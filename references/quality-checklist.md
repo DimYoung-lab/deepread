@@ -36,6 +36,7 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 8 | **Reset View works** | Click "Reset View" button or double-click canvas | Returns to default zoom and centering |
 | 9 | **Tooltips on hover** | Hover over a node | Tooltip appears with full text and timestamp |
 | 10 | **Title bar complete** | Check top bar | Shows interview title, guest name, date, duration |
+| 11 | **No SVG interception** | Click several topic nodes that are visually close to link paths | All clicks register, no "intercepts pointer events" errors. Verify `.link { pointer-events: none }` in CSS. |
 
 ### Markdown Report Checks
 
@@ -137,6 +138,88 @@ function nodeRadius(d) {
 **Fix:** Always write to files and read them, rather than relying on terminal output. Use `python -c "..."` with output redirection to files when processing Chinese text.
 
 **Prevention:** For any script that outputs Chinese text, provide a `--output` file option.
+
+### Pitfall 7: SVG Link/Path Elements Intercept Pointer Events (MEDIUM)
+
+**Symptom:** In the mind map, clicking or hovering on a topic node sometimes fails — Playwright reports `<path class="link">` or `<circle class="node-circle">` "intercepts pointer events."
+
+**Root Cause:** SVG renders elements in DOM order. `<path class="link">` elements (the curved lines connecting nodes) are rendered AFTER the node `<g>` groups in the SVG, putting them visually on top. Without `pointer-events: none`, these paths consume mouse events before they reach the nodes.
+
+**Fix:** Add `pointer-events: none` to the `.link` CSS class:
+
+```css
+.link {
+    fill: none;
+    stroke: rgba(255,255,255,0.12);
+    stroke-width: 1.2;
+    pointer-events: none;  /* REQUIRED: let clicks pass through to nodes */
+    transition: stroke var(--transition-speed) ease;
+}
+```
+
+**Prevention:** ALL decorative SVG elements (link paths, background circles, glow effects) that overlay interactive nodes MUST have `pointer-events: none`. Only the `<g class="node">` groups and their explicitly interactive children should receive pointer events.
+
+### Pitfall 8: Verifying `<details>` Collapse — `querySelector` vs `offsetHeight` (LOW)
+
+**Symptom:** When testing collapsed `<details>` elements, `querySelector` still finds child elements inside closed details, leading to false "BUG!" reports.
+
+**Root Cause:** The browser's native `<details>` collapse hides content VISUALLY (via shadow DOM), but does NOT remove elements from the DOM tree. `querySelector` searches the DOM tree, not the visual viewport.
+
+**Wrong way to test:**
+```javascript
+// Always finds elements even when collapsed — false positive!
+document.querySelector('details:not([open]) .insight-card')  // → found!
+```
+
+**Right way to test:**
+```javascript
+// Check the details element's own height — summary only when closed
+document.querySelector('details:not([open])').offsetHeight   // → ~97px (summary only)
+document.querySelector('details[open]').offsetHeight         // → large (full content)
+
+// Or use the native open attribute
+document.querySelector('details').hasAttribute('open')        // → false when collapsed
+document.querySelectorAll('details[open]').length             // → count of open details
+```
+
+**Prevention:** Always verify collapse state via `hasAttribute('open')` or by comparing the `offsetHeight` of the `<details>` element itself (not its children). Never use `querySelector` to verify content visibility.
+
+### Pitfall 9: Playwright `file://` Protocol Blocked (LOW)
+
+**Symptom:** `playwright-cli open "file:///C:/path/to/report.html"` fails with "Access to file: protocol is blocked."
+
+**Root Cause:** Playwright blocks `file://` URLs for security reasons.
+
+**Fix:** Always serve files through a local HTTP server:
+```bash
+cd output/yaoshunyu-20260530
+python -m http.server 8765 &
+playwright-cli open "http://localhost:8765/report.html"
+```
+
+**Prevention:** Document in test procedures that a local HTTP server is required. The regression test script should include server startup.
+
+### Pitfall 10: `playwright-cli eval` JavaScript Syntax Restrictions (LOW)
+
+**Symptom:** `eval` commands fail with `SyntaxError: Unexpected token 'var'` or `Unexpected token ';'`.
+
+**Root Cause:** `playwright-cli eval` wraps the expression in an arrow function. Variable declarations (`var`, `let`, `const`) and certain syntax patterns cause parse errors.
+
+**Wrong:**
+```bash
+playwright-cli eval "var x = document.querySelector('a'); x.href"
+playwright-cli eval "document.querySelector('a').click(); 'ok'"
+```
+
+**Right (simple single expressions only):**
+```bash
+playwright-cli eval "document.querySelector('a').href"
+playwright-cli eval "document.querySelectorAll('details').length + ' details'"
+# For click actions, use separate playwright-cli click command:
+playwright-cli click e34
+```
+
+**Prevention:** Use `playwright-cli eval` only for simple property reads and counts. For mouse interactions, use dedicated commands (`click`, `hover`, `fill`, `press`). For complex logic, write to a Python helper script instead.
 
 ---
 

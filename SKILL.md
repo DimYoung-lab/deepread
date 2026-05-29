@@ -313,6 +313,12 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 
 6. **Windows encoding**: Always write Chinese text to files (never rely on terminal stdout). Provide `--output` flags on all scripts.
 
+7. **SVG pointer-events blocking**: In the mind map template, ALL decorative SVG elements (`.link` paths, glow circles, background elements) MUST have `pointer-events: none`. Without this, SVG link paths rendered between nodes intercept clicks and hovers meant for the nodes themselves. Only `<g class="node">` groups should receive pointer events.
+
+8. **`<details>` visibility testing**: Never verify `<details>` collapse by using `querySelector` on child elements (they still exist in the DOM even when visually hidden). Use `hasAttribute('open')` or compare `offsetHeight` of the `<details>` element itself.
+
+9. **`playwright-cli eval` syntax**: `eval` only accepts single expressions — no `var`/`let`/`const`, no semicolons. Use dedicated commands (`click`, `fill`, `press`) for interactions; use `eval` only for property reads and counts.
+
 ## Reference Files
 
 | File | When to Load | Content |
