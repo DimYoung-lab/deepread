@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Runtime output (intermediate processing artifacts)
+output/turns.json
+output/segments.json
+output/knowledge.json
+output/segments/
+output/*.txt
+output/*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Playwright test artifacts
+.playwright-cli/
+
+# Temp files
+*.tmp
+*.bak

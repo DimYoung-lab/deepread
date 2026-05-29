@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Mind Map — Interview-Based Learning</title>
+<style>
+  :root {
+    --bg-deep: #0f0f23;
+    --bg-mid: #1a1a2e;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-dim: #64748b;
+    --accent: #6366f1;
+    --glow-strength: 0.6;
+    --transition-speed: 300ms;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0f0f23 60%, #0a0a1a 100%);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Starfield canvas */
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Title Bar */
+  #title-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(180deg, rgba(15,15,35,0.95) 40%, rgba(15,15,35,0) 100%);
+    pointer-events: none;
+  }
+  #title-bar > * { pointer-events: auto; }
+
+  .title-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+  .title-main h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .title-main .subtitle {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    align-items: center;
+  }
+  .title-main .subtitle span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .title-main .subtitle .divider {
+    width: 1px;
+    height: 12px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .title-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .meta-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    backdrop-filter: blur(12px);
+  }
+  .meta-badge .icon { opacity: 0.6; font-size: 0.85rem; }
+
+  /* Search Box */
+  #search-box {
+    position: fixed;
+    top: 20px;
+    right: 28px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #search-input {
+    width: 220px;
+    padding: 10px 16px 10px 38px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(20,20,45,0.85);
+    color: #e2e8f0;
+    font-size: 0.82rem;
+    backdrop-filter: blur(16px);
+    outline: none;
+    transition: all var(--transition-speed) ease;
+    font-family: inherit;
+  }
+  #search-input::placeholder { color: var(--text-dim); }
+  #search-input:focus {
+    border-color: rgba(99,102,241,0.6);
+    width: 280px;
+    box-shadow: 0 0 20px rgba(99,102,241,0.15);
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+
+  /* Controls */
+  #controls {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    gap: 8px;
+  }
+  .ctrl-btn {
+    padding: 9px 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(20,20,50,0.85);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: inherit;
+    backdrop-filter: blur(16px);
+    transition: all var(--transition-speed) ease;
+    letter-spacing: 0.01em;
+  }
+  .ctrl-btn:hover {
+    background: rgba(40,40,80,0.9);
+    color: #fff;
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .ctrl-btn:active { transform: scale(0.96); }
+  .ctrl-btn.active {
+    border-color: var(--accent);
+    color: #fff;
+    background: rgba(99,102,241,0.2);
+  }
+
+  /* SVG container */
+  #map-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+  }
+  #map-container svg {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+  }
+  #map-container svg:active { cursor: grabbing; }
+  #map-container svg.panning { cursor: grabbing; }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    max-width: 340px;
+    padding: 14px 18px;
+    background: rgba(16,16,36,0.96);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    transition: opacity 150ms ease;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  #tooltip.visible { opacity: 1; }
+  #tooltip .tt-time {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-bottom: 6px;
+  }
+  #tooltip .tt-type {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+  }
+  #tooltip .tt-speaker {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-top: 4px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+  #tooltip .tt-text {
+    color: var(--text-primary);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .tt-type.statistic { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .tt-type.insight { background: rgba(139,92,246,0.2); color: #a78bfa; }
+  .tt-type.quote { background: rgba(245,158,11,0.2); color: #fbbf24; }
+
+  /* Legend */
+  #legend {
+    position: fixed;
+    bottom: 100px;
+    left: 28px;
+    z-index: 20;
+    padding: 16px 20px;
+    background: rgba(16,16,36,0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  #legend h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Node styles (within SVG) */
+  .node-root circle {
+    fill: url(#root-gradient);
+    stroke: rgba(255,255,255,0.3);
+    stroke-width: 2;
+  }
+  .node-topic text { font-weight: 600; }
+  .node-child text { font-weight: 400; font-size: 11px; }
+
+  .link {
+    fill: none;
+    stroke: rgba(255,255,255,0.12);
+    stroke-width: 1.2;
+    transition: stroke var(--transition-speed) ease, stroke-width var(--transition-speed) ease;
+  }
+  .link.highlighted {
+    stroke-opacity: 0.35;
+  }
+  .link.dimmed {
+    stroke-opacity: 0.04;
+  }
+
+  /* Glow filters */
+  .node-glow {
+    transition: opacity var(--transition-speed) ease;
+  }
+
+  text {
+    fill: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    pointer-events: none;
+  }
+
+  circle { cursor: pointer; }
+
+  @media (max-width: 600px) {
+    #search-input { width: 140px; }
+    #search-input:focus { width: 180px; }
+    #title-bar { padding: 12px 16px; }
+    .title-main h1 { font-size: 1.05rem; }
+    #legend { bottom: 90px; left: 8px; padding: 10px 14px; font-size: 0.7rem; }
+    .ctrl-btn { padding: 7px 14px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div id="title-bar">
+  <div class="title-main">
+    <h1 id="title-heading"></h1>
+    <div class="subtitle">
+      <span id="title-guest">👤 </span>
+      <span class="divider"></span>
+      <span id="title-date">📅 </span>
+      <span class="divider"></span>
+      <span id="title-duration">⏱️ </span>
+    </div>
+  </div>
+</div>
+
+<div id="search-box">
+  <span class="search-icon">🔍</span>
+  <input type="text" id="search-input" placeholder="Search nodes...">
+</div>
+
+<div id="map-container"></div>
+
+<div id="tooltip"></div>
+
+<div id="legend">
+  <h3>Topics</h3>
+  <div id="legend-items"></div>
+</div>
+
+<div id="controls">
+  <button class="ctrl-btn active" id="btn-expand-all" title="Expand all branches">Expand All</button>
+  <button class="ctrl-btn" id="btn-collapse-all" title="Collapse to topics only">Collapse All</button>
+  <button class="ctrl-btn" id="btn-reset" title="Reset zoom &amp; position">⟲ Reset View</button>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// ============================================================
+// DATA — replace this with your interview data
+// ============================================================
+const MINDMAP_DATA = {
+  "title": "Sample Interview: The Future of AI",
+  "guest": "Dr. Jane Smith",
+  "date": "2026-05-30",
+  "duration": "3h 47m",
+  "topics": [
+    {
+      "name": "Neural Architecture",
+      "time_range": "00:00-42:00",
+      "color": "#3b82f6",
+      "summary": "Evolution of transformer architectures and novel attention mechanisms for next-generation models.",
+      "insights": [
+        {"text": "Sparse attention reduces compute by 40% while maintaining 98% accuracy", "timestamp": "05:30"},
+        {"text": "Mixture-of-experts routing is the key bottleneck in distributed training", "timestamp": "18:20"},
+        {"text": "New SSM-based architectures challenge the dominance of attention", "timestamp": "31:45"}
+      ],
+      "quotes": [
+        {"text": "The transformer was just the beginning — the real revolution is in how we compose these primitives.", "timestamp": "08:15", "speaker": "Dr. Jane Smith"},
+        {"text": "We're seeing performance that was unimaginable two years ago from 7B parameter models.", "timestamp": "35:10", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "Training efficiency improved 3.2x since 2024 through architectural innovations alone", "timestamp": "22:00", "type": "statistic"},
+        {"text": "Top models now use 8-32 experts with dynamic routing", "timestamp": "19:30", "type": "statistic"}
+      ]
+    },
+    {
+      "name": "Alignment & Safety",
+      "time_range": "42:00-1:15:00",
+      "color": "#8b5cf6",
+      "summary": "Constitutional AI, RLHF variants, and scalable oversight techniques for ensuring safe model behavior.",
+      "insights": [
+        {"text": "Constitutional AI reduces harmful outputs by 78% without sacrificing helpfulness", "timestamp": "45:00"},
+        {"text": "Debate-based oversight works for capabilities up to human expert level", "timestamp": "58:30"},
+        {"text": "Scalable oversight remains an open problem for superhuman systems", "timestamp": "1:08:20"}
+      ],
+      "quotes": [
+        {"text": "Safety isn't a tax on capability — it's an enabler for deployment at scale.", "timestamp": "50:45", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "RLHF training runs increased 5x in cost since 2024 for frontier models", "timestamp": "52:30", "type": "statistic"}
+      ]
+    },
+    {
+      "name": "Multimodal Integration",
+      "time_range": "1:15:00-1:50:00",
+      "color": "#10b981",
+      "summary": "Unified architectures that process text, images, audio, and video natively through shared representations.",
+      "insights": [
+        {"text": "Early fusion outperforms late fusion by 12-18% on cross-modal reasoning benchmarks", "timestamp": "1:20:10"},
+        {"text": "Joint embedding spaces enable zero-shot transfer between modalities", "timestamp": "1:34:40"}
+      ],
+      "quotes": [
+        {"text": "The most exciting frontier isn't any single modality — it's the intersections between them.", "timestamp": "1:42:15", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "Multimodal models show 35% better performance on complex reasoning tasks", "timestamp": "1:29:00", "type": "statistic"}
+      ]
+    },
+    {
+      "name": "Deployment & Inference",
+      "time_range": "1:50:00-2:35:00",
+      "color": "#f59e0b",
+      "summary": "Optimizing model serving, quantization strategies, and edge deployment for production systems.",
+      "insights": [
+        {"text": "4-bit quantization with GPTQ achieves <1% quality degradation for most tasks", "timestamp": "1:55:30"},
+        {"text": "Speculative decoding yields 2-3x speedup in production serving environments", "timestamp": "2:10:15"},
+        {"text": "KV-cache optimization is the single highest-leverage inference improvement", "timestamp": "2:22:40"}
+      ],
+      "quotes": [
+        {"text": "We went from 'can we serve this' to 'can we serve this to a million users concurrently' in 18 months.", "timestamp": "2:28:50", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "Inference costs dropped 87% since 2024 while throughput increased 6x", "timestamp": "2:05:20", "type": "statistic"}
+      ]
+    },
+    {
+      "name": "Open Source Ecosystem",
+      "time_range": "2:35:00-3:15:00",
+      "color": "#ec4899",
+      "summary": "The rise of open-weight models, community tooling, and the shifting competitive landscape.",
+      "insights": [
+        {"text": "Open models now achieve 92% of closed-model performance on standard benchmarks", "timestamp": "2:40:30"},
+        {"text": "Community fine-tuning pipelines have democratized domain-specific adaptation", "timestamp": "2:55:15"},
+        {"text": "The moat is shifting from model weights to data flywheels and evaluation frameworks", "timestamp": "3:08:40"}
+      ],
+      "quotes": [
+        {"text": "Open source isn't catching up — it's defining a completely different playing field.", "timestamp": "3:10:30", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "65% of production AI systems now use at least one open-weight component", "timestamp": "2:45:50", "type": "statistic"}
+      ]
+    },
+    {
+      "name": "Future Predictions",
+      "time_range": "3:15:00-3:47:00",
+      "color": "#06b6d4",
+      "summary": "Speculative outlook on AGI timelines, economic impact, and research priorities for the next decade.",
+      "insights": [
+        {"text": "Automated research agents could accelerate AI progress by 10x by 2028", "timestamp": "3:22:10"},
+        {"text": "The bottleneck shifts from compute to high-quality training data by 2027", "timestamp": "3:35:25"},
+        {"text": "Economic modeling suggests 15-25% of knowledge work tasks automatable within 3 years", "timestamp": "3:42:00"}
+      ],
+      "quotes": [
+        {"text": "We're not building tools anymore — we're building colleagues.", "timestamp": "3:28:50", "speaker": "Dr. Jane Smith"},
+        {"text": "The question isn't if but when — and more importantly, are we ready?", "timestamp": "3:45:30", "speaker": "Dr. Jane Smith"}
+      ],
+      "data_points": [
+        {"text": "Projected $1.3T economic impact from generative AI by 2030", "timestamp": "3:38:00", "type": "statistic"}
+      ]
+    }
+  ]
+};
+
+// ============================================================
+// STARFIELD BACKGROUND
+// ============================================================
+(function initStarfield() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let animationId;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const STAR_COUNT = 180;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.3,
+      opacity: Math.random() * 0.6 + 0.1,
+      speed: Math.random() * 0.015 + 0.003,
+      angle: Math.random() * Math.PI * 2
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const s of stars) {
+      s.opacity += s.speed;
+      if (s.opacity > 0.7 || s.opacity < 0.08) s.speed *= -1;
+      s.x += Math.cos(s.angle) * 0.15;
+      s.y += Math.sin(s.angle) * 0.15;
+      if (s.x < 0) s.x = canvas.width;
+      if (s.x > canvas.width) s.x = 0;
+      if (s.y < 0) s.y = canvas.height;
+      if (s.y > canvas.height) s.y = 0;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180,200,255,${s.opacity.toFixed(2)})`;
+      ctx.fill();
+    }
+    animationId = requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============================================================
+// POPULATE TITLE BAR
+// ============================================================
+document.getElementById('title-heading').textContent = MINDMAP_DATA.title;
+document.getElementById('title-guest').innerHTML = '&#x1F464; ' + MINDMAP_DATA.guest;
+document.getElementById('title-date').innerHTML = '&#x1F4C5; ' + MINDMAP_DATA.date;
+document.getElementById('title-duration').innerHTML = '&#x23F1;&#xFE0F; ' + MINDMAP_DATA.duration;
+
+// ============================================================
+// POPULATE LEGEND
+// ============================================================
+const legendContainer = document.getElementById('legend-items');
+MINDMAP_DATA.topics.forEach(t => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<span class="legend-dot" style="background:${t.color};color:${t.color}"></span>${t.name}`;
+  legendContainer.appendChild(item);
+});
+
+// ============================================================
+// BUILD TREE STRUCTURE
+// ============================================================
+function buildTree() {
+  const root = {
+    name: MINDMAP_DATA.title,
+    guest: MINDMAP_DATA.guest,
+    children: [],
+    type: 'root',
+    color: '#6366f1',
+    depth: 0,
+    _collapsed: false,
+    _id: 'root'
+  };
+
+  MINDMAP_DATA.topics.forEach((topic, i) => {
+    const topicNode = {
+      name: topic.name,
+      summary: topic.summary,
+      time_range: topic.time_range,
+      color: topic.color,
+      type: 'topic',
+      depth: 1,
+      _collapsed: true, // collapsed by default (only topics visible)
+      _id: `topic-${i}`,
+      children: []
+    };
+
+    // Insights as ring 2
+    topic.insights.forEach((insight, j) => {
+      const insightNode = {
+        name: insight.text,
+        timestamp: insight.timestamp,
+        type: 'insight',
+        color: topic.color,
+        depth: 2,
+        _collapsed: true,
+        _id: `topic-${i}-insight-${j}`,
+        children: []
+      };
+      topicNode.children.push(insightNode);
+    });
+
+    // Quotes as ring 2/3 (under each topic)
+    topic.quotes.forEach((quote, k) => {
+      const quoteNode = {
+        name: quote.text,
+        timestamp: quote.timestamp,
+        speaker: quote.speaker,
+        type: 'quote',
+        color: topic.color,
+        depth: 2,
+        _collapsed: true,
+        _id: `topic-${i}-quote-${k}`,
+        children: []
+      };
+      topicNode.children.push(quoteNode);
+    });
+
+    // Data points as ring 2/3
+    topic.data_points.forEach((dp, l) => {
+      const dpNode = {
+        name: dp.text,
+        timestamp: dp.timestamp,
+        type: 'data_point',
+        subtype: dp.type || 'statistic',
+        color: topic.color,
+        depth: 2,
+        _collapsed: true,
+        _id: `topic-${i}-dp-${l}`,
+        children: []
+      };
+      topicNode.children.push(dpNode);
+    });
+
+    root.children.push(topicNode);
+  });
+
+  return root;
+}
+
+// ============================================================
+// MAIN VISUALIZATION
+// ============================================================
+(function render() {
+  const container = document.getElementById('map-container');
+  const tooltip = document.getElementById('tooltip');
+  const searchInput = document.getElementById('search-input');
+
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+
+  // SVG setup
+  const svg = d3.select('#map-container')
+    .append('svg')
+    .attr('width', W)
+    .attr('height', H);
+
+  // Defs: gradients and filters
+  const defs = svg.append('defs');
+
+  // Root gradient
+  defs.append('radialGradient')
+    .attr('id', 'root-gradient')
+    .attr('cx', '50%').attr('cy', '50%').attr('r', '50%')
+    .selectAll('stop')
+    .data([
+      { offset: '0%', color: '#818cf8' },
+      { offset: '100%', color: '#4f46e5' }
+    ])
+    .enter().append('stop')
+    .attr('offset', d => d.offset)
+    .attr('stop-color', d => d.color);
+
+  // Glow filter
+  defs.append('filter')
+    .attr('id', 'glow')
+    .attr('x', '-60%').attr('y', '-60%').attr('width', '220%').attr('height', '220%')
+    .html(`
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    `);
+
+  defs.append('filter')
+    .attr('id', 'glow-strong')
+    .attr('x', '-80%').attr('y', '-80%').attr('width', '260%').attr('height', '260%')
+    .html(`
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    `);
+
+  // Topic gradients (one per topic)
+  MINDMAP_DATA.topics.forEach((t, i) => {
+    defs.append('radialGradient')
+      .attr('id', `topic-grad-${i}`)
+      .attr('cx', '50%').attr('cy', '50%').attr('r', '50%')
+      .selectAll('stop')
+      .data([
+        { offset: '0%', color: d3.color(t.color).brighter(0.6).toString() },
+        { offset: '100%', color: t.color }
+      ])
+      .enter().append('stop')
+      .attr('offset', d => d.offset)
+      .attr('stop-color', d => d.color);
+  });
+
+  // Arrow marker for links
+  defs.append('marker')
+    .attr('id', 'arrow')
+    .attr('viewBox', '0 0 6 6')
+    .attr('refX', 6).attr('refY', 3)
+    .attr('markerWidth', 4).attr('markerHeight', 4)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0 1 L 5 3 L 0 5 Z')
+    .attr('fill', 'rgba(255,255,255,0.2)');
+
+  // Main group for zoom/pan
+  const g = svg.append('g');
+
+  // Zoom behavior
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 3.5])
+    .on('zoom', (event) => {
+      g.attr('transform', event.transform);
+    });
+
+  svg.call(zoom);
+  // Initial centered transform
+  svg.call(zoom.transform, d3.zoomIdentity.translate(W / 2, H / 2));
+
+  // Double-click reset
+  svg.on('dblclick.zoom', (event) => {
+    event.stopPropagation();
+    svg.transition().duration(500).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(W / 2, H / 2)
+    );
+  });
+
+  // Data
+  let treeData = buildTree();
+  let searchTerm = '';
+
+  // Compute visible children (respecting _collapsed)
+  function getVisibleChildren(d) {
+    if (d._collapsed || !d.children || d.children.length === 0) return [];
+    return d.children;
+  }
+
+  // Layout
+  const radius = Math.min(W, H) * 0.42;
+  const treeLayout = d3.tree()
+    .size([2 * Math.PI, radius])
+    .separation((a, b) => (a.parent === b.parent ? 1.2 : 1.8) / a.depth);
+
+  // Convert to radial coordinates
+  function radialPoint(angle, radius) {
+    return [radius * Math.cos(angle - Math.PI / 2), radius * Math.sin(angle - Math.PI / 2)];
+  }
+
+  // Assign hierarchy and layout
+  function computeLayout(rootData) {
+    const root = d3.hierarchy(rootData, getVisibleChildren);
+    treeLayout(root);
+    // Convert to radial
+    root.each(d => {
+      const [x, y] = radialPoint(d.x, d.y);
+      d._rx = x;
+      d._ry = y;
+    });
+    return root;
+  }
+
+  // Node size calculation
+  function nodeRadius(d) {
+    if (!d || !d.data) return 5;
+    switch (d.data.type) {
+      case 'root': return 42;
+      case 'topic': return 18 + Math.min((d.data.children ? d.data.children.length : 0), 15) * 1.2;
+      case 'insight':
+      case 'quote':
+      case 'data_point': return 6;
+      default: return 8;
+    }
+  }
+
+  // Color for node fill
+  function nodeFill(d) {
+    if (!d || !d.data) return '#6366f1';
+    if (d.data.type === 'root') return 'url(#root-gradient)';
+    if (d.data.type === 'topic') {
+      const idx = MINDMAP_DATA.topics.findIndex(t => t.name === d.data.name);
+      return idx >= 0 ? `url(#topic-grad-${idx})` : d.data.color;
+    }
+    return d.data.color || '#6366f1';
+  }
+
+  // Label for node
+  function nodeLabel(d) {
+    if (!d || !d.data) return '';
+    if (d.data.type === 'root') return MINDMAP_DATA.guest.length ? MINDMAP_DATA.title + '\n' + MINDMAP_DATA.guest : MINDMAP_DATA.title;
+    if (d.data.type === 'topic') return d.data.name;
+    // Truncate long text for leaf nodes
+    const maxLen = 35;
+    return d.data.name.length > maxLen ? d.data.name.slice(0, maxLen) + '…' : d.data.name;
+  }
+
+  function renderTree() {
+    const root = computeLayout(treeData);
+
+    // Collect all visible nodes
+    const nodes = root.descendants().reverse();
+    const links = root.links();
+
+    // --- LINKS ---
+    const linkSel = g.selectAll('.link')
+      .data(links, d => d.source.data._id + '->' + d.target.data._id);
+
+    const linkEnter = linkSel.enter().append('path')
+      .attr('class', 'link')
+      .attr('d', d => curvedLink(d.source, d.target))
+      .style('opacity', 0);
+
+    linkSel.merge(linkEnter)
+      .transition().duration(300)
+      .attr('class', d => {
+        let cls = 'link';
+        if (searchTerm) {
+          const match = nodeMatchesSearch(d.target);
+          cls += match ? ' highlighted' : ' dimmed';
+        }
+        return cls;
+      })
+      .attr('d', d => curvedLink(d.source, d.target))
+      .style('opacity', 1)
+      .style('stroke', d => {
+        if (d.target.data.type === 'topic') return d.target.data.color;
+        return null;
+      })
+      .style('stroke-width', d => d.target.data.type === 'topic' ? 2 : 1);
+
+    linkSel.exit()
+      .transition().duration(300)
+      .style('opacity', 0)
+      .remove();
+
+    // --- NODES ---
+    const nodeSel = g.selectAll('.node')
+      .data(nodes, d => d.data._id);
+
+    const nodeEnter = nodeSel.enter().append('g')
+      .attr('class', d => `node node-${d.data.type}`)
+      .attr('transform', d => `translate(${d._rx},${d._ry})`)
+      .style('opacity', 0)
+      .style('cursor', d => d.data.type === 'root' || (d.data.children && d.data.children.length > 0) ? 'pointer' : 'default');
+
+    // Glow circle (behind)
+    nodeEnter.append('circle')
+      .attr('class', 'node-glow-bg')
+      .attr('r', d => nodeRadius(d) * 1.6)
+      .attr('fill', 'none');
+
+    // Main circle
+    nodeEnter.append('circle')
+      .attr('class', 'node-circle')
+      .attr('r', d => nodeRadius(d))
+      .attr('fill', d => nodeFill(d))
+      .attr('stroke', d => {
+        if (d.data.type === 'root') return 'rgba(255,255,255,0.3)';
+        if (d.data.type === 'topic') return d3.color(d.data.color).brighter(0.5).toString();
+        return d3.color(d.data.color).brighter(0.3).toString();
+      })
+      .attr('stroke-width', d => d.data.type === 'root' ? 2.5 : d.data.type === 'topic' ? 1.8 : 0.8)
+      .attr('filter', d => d.data.type === 'root' ? 'url(#glow-strong)' : 'url(#glow)');
+
+    // Labels
+    nodeEnter.append('text')
+      .attr('class', 'node-label')
+      .attr('dy', d => {
+        if (d.data.type === 'root') return '0.35em';
+        return nodeRadius(d) + 14;
+      })
+      .attr('text-anchor', 'middle')
+      .attr('font-size', d => {
+        if (d.data.type === 'root') return '14px';
+        if (d.data.type === 'topic') return '13px';
+        return '10px';
+      })
+      .attr('font-weight', d => d.data.type === 'root' ? '700' : d.data.type === 'topic' ? '600' : '400')
+      .attr('fill', d => d.data.type === 'root' ? '#fff' : d.data.type === 'topic' ? '#fff' : d3.color(d.data.color).brighter(0.8).toString())
+      .style('text-shadow', d => d.data.type === 'topic' ? `0 0 12px ${d.data.color}44` : 'none')
+      .text(d => nodeLabel(d));
+
+    // Child count badge for collapsed topic nodes
+    nodeEnter.filter(d => d.data.type === 'topic' && d.data._collapsed && d.data.children && d.data.children.length > 0)
+      .append('text')
+      .attr('class', 'badge-count')
+      .attr('dy', nodeRadius(d => d) + 28)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '9px')
+      .attr('fill', 'rgba(255,255,255,0.4)')
+      .text(d => `+${d.data.children.length}`);
+
+    // Update positions
+    const nodeMerge = nodeSel.merge(nodeEnter);
+
+    nodeMerge.transition().duration(300)
+      .attr('transform', d => `translate(${d._rx},${d._ry})`)
+      .style('opacity', d => {
+        if (!searchTerm) return 1;
+        return nodeMatchesSearch(d) ? 1 : 0.15;
+      });
+
+    // Update circle radius (may change due to hierarchy structure)
+    nodeMerge.select('.node-circle')
+      .transition().duration(300)
+      .attr('r', d => nodeRadius(d))
+      .attr('fill', d => nodeFill(d));
+
+    // Update label positions
+    nodeMerge.select('.node-label')
+      .transition().duration(300)
+      .attr('dy', d => {
+        if (d.data.type === 'root') return '0.35em';
+        return nodeRadius(d) + 14;
+      });
+
+    // Update glow circle
+    nodeMerge.select('.node-glow-bg')
+      .transition().duration(300)
+      .attr('r', d => nodeRadius(d) * 1.6);
+
+    // Update badges
+    nodeMerge.select('.badge-count')
+      .text(d => d.data.type === 'topic' && d.data._collapsed && d.data.children && d.data.children.length > 0 ? `+${d.data.children.length}` : '')
+      .transition().duration(300)
+      .attr('dy', d => nodeRadius(d) + 28);
+
+    nodeSel.exit()
+      .transition().duration(300)
+      .style('opacity', 0)
+      .remove();
+
+    // --- INTERACTIONS ---
+    // Click to expand/collapse
+    g.selectAll('.node').on('click', function(event, d) {
+      event.stopPropagation();
+      if (d.data.type !== 'topic' && d.data.type !== 'root') return;
+      if (!d.data.children || d.data.children.length === 0) return;
+      d.data._collapsed = !d.data._collapsed;
+      renderTree();
+      updateControls();
+    });
+
+    // Hover for tooltip
+    g.selectAll('.node')
+      .on('mouseenter', function(event, d) {
+        if (d.data.type === 'root') {
+          showTooltip(event, {
+            text: MINDMAP_DATA.title,
+            subtitle: MINDMAP_DATA.guest,
+            type: 'interview',
+            time: MINDMAP_DATA.duration
+          });
+          return;
+        }
+        if (d.data.type === 'topic') {
+          showTooltip(event, {
+            text: d.data.name,
+            subtitle: d.data.time_range,
+            type: 'topic',
+            time: d.data.time_range,
+            summary: d.data.summary,
+            color: d.data.color
+          });
+          return;
+        }
+        showTooltip(event, {
+          text: d.data.name,
+          timestamp: d.data.timestamp,
+          type: d.data.type === 'quote' ? 'quote' : d.data.subtype || d.data.type,
+          speaker: d.data.speaker,
+          color: d.data.color
+        });
+      })
+      .on('mousemove', function(event) {
+        positionTooltip(event);
+      })
+      .on('mouseleave', function() {
+        hideTooltip();
+      });
+
+    // Zoom on background (non-node clicks)
+    svg.on('click', function(event) {
+      if (event.target === svg.node() || event.target.tagName === 'svg') {
+        // Clicked on background - could optionally collapse all
+      }
+    });
+  }
+
+  // Helper: curved link path
+  function curvedLink(source, target) {
+    const sx = source._rx, sy = source._ry;
+    const tx = target._rx, ty = target._ry;
+    const dx = tx - sx;
+    const dy = ty - sy;
+    const dr = Math.sqrt(dx * dx + dy * dy) * 1.5;
+    return `M${sx},${sy}A${dr},${dr} 0 0,1 ${tx},${ty}`;
+  }
+
+  // Search matching
+  function nodeMatchesSearch(d) {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    const name = (d.data.name || '').toLowerCase();
+    const summary = (d.data.summary || '').toLowerCase();
+    const type = (d.data.type || '').toLowerCase();
+    return name.includes(term) || summary.includes(term) || type.includes(term);
+  }
+
+  // Tooltip
+  function showTooltip(event, info) {
+    let html = '';
+    if (info.time) {
+      html += `<span class="tt-time">${info.time}</span>`;
+    }
+    if (info.type && info.type !== 'topic' && info.type !== 'interview') {
+      html += `<span class="tt-type ${info.type}">${info.type}</span>`;
+    }
+    if (info.speaker) {
+      html += `<div class="tt-speaker">— ${info.speaker}</div>`;
+    }
+    html += `<div class="tt-text">${info.text}</div>`;
+    if (info.subtitle && info.type === 'topic') {
+      html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:2px;">${info.subtitle}</div>`;
+    }
+    if (info.summary) {
+      html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:4px;line-height:1.4;">${info.summary}</div>`;
+    }
+    if (info.subtitle && info.type === 'interview') {
+      html += `<div style="color:#94a3b8;font-size:0.78rem;margin-top:2px;">Guest: ${info.subtitle}</div>`;
+    }
+    tooltip.innerHTML = html;
+    tooltip.classList.add('visible');
+    positionTooltip(event);
+  }
+
+  function positionTooltip(event) {
+    let x = event.clientX + 16;
+    let y = event.clientY - 10;
+    const tw = tooltip.offsetWidth;
+    const th = tooltip.offsetHeight;
+    if (x + tw > window.innerWidth - 20) x = event.clientX - tw - 20;
+    if (y + th > window.innerHeight - 20) y = event.clientY - th - 20;
+    if (y < 10) y = 10;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('visible');
+  }
+
+  // Search
+  searchInput.addEventListener('input', function() {
+    searchTerm = this.value.trim();
+    renderTree();
+  });
+
+  // Controls
+  function updateControls() {
+    const allTopicsCollapsed = treeData.children.every(t => t._collapsed);
+    const allTopicsExpanded = treeData.children.every(t => !t._collapsed);
+    document.getElementById('btn-expand-all').classList.toggle('active', allTopicsExpanded);
+    document.getElementById('btn-collapse-all').classList.toggle('active', !allTopicsExpanded && allTopicsCollapsed);
+  }
+
+  document.getElementById('btn-expand-all').addEventListener('click', () => {
+    treeData.children.forEach(t => { t._collapsed = false; });
+    renderTree();
+    updateControls();
+  });
+
+  document.getElementById('btn-collapse-all').addEventListener('click', () => {
+    treeData.children.forEach(t => { t._collapsed = true; });
+    renderTree();
+    updateControls();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    svg.transition().duration(500).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(W / 2, H / 2)
+    );
+    searchInput.value = '';
+    searchTerm = '';
+    renderTree();
+  });
+
+  // Resize handler
+  window.addEventListener('resize', () => {
+    const newW = container.clientWidth;
+    const newH = container.clientHeight;
+    svg.attr('width', newW).attr('height', newH);
+    // Re-apply zoom center
+    svg.call(zoom.transform, d3.zoomIdentity.translate(newW / 2, newH / 2));
+    renderTree();
+  });
+
+  // Initial render
+  renderTree();
+  updateControls();
+})();
+</script>
+</body>
+</html>
