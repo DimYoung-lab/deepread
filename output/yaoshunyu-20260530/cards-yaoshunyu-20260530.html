@@ -232,10 +232,9 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -1093,20 +1092,9 @@ code {
    19. ANIMATIONS — CARD REVEAL
    ======================================================================== */
 
-.card-in-view {
-  animation: cardReveal var(--duration-glacial) var(--ease-out-expo) both;
-}
-
-@keyframes cardReveal {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Cards appear at full opacity immediately — no scroll animation.
+   The content is already loaded; animating opacity during scroll creates
+   a visible flash that reads as broken, not designed. */
 
 /* Stagger effect: theme cards reveal one by one */
 .card-theme:nth-child(2)  { animation-delay: 0ms; }
