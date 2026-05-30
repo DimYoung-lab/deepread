@@ -636,17 +636,18 @@ code {
    ======================================================================== */
 
 .card-theme {
-  border-left: 5px solid transparent;
+  border-top: 3px solid transparent;
   padding-top: var(--space-10);
+  background: var(--color-surface-raised);
 }
 
-.card-theme.theme-1 { border-left-color: var(--color-theme-1); }
-.card-theme.theme-2 { border-left-color: var(--color-theme-2); }
-.card-theme.theme-3 { border-left-color: var(--color-theme-3); }
-.card-theme.theme-4 { border-left-color: var(--color-theme-4); }
-.card-theme.theme-5 { border-left-color: var(--color-theme-5); }
-.card-theme.theme-6 { border-left-color: var(--color-theme-6); }
-.card-theme.theme-7 { border-left-color: var(--color-theme-7); }
+.card-theme.theme-1 { border-top-color: var(--color-theme-1); }
+.card-theme.theme-2 { border-top-color: var(--color-theme-2); }
+.card-theme.theme-3 { border-top-color: var(--color-theme-3); }
+.card-theme.theme-4 { border-top-color: var(--color-theme-4); }
+.card-theme.theme-5 { border-top-color: var(--color-theme-5); }
+.card-theme.theme-6 { border-top-color: var(--color-theme-6); }
+.card-theme.theme-7 { border-top-color: var(--color-theme-7); }
 
 .theme-badge {
   display: inline-flex;
@@ -716,9 +717,9 @@ code {
 .pull-quote {
   margin: var(--space-8) 0;
   padding: var(--space-6) var(--space-8);
-  border-left: 4px solid var(--color-accent);
   background: var(--color-accent-soft);
-  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 4px 0 0 0 var(--color-accent);
   font-style: italic;
   font-size: var(--text-md);
   line-height: var(--leading-compact);
