@@ -213,17 +213,31 @@ For each theme, select:
         "arguments": [
           {
             "claim": "支撑论点（≤50字符）",
+            "importance": 5,
+            "explanation": "完整解释文本（tooltip中显示）",
+            "insight_type": "counterintuitive",
             "evidence": [
               { "type": "quote", "text": "精选引文（≤120字符，tooltip显示全文）", "full_text": "完整引文", "timestamp": "00:00:45" },
               { "type": "data_point", "text": "数据点摘要", "timestamp": "" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "预测主张", "time_horizon": "12 months", "confidence": "high" }
         ]
       }
     ],
     "cross_links": [
       { "source": "theme_1.0", "target": "theme_3.1", "relation": "contrasts" }
-    ]
+    ],
+    "stats": {
+      "insight_count": 124,
+      "quote_count": 130,
+      "data_point_count": 126,
+      "prediction_count": 37,
+      "theme_count": 7,
+      "segment_count": 12
+    }
   }
 }
 ```

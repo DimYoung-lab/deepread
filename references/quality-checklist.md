@@ -39,16 +39,17 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | # | Check | Method | Expected |
 |---|-------|--------|----------|
 | 1 | **Zero JS errors** | Open browser console, load page | No errors |
-| 2 | **12 topic nodes visible** | Count topic nodes in legend or visual | 12 topics with labels and "+N" child count badges |
-| 3 | **Node expansion works** | Click a topic node | Child insight nodes animate into view, circle count increases |
-| 4 | **Expand All works** | Click "Expand All" button | All nodes visible (>700 circles for a full interview) |
-| 5 | **Collapse All works** | Click "Collapse All" button | Returns to topic-only view (~26 circles) |
+| 2 | **7 theme nodes visible (or 12 segment topics if legacy fallback)** | Count topic nodes in legend or visual | 7 themes (or 12 segments in legacy) with labels and "+N" child count badges |
+| 3 | **Node expansion works** | Click a topic node | Child argument/insight nodes animate into view; diamond-shaped data-point nodes visible; prediction nodes with dashed borders |
+| 4 | **Expand All works** | Click "Expand All" button | All argument nodes visible (~34 arguments + 68 evidence for a full interview in new format; >700 circles for legacy format) |
+| 5 | **Collapse All works** | Click "Collapse All" button | Returns to topic-only view (~8 circles: 1 root + 7 themes) |
 | 6 | **Search filters nodes** | Type a term in search box | Matching nodes remain visible/highlighted, non-matching dim or hide |
 | 7 | **Zoom/Pan works** | Mouse wheel scroll, click-drag on canvas | Map zooms in/out smoothly, pans with drag |
 | 8 | **Reset View works** | Click "Reset View" button or double-click canvas | Returns to default zoom and centering |
-| 9 | **Tooltips on hover** | Hover over a node | Tooltip appears with full text and timestamp |
-| 10 | **Title bar complete** | Check top bar | Shows interview title, guest name, date, duration |
-| 11 | **No SVG interception** | Click several topic nodes that are visually close to link paths | All clicks register, no "intercepts pointer events" errors. Verify `.link { pointer-events: none }` in CSS. |
+| 9 | **Tooltips on hover** | Hover over argument node | Tooltip shows type badge, explanation text, importance stars (★) |
+| 10 | **Title bar complete** | Check top bar | Shows interview title, guest name, date, duration, AND stats bar (insight/quote/prediction counts) |
+| 11 | **No SVG interception** | Click several topic nodes that are visually close to link paths | All clicks register; `.link { pointer-events: none }` in CSS |
+| 12 | **Importance sizing** | Check argument node sizes | Higher importance (5) nodes visibly larger than lower (3) |
 
 ### Markdown Report Checks
 
@@ -361,7 +362,7 @@ with open('/tmp/test_map.html') as f: html = f.read()
 m = re.search(r'const MINDMAP_DATA = (\{.*?\n\};)', html, re.DOTALL)
 assert m, 'MINDMAP_DATA not found'
 data = json.loads(m.group(1)[:-1])
-assert len(data['topics']) == 12
+assert len(data['topics']) in (7, 12), f"Expected 7 themes or 12 segments, got {len(data['topics'])}"
 # Verify pointer-events fix is present
 assert 'pointer-events: none' in html or '.link' in html, 'Missing pointer-events CSS on link paths'
 print('Stage 6 — Mind Map: OK')

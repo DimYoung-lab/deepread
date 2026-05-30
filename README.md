@@ -125,7 +125,7 @@ interview-based-learning/
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
 │   ├── validate_transcript.py   ← 术语校验 + 转录纠错
 │   ├── generate_cards.py        ← visual_content.json → 学习卡片
-│   ├── generate_mindmap.py      ← knowledge.json → 知识图谱
+│   ├── generate_mindmap.py      ← visual_content.json → 知识图谱
 │   └── generate_audio.py        ← 播客脚本 → TTS 音频
 ├── references/                  ← 按需加载的参考文档（6 个）
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema

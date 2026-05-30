@@ -315,7 +315,7 @@ Generate using the script with `visual_content.json` (primary) and `knowledge.js
 python scripts/generate_mindmap.py visual_content.json --output map-[guest-lastname]-[YYYYMMDD].html --knowledge-json knowledge.json
 ```
 
-Produces a self-contained interactive radial mind map (D3.js via CDN). **New hierarchy**: Central thesis node → Theme ring (7 cross-cutting themes) → Argument ring → Evidence ring. **New features**: Cross-theme connection lines showing relationships (supports/contrasts/extends). Falls back to segment-based hierarchy if `map_data` is unavailable.
+Produces a self-contained interactive radial mind map (D3.js via CDN). **Hierarchy**: Central thesis node → Theme ring (7 cross-cutting themes) → Argument ring → Evidence ring (mixed quote circles + data-point diamonds). **Visual encoding**: Argument node size scales by importance (1-5), prediction nodes use dashed borders, data-point nodes render as diamonds. **Features**: Cross-theme connection lines (supports/contrasts/extends), rich tooltips (type badge + explanation + confidence stars), stats bar in title. Falls back to segment-based hierarchy if `map_data` is unavailable.
 
 ### Output 5: Social Media Post
 
