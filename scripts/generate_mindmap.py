@@ -367,6 +367,7 @@ def transform_from_map_data(
                         "text": ev.get("text", ""),
                         "timestamp": ev.get("timestamp", ""),
                         "type": ev.get("type", "quote"),
+                        "full_text": ev.get("full_text", ""),
                     }
                 )
 
@@ -374,6 +375,20 @@ def transform_from_map_data(
                 {
                     "text": arg.get("claim", ""),
                     "evidence": evidence_items,
+                    "importance": arg.get("importance", 3),
+                    "explanation": arg.get("explanation", ""),
+                    "insight_type": arg.get("insight_type", "claim"),
+                }
+            )
+
+        # --- predictions (optional per-theme forward-looking items) ---
+        predictions: list[dict[str, Any]] = []
+        for pred in tn.get("predictions", []):
+            predictions.append(
+                {
+                    "text": pred.get("text", ""),
+                    "confidence": pred.get("confidence", "medium"),
+                    "timeframe": pred.get("time_horizon", ""),
                 }
             )
 
@@ -383,6 +398,7 @@ def transform_from_map_data(
                 "color": color,
                 "summary": tn.get("summary", ""),
                 "insights": insights,
+                "predictions": predictions,
             }
         )
 
@@ -411,6 +427,11 @@ def transform_from_map_data(
         "topics": topics,
         "cross_links": cross_links,
     }
+
+    # Attach pipeline stats when present (theme_count, segment_count, etc.)
+    stats = map_data.get("stats")
+    if isinstance(stats, dict) and stats:
+        result["stats"] = stats
 
     return result
 

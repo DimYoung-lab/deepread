@@ -250,6 +250,7 @@
   .tt-type.statistic { background: rgba(59,130,246,0.2); color: #60a5fa; }
   .tt-type.insight { background: rgba(139,92,246,0.2); color: #a78bfa; }
   .tt-type.quote { background: rgba(245,158,11,0.2); color: #fbbf24; }
+  .tt-type.prediction { background: rgba(245,158,11,0.2); color: #fbbf24; }
 
   /* Legend */
   #legend {
@@ -350,6 +351,7 @@
       <span class="divider"></span>
       <span id="title-duration">⏱️ </span>
     </div>
+    <div id="title-stats" style="font-size:0.72rem;color:#94a3b8;margin-top:3px;"></div>
   </div>
 </div>
 
@@ -548,6 +550,13 @@ document.getElementById('title-guest').innerHTML = '&#x1F464; ' + MINDMAP_DATA.g
 document.getElementById('title-date').innerHTML = '&#x1F4C5; ' + MINDMAP_DATA.date;
 document.getElementById('title-duration').innerHTML = '&#x23F1;&#xFE0F; ' + MINDMAP_DATA.duration;
 
+if (MINDMAP_DATA.stats) {
+  document.getElementById('title-stats').textContent =
+    MINDMAP_DATA.stats.insight_count + ' insights · ' +
+    MINDMAP_DATA.stats.quote_count + ' quotes · ' +
+    MINDMAP_DATA.stats.prediction_count + ' predictions';
+}
+
 // ============================================================
 // POPULATE LEGEND
 // ============================================================
@@ -557,6 +566,22 @@ MINDMAP_DATA.topics.forEach(t => {
   item.className = 'legend-item';
   item.innerHTML = `<span class="legend-dot" style="background:${t.color};color:${t.color}"></span>${t.name}`;
   legendContainer.appendChild(item);
+});
+
+// Add visual distinction legend entries
+var visualLegend = [
+  { symbol: '●', label: 'Argument', color: '#a78bfa' },
+  { symbol: '◇', label: 'Data point', color: '#60a5fa' },
+  { symbol: '◌', label: 'Prediction', color: '#f59e0b' }
+];
+var legendSep = document.createElement('div');
+legendSep.style.cssText = 'width:100%;height:1px;background:rgba(255,255,255,0.08);margin:4px 0;';
+legendContainer.appendChild(legendSep);
+visualLegend.forEach(function(vl) {
+  var vItem = document.createElement('div');
+  vItem.className = 'legend-item';
+  vItem.innerHTML = '<span style="font-size:1.1em;color:' + vl.color + ';flex-shrink:0;width:10px;text-align:center;">' + vl.symbol + '</span>' + vl.label;
+  legendContainer.appendChild(vItem);
 });
 
 // ============================================================
@@ -600,6 +625,9 @@ function buildTree() {
         depth: 2,
         _collapsed: true,
         _id: `topic-${i}-insight-${j}`,
+        importance: insight.importance || 3,
+        insight_type: insight.insight_type || 'insight',
+        explanation: insight.explanation || '',
         children: []
       };
 
@@ -634,6 +662,7 @@ function buildTree() {
         depth: 2,
         _collapsed: true,
         _id: `topic-${i}-quote-${k}`,
+        importance: quote.importance || 2,
         children: []
       };
       topicNode.children.push(quoteNode);
@@ -650,9 +679,26 @@ function buildTree() {
         depth: 2,
         _collapsed: true,
         _id: `topic-${i}-dp-${l}`,
+        importance: dp.importance || 2,
         children: []
       };
       topicNode.children.push(dpNode);
+    });
+
+    // Predictions as children with special type
+    (topic.predictions || []).forEach((pred, m) => {
+      const predNode = {
+        name: pred.text || pred.claim || '',
+        timestamp: pred.timestamp || '',
+        type: 'prediction',
+        color: topic.color,
+        depth: 2,
+        _collapsed: true,
+        _id: `topic-${i}-pred-${m}`,
+        importance: pred.importance || 3,
+        children: []
+      };
+      topicNode.children.push(predNode);
     });
 
     root.children.push(topicNode);
@@ -847,10 +893,16 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
     if (!d || !d.data) return 5;
     switch (d.data.type) {
       case 'root': return 42;
-      case 'topic': return 18 + Math.min((d.data.children ? d.data.children.length : 0), 15) * 1.2;
-      case 'insight':
+      case 'topic': {
+        // Weighted sum of children's importance instead of just count
+        var children = d.data.children || [];
+        var weightedSum = children.reduce(function(sum, c) { return sum + (c.importance || 3); }, 0);
+        return 18 + Math.min(weightedSum, 40) * 0.5;
+      }
+      case 'insight': return 5 + (d.data.importance || 3) * 1.5;
       case 'quote':
       case 'data_point': return 6;
+      case 'prediction': return 7;
       default: return 8;
     }
   }
@@ -941,18 +993,39 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
       .attr('r', d => nodeRadius(d) * 1.6)
       .attr('fill', 'none');
 
-    // Main circle
-    nodeEnter.append('circle')
-      .attr('class', 'node-circle')
-      .attr('r', d => nodeRadius(d))
-      .attr('fill', d => nodeFill(d))
-      .attr('stroke', d => {
-        if (d.data.type === 'root') return 'rgba(255,255,255,0.3)';
-        if (d.data.type === 'topic') return d3.color(d.data.color).brighter(0.5).toString();
-        return d3.color(d.data.color).brighter(0.3).toString();
-      })
-      .attr('stroke-width', d => d.data.type === 'root' ? 2.5 : d.data.type === 'topic' ? 1.8 : 0.8)
-      .attr('filter', d => d.data.type === 'root' ? 'url(#glow-strong)' : 'url(#glow)');
+    // Main shape (circle or diamond for data_points)
+    nodeEnter.each(function(d) {
+      var el = d3.select(this);
+      var strokeColor;
+      if (d.data.type === 'root') strokeColor = 'rgba(255,255,255,0.3)';
+      else if (d.data.type === 'topic') strokeColor = d3.color(d.data.color).brighter(0.5).toString();
+      else strokeColor = d3.color(d.data.color).brighter(0.3).toString();
+      var sw = d.data.type === 'root' ? 2.5 : d.data.type === 'topic' ? 1.8 : 0.8;
+      var filt = d.data.type === 'root' ? 'url(#glow-strong)' : 'url(#glow)';
+
+      if (d.data.type === 'data_point') {
+        var s = nodeRadius(d);
+        var pts = '0,' + (-s).toFixed(1) + ' ' + s.toFixed(1) + ',0 0,' + s.toFixed(1) + ' ' + (-s).toFixed(1) + ',0';
+        el.append('polygon')
+          .attr('class', 'node-shape')
+          .attr('points', pts)
+          .attr('fill', nodeFill(d))
+          .attr('stroke', strokeColor)
+          .attr('stroke-width', sw)
+          .attr('filter', filt);
+      } else {
+        var circle = el.append('circle')
+          .attr('class', 'node-shape')
+          .attr('r', nodeRadius(d))
+          .attr('fill', nodeFill(d))
+          .attr('stroke', strokeColor)
+          .attr('stroke-width', sw)
+          .attr('filter', filt);
+        if (d.data.type === 'prediction') {
+          circle.attr('stroke-dasharray', '3,2');
+        }
+      }
+    });
 
     // Labels
     nodeEnter.append('text')
@@ -992,11 +1065,19 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
         return nodeMatchesSearch(d) ? 1 : 0.15;
       });
 
-    // Update circle radius (may change due to hierarchy structure)
-    nodeMerge.select('.node-circle')
+    // Update shape (circle radius or polygon points)
+    nodeMerge.select('.node-shape')
       .transition().duration(300)
-      .attr('r', d => nodeRadius(d))
-      .attr('fill', d => nodeFill(d));
+      .attr('r', d => d.data.type === 'data_point' ? null : nodeRadius(d))
+      .attr('points', d => {
+        if (d.data.type === 'data_point') {
+          var s = nodeRadius(d);
+          return '0,' + (-s).toFixed(1) + ' ' + s.toFixed(1) + ',0 0,' + s.toFixed(1) + ' ' + (-s).toFixed(1) + ',0';
+        }
+        return null;
+      })
+      .attr('fill', d => nodeFill(d))
+      .attr('stroke-dasharray', d => d.data.type === 'prediction' ? '3,2' : null);
 
     // Update label positions
     nodeMerge.select('.node-label')
@@ -1059,13 +1140,24 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
           });
           return;
         }
-        showTooltip(event, {
-          text: d.data.name,
-          timestamp: d.data.timestamp,
-          type: d.data.type === 'quote' ? 'quote' : d.data.subtype || d.data.type,
-          speaker: d.data.speaker,
-          color: d.data.color
-        });
+        if (d.data.type === 'insight') {
+          showTooltip(event, {
+            type: d.data.insight_type || 'insight',
+            timestamp: d.data.timestamp,
+            text: d.data.name,
+            explanation: d.data.explanation || '',
+            importance: d.data.importance || 3,
+            color: d.data.color
+          });
+        } else {
+          showTooltip(event, {
+            text: d.data.name,
+            timestamp: d.data.timestamp,
+            type: d.data.type === 'quote' ? 'quote' : d.data.subtype || d.data.type,
+            speaker: d.data.speaker,
+            color: d.data.color
+          });
+        }
       })
       .on('mousemove', function(event) {
         positionTooltip(event);
@@ -1120,6 +1212,16 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
     }
     if (info.summary) {
       html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:4px;line-height:1.4;">${info.summary}</div>`;
+    }
+    if (info.explanation) {
+      html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:4px;line-height:1.4;font-style:italic;">${info.explanation}</div>`;
+    }
+    if (info.importance) {
+      html += `<div style="margin-top:4px;display:flex;gap:2px;">`;
+      for (var impI = 0; impI < 5; impI++) {
+        html += `<span style="color:${impI < info.importance ? '#fbbf24' : '#374151'};font-size:10px;">★</span>`;
+      }
+      html += `</div>`;
     }
     if (info.subtitle && info.type === 'interview') {
       html += `<div style="color:#94a3b8;font-size:0.78rem;margin-top:2px;">Guest: ${info.subtitle}</div>`;

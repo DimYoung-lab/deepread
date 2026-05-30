@@ -750,6 +750,14 @@
   ],
   "map_data": {
     "central_thesis": "AI行业已进入集体主义时代：个人英雄终结，靠谱与执行力决胜",
+    "stats": {
+      "insight_count": 124,
+      "quote_count": 130,
+      "data_point_count": 126,
+      "prediction_count": 37,
+      "theme_count": 7,
+      "segment_count": 12
+    },
     "theme_nodes": [
       {
         "id": "theme_1",
@@ -759,22 +767,59 @@
         "arguments": [
           {
             "claim": "AI最重要的特质是「靠谱」而非聪明",
+            "importance": 5,
+            "explanation": "姚顺宇直言「AI这个事儿本来也不太需要脑子」，真正区分从业者的核心特质是靠谱程度。这个看似反智的判断背后是对行业现实的深刻洞察：当模型本身的智能已经不是瓶颈，执行力和可靠性成为真正的分水岭。",
+            "insight_type": "counterintuitive",
             "evidence": [
-              { "type": "quote", "text": "AI不太需要脑子，最重要的是靠谱——做事细致、对自己负责。", "full_text": "AI这个事儿本来也不太需要脑子……我觉得这个行业最重要的特质就是靠谱，就是做事儿细，然后对自己做的事儿负责任，这是最重要的特质。", "timestamp": "00:45" }
+              { "type": "quote", "text": "AI不太需要脑子，最重要的是靠谱——做事细致、对自己负责。", "full_text": "AI这个事儿本来也不太需要脑子……我觉得这个行业最重要的特质就是靠谱，就是做事儿细，然后对自己做的事儿负责任，这是最重要的特质。", "timestamp": "00:45" },
+              { "type": "data_point", "text": "姚顺宇认为AI行业的智力门槛已被模型本身大幅降低——「那些东西有多需要脑子，我觉得都是一些本科生就能干的活」。", "full_text": "我觉得这个行业最重要的特质就是靠谱……你说那些东西有多需要脑子，我觉得都是一些本科生就能干的活。", "timestamp": "03:29:42" }
             ]
           },
           {
-            "claim": "每个人都是冲浪者，浪才是主角",
+            "claim": "每个人都是冲浪者，AI浪潮本身才是真正的主角",
+            "importance": 5,
+            "explanation": "姚顺宇用「冲浪」比喻贯穿始终：AI浪潮本身是不可阻挡的动量，个人贡献被严重高估。浪的大小和方向才是决定性因素，个人只是冲浪者。这个比喻是理解他整个世界观的核心密钥。",
+            "insight_type": "mental_model",
             "evidence": [
-              { "type": "quote", "text": "这个世界在推着我们前进，而不是我们在推着这个世界前进。", "full_text": "这个世界在推着我们前进，而不是我们在推着这个世界前进。", "timestamp": "02:31:14" }
+              { "type": "quote", "text": "这个世界在推着我们前进，而不是我们在推着这个世界前进。", "full_text": "这个世界在推着我们前进，而不是我们在推着这个世界前进。", "timestamp": "02:31:14" },
+              { "type": "data_point", "text": "特斯拉自动驾驶团队长期处于行业领先地位并非因为「谁做不到特斯拉能做到」，而是组织执行力的持续积累。", "full_text": "姚顺宇用特斯拉自动驾驶的案例说明：不是谁做不到什么事，而是谁能更系统地执行。", "timestamp": "00:45" }
             ]
           },
           {
-            "claim": "简单的事做得比谁都干净才是关键",
+            "claim": "把简单的事做得比谁都干净才是关键——工程质量压倒神奇技巧",
+            "importance": 5,
+            "explanation": "姚顺宇的RL研究哲学：在范式清楚之后，进步的主要来源不是算法突破，而是把基础工程做到极致。多数宣称「scaling law撞墙」的人是因为工作里有bug没发现——修好一个bug带来的进展远大于一些很神奇的技巧。",
+            "insight_type": "mental_model",
             "evidence": [
-              { "type": "quote", "text": "修好一个bug的进展远大于神奇的技巧。", "full_text": "很多时候修好一个bug带来的进展是远大于一些很神奇的技巧的。", "timestamp": "29:05" }
+              { "type": "quote", "text": "修好一个bug的进展远大于神奇的技巧。", "full_text": "很多时候修好一个bug带来的进展是远大于一些很神奇的技巧的。", "timestamp": "29:05" },
+              { "type": "data_point", "text": "在范式清楚之后（如当前的语言模型后训练），90%以上的进展来自数据工程和系统优化，而非新算法。", "full_text": "姚顺宇指出当前RL研究的进步主要来自更好的数据构建和工程实现，而非算法创新。", "timestamp": "02:09:13" }
+            ]
+          },
+          {
+            "claim": "技术一号位必须同时是公司决策人——这是top-down组织模式的前提条件",
+            "importance": 4,
+            "explanation": "姚顺宇揭示了Anthropic执行力的组织密码：Jared Kaplan和Sam McCandlish同时具备技术公信力和公司决策权。这个模式的前提极为苛刻——联合创始团队无一人离开，所有人「是一块儿趴过战壕的人」。大多数公司连创始团队团结都维持不住。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "实行top-down的前提是你做技术的决策人必须也得是公司本身的决策人——首先技术上能服众，另一方面你得能为公司负责。", "full_text": "实行top-down其实有一个很难的点，就是你做技术的决策人必须也得是公司本身的决策人。首先就是你技术上得能服众……另一方面就是你得是公司的决策人，你得能为这个公司负这个责任。", "timestamp": "02:01:28" },
+              { "type": "data_point", "text": "Anthropic创始团队至今无一人离开——这在AI创业公司中极为罕见。", "full_text": "那是一群真正一起打过仗的人。他们是一块儿趴过战壕的人。", "timestamp": "02:05:26" }
+            ]
+          },
+          {
+            "claim": "组织运行好不好，归根结底是技术leader的问题——而非组织架构本身",
+            "importance": 4,
+            "explanation": "姚顺宇认为「最好的那个状态往往都是最不稳定的一个状态，就很容易往不好的那个方向滑」。组织天然倾向于熵增，需要一个有能力的leader持续维护。把组织问题归结为组织架构是推卸责任——本质上就是leader的问题。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "组织运行得好不好，看起来是组织的问题，但其实归根结底是技术leader的问题。", "full_text": "组织运行得好不好，看起来是组织的问题，但其实归根结底是技术leader的问题。", "timestamp": "03:19:43" },
+              { "type": "data_point", "text": "姚顺宇观察到：最好的组织状态往往是最不稳定的，容易滑向不好的方向，需要持续的外部能量输入来维持。", "full_text": "最好的那个状态往往都是最不稳定的一个状态，就很容易往不好的那个方向滑。所以得有一个leader来控制这个事儿。", "timestamp": "03:19:43" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "AI研究组织形式将从个人品牌转向系统团队——单打独斗产生突破的概率趋近于零，投资和人才将进一步向组织执行力强的公司集中。", "time_horizon": "24 months", "confidence": "high" },
+          { "text": "对「靠谱」的行业共识将重塑招聘标准——软技能（可靠性、责任感、自我认知清晰度）权重将超过纯技术能力。", "time_horizon": "18 months", "confidence": "medium" },
+          { "text": "硅谷新兴AI lab绝大多数将在2-3年内关闭或转型——缺乏组织凝聚力的团队无法在范式成熟期竞争。", "time_horizon": "24-36 months", "confidence": "high" }
         ]
       },
       {
@@ -784,17 +829,59 @@
         "summary": "语言范式已定→多模态范式未定→机器人还没GPT-1时刻",
         "arguments": [
           {
-            "claim": "语言模型范式已定，末班车已发车",
+            "claim": "语言模型范式已定——末班车已经发车，窗口在2023-2024年关闭",
+            "importance": 5,
+            "explanation": "自然语言生成在科学上已比较清楚——预训练+后训练+RL的范式已确立。进入这个方向的新人面临的不是科学突破机会，而是工程优化竞争。姚顺宇将自己的入行时间定位为「末班车」。",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "纯做语言模型已经不是蓝海了，末班车已经发车了。", "full_text": "纯做语言模型已经不是一个蓝海了。我觉得晚了，就是末班车已经发车了。我感觉我入行就是那个末班车。", "timestamp": "03:33:45" }
+              { "type": "quote", "text": "纯做语言模型已经不是蓝海了。末班车已经发车了。", "full_text": "纯做语言模型已经不是一个蓝海了。我觉得晚了，就是末班车已经发车了。我感觉我入行就是那个末班车。", "timestamp": "03:33:45" },
+              { "type": "data_point", "text": "SWE-bench上各模型均在80%以上，benchmark差异已退化为噪声——语言模型能力已高度趋同。", "full_text": "SWE-bench大家都打到80多，幸亏没有人超过83……谁超过谁尴尬。", "timestamp": "03:07:32" }
             ]
           },
           {
-            "claim": "机器人还没到GPT-1时刻",
+            "claim": "Coding是AI发展最快的场景——同时具备范式成熟+奖励清晰+数据充分三个条件",
+            "importance": 5,
+            "explanation": "语言生成范式已定+代码正确性可直接验证（reward signal清晰）+GitHub提供几十年高质量代码数据。这三个条件同时满足的场景极为罕见，这是coding成为唯一AI原生成功应用的根本原因。",
+            "insight_type": "framework",
             "evidence": [
-              { "type": "quote", "text": "机器人没到那个阶段——大家还没想明白怎么scale up。", "full_text": "我觉得对我来说不管机器人还是多模态生成都没到这个点——就是大家还没有想明白怎么去scale up。", "timestamp": "01:08:30" }
+              { "type": "quote", "text": "coding是模型使用工具和环境交互的很好的抽象——回归信号清晰、数据充分。", "full_text": "coding其实是模型使用工具和环境交互的一个很好的抽象。这个抽象的好处在于，比如说这个回归信号清晰，然后数据充分。", "timestamp": "02:10:17" },
+              { "type": "data_point", "text": "姚顺宇保守估计90%的代码由AI生成——「不保守的可能就是99或者100」。", "full_text": "真正去输出code，我觉得模型比人的能力强太多了……保守估计模型写的超过90%，不保守的可能就是99或者100。", "timestamp": "38:36" }
+            ]
+          },
+          {
+            "claim": "多模态生成是另一个科学问题还没有解决的领域——范式未定",
+            "importance": 4,
+            "explanation": "与自然语言不同，多模态生成（视频、音频、3D等）的底层科学问题尚未被解决。这不是工程优化问题，而是需要新的科学突破。这也是姚顺宇从Anthropic跳到DeepMind的核心动机——寻找仍有科学突破空间的方向。",
+            "insight_type": "causal_claim",
+            "evidence": [
+              { "type": "quote", "text": "多模态生成是另一个科学问题还没有解决的领域。", "full_text": "自然语言生成就这个事儿在科学上比较清楚……但是就多模态生成啊，我觉得是另一个事儿，那可能是另一个科学问题还没有解决的领域。", "timestamp": "33:26" },
+              { "type": "data_point", "text": "豆包的语音生成能力被姚顺宇评价为「全世界最好的」——但整体多模态生成范式仍未统一，各方向独立发展。", "full_text": "客气的说可能是全世界最好的之一，不客气的说我觉得就是全世界最好的。", "timestamp": "01:02:13" }
+            ]
+          },
+          {
+            "claim": "机器人连GPT-1时刻都还没到——仍处于feature engineering阶段",
+            "importance": 4,
+            "explanation": "姚顺宇认为机器人领域尚未达到范式突破的临界点。当前仍以手工特征工程为主，缺乏能够scale up的统一框架。中国人形机器人在亚马逊的售价远低于预期，反映了技术成熟度的低下。",
+            "insight_type": "causal_claim",
+            "evidence": [
+              { "type": "quote", "text": "机器人没到那个阶段——大家还没想明白怎么去scale up。", "full_text": "我觉得对我来说不管机器人还是多模态生成都没到这个点——就是大家还没有想明白怎么去scale up。", "timestamp": "01:08:30" },
+              { "type": "data_point", "text": "中国人形机器人产品在亚马逊售价远低于市场预期，说明技术成熟度和商业价值都处于极早期。", "full_text": "姚顺宇指出中国人形机器人的低售价反映了技术远未成熟、市场尚未验证的现状。", "timestamp": "01:08:30" }
+            ]
+          },
+          {
+            "claim": "「泛化性」是区分真正AI进步与场景特化的分水岭",
+            "importance": 3,
+            "explanation": "姚顺宇指出，在单一确定场景做好一件事，「不是最近这几年才解决的，十几年前就能干」。真正的AI进步必须体现在泛化能力上——从没见过的新场景中依然有效。这个标准可以过滤掉大量看似「AI突破」实为工程特化的噪声。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "有没有泛化性，其实是很多AI方向的分水岭——单一场景十几年前就能干。", "full_text": "有没有泛化性，其实是很多AI方向它的一个分水岭。一个确定的场景，一个很单一的场景，能不能做好这个事儿，不是最近这几年才解决的，十几年前就能干。", "timestamp": "01:05:28" },
+              { "type": "data_point", "text": "将场景特化包装成AI突破在学术界和工业界都很常见——姚顺宇认为应该用泛化性标准严格区分。", "full_text": "姚顺宇对AI领域中场景特化和真正的泛化能力进行了严格区分。", "timestamp": "01:05:28" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "机器人将在3-5年内迎来GPT-1时刻——范式突破将来自数据收集基础设施和评价标准的建立，而非算法创新。", "time_horizon": "36-60 months", "confidence": "medium" },
+          { "text": "多模态生成领域的核心范式将在24个月内开始收敛——当前多个竞争方向（扩散、自回归、混合）将逐渐分出优劣。", "time_horizon": "24 months", "confidence": "medium" }
         ]
       },
       {
@@ -804,17 +891,49 @@
         "summary": "中国算力劣势反而催生了软蒸馏和multi-agent训练的先驱实践",
         "arguments": [
           {
-            "claim": "软蒸馏使中国成为真正的multi-agent训练先驱",
+            "claim": "软蒸馏使中国实验室成为真正的multi-agent训练先驱",
+            "importance": 5,
+            "explanation": "姚顺宇区分了「硬蒸馏」（直接取token训练）和「软蒸馏」（异构多模型协作训练）。硬蒸馏是「商业上不道德、智力上愚蠢」的；软蒸馏则是「技术上很有意思」的——用不同家模型构建协作训练系统，每家模型分布很不一样，融合后可能产生涌现能力。",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "中国实验室成为了做multi-agent训练的先驱。", "full_text": "中国的实验室成为了做multi-agent训练的先驱，而且是真正的multi-agent。", "timestamp": "56:07" }
+              { "type": "quote", "text": "中国的实验室成为了做multi-agent训练的先驱，而且是真正的multi-agent。", "full_text": "中国的实验室成为了做multi-agent训练的先驱，而且是真正的multi-agent。因为它如果从不同家的模型里，用这种比较聪明的方案，把它们融汇到一个训练系统里的话，每家模型它可能是分布很不一样。", "timestamp": "56:07" },
+              { "type": "data_point", "text": "中国公司在蒸馏技术上投入的研究资源远超美国同行——这是算力劣势直接驱动的差异化创新路径。", "full_text": "中国确实在实际的算力资源上来说是占很大劣势的。但是这个很大的劣势可能反而逼出了一些有趣的事儿。比如说中国的模型公司，其实对蒸馏就真的很有研究。", "timestamp": "53:39" }
             ]
           },
           {
-            "claim": "豆包语音生成是全世界最好的",
+            "claim": "豆包语音生成是世界顶尖水平——不是产品优化，而是底层模型能力的体现",
+            "importance": 4,
+            "explanation": "姚顺宇对字节跳动的豆包语音生成给予极高评价：「客气的说可能是全世界最好的之一，不客气的说就是全世界最好的。」他强调这不是产品层面的优化，而是底层模型层面的能力——说明中国在特定AI子领域已追上甚至超越美国。",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "不客气的说就是全世界最好的。", "full_text": "客气的说可能是全世界最好的之一，不客气的说我觉得就是全世界最好的。", "timestamp": "01:02:13" }
+              { "type": "quote", "text": "客气的说可能是全世界最好的之一，不客气的说就是全世界最好的。", "full_text": "客气的说可能是全世界最好的之一，不客气的说我觉得就是全世界最好的。", "timestamp": "01:02:13" },
+              { "type": "data_point", "text": "姚顺宇认为ByteDance是一家被严重低估的公司——无论是在模型能力还是产品创新上。", "full_text": "姚顺宇在访谈中多次表达了对ByteDance的高度评价，认为它是一家被市场严重低估的AI公司。", "timestamp": "03:26:39" }
+            ]
+          },
+          {
+            "claim": "中美产品路径分化的根本原因是经济激励结构——美国to B挣钱太容易",
+            "importance": 4,
+            "explanation": "姚顺宇提出一个尖锐的经济解释：美国AI公司主要通过API/token赚钱（to B），利润丰厚，因此没有动力做C端产品创新。「在美国挣钱太容易。挣钱太容易的时候，你就不会费脑筋去想怎么挣钱。」而中国公司因为to B市场不如美国，被迫在C端产品创新上下功夫。",
+            "insight_type": "causal_claim",
+            "evidence": [
+              { "type": "quote", "text": "在美国挣钱太容易。挣钱太容易的时候，你就不会费脑筋去想怎么挣钱。", "full_text": "在美国挣钱太容易。挣钱太容易的时候，你就不会费脑筋去想怎么挣钱。", "timestamp": "03:26:39" },
+              { "type": "data_point", "text": "中国C端AI产品「一开始不挣钱，但是一旦他开始挣钱你就拦不住他」——能形成真正的用户闭环和护城河。", "full_text": "中国C端产品……一开始不挣钱，但是一旦他开始挣钱你就拦不住他。他就是真的能形成自己的那个圈。", "timestamp": "03:27:31" }
+            ]
+          },
+          {
+            "claim": "硬蒸馏（直接取token训练）是「商业不道德+智力愚蠢」的——真正的价值在异构模型协作",
+            "importance": 3,
+            "explanation": "姚顺宇对蒸馏的两类实践做了清晰的价值判断：直接取别家模型token来训练自己的模型，既不道德（窃取他人成果）也不聪明（没有技术含量）。真正有技术价值的软蒸馏是做异构多模型协作训练系统——这可能是通向真正multi-agent训练的路径。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "中国对蒸馏真的很有研究——不是那种商业上不道德、智力上愚蠢的硬蒸馏。", "full_text": "中国的模型公司，其实对蒸馏就真的很有研究。", "timestamp": "53:39" },
+              { "type": "data_point", "text": "姚顺宇将蒸馏分为两大类：硬蒸馏（直接取token）和软蒸馏（异构模型协作训练），两者的技术含量和商业伦理有本质区别。", "full_text": "姚顺宇区分了两种蒸馏方式，并指出中国在软蒸馏方面可能有独特的技术积累。", "timestamp": "56:07" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "中国实验室的软蒸馏/异构模型协作训练技术将在24个月内被西方主流实验室反向借鉴和引用——成为公认的multi-agent训练的重要前身。", "time_horizon": "24 months", "confidence": "high" },
+          { "text": "中美AI产品形态的分化将持续加深——美国主导to B API经济，中国主导C端AI原生应用创新，两条路径在未来3年不会交汇。", "time_horizon": "36 months", "confidence": "high" }
         ]
       },
       {
@@ -824,17 +943,60 @@
         "summary": "Anthropic top-down vs Google bottom-up vs OpenAI过渡态",
         "arguments": [
           {
-            "claim": "Top-down模式的前提：技术一号位=公司决策人",
+            "claim": "Anthropic top-down模式的前提：技术一号位=公司决策人——极难复制",
+            "importance": 5,
+            "explanation": "Jared Kaplan和Sam McCandlish同时具备技术公信力（能让研究员信服）和公司决策权（能为公司负责）。Dario作为CEO的角色是「配合而非阻碍」。这个模式的前提是联合创始团队无一人离开——「是一块儿趴过战壕的人」。大多数公司连创始团队团结都维持不住。",
+            "insight_type": "framework",
             "evidence": [
-              { "type": "quote", "text": "那是一群真正一起打过仗的人，一块儿趴过战壕。", "full_text": "那是一群真正一起打过仗的人。他们是一块儿趴过战壕的人，我觉得互相之间的信任还是很关键的。", "timestamp": "02:05:26" }
+              { "type": "quote", "text": "那是一群真正一起打过仗的人，一块儿趴过战壕，互相之间的信任很关键。", "full_text": "那是一群真正一起打过仗的人。他们是一块儿趴过战壕的人，我觉得互相之间的信任还是很关键的。有很多公司可能就是干着干着连这个小集体都团结不住了。", "timestamp": "02:05:26" },
+              { "type": "data_point", "text": "Anthropic创始团队至今无一人离开——这在AI创业公司中极为罕见，是top-down模式能够运转的组织基础。", "full_text": "Anthropic创始团队至今无一人离开。", "timestamp": "02:05:26" }
             ]
           },
           {
-            "claim": "Google擅长简单形态+疯狂卷技术",
+            "claim": "Google的制胜公式：找到最简单的产品形态，疯狂卷技术——「你就解不过他」",
+            "importance": 4,
+            "explanation": "姚顺宇认为Google传统上在产品方面「有点慢」，但特别擅长在简单产品形态上通过技术实力碾压对手。Gmail、Search、Gemini都是这个模式。Nano Banana（Pixel 9 AI功能）作为爆款产品带来用户，Gemini 3用模型能力留住用户——双引擎驱动复兴。",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "找到最简单产品形态，疯狂卷技术，你就解不过他。", "full_text": "Google特别擅长的一件事是什么？是找到一个最为简单的产品形态，大家都长一个样，他就疯狂给你卷技术，你就解不过他。", "timestamp": "02:55:47" }
+              { "type": "quote", "text": "找到最简单产品形态，大家都长一个样，疯狂卷技术，你就解不过他。", "full_text": "Google特别擅长的一件事是什么？是找到一个最为简单的产品形态，大家都长一个样，他就疯狂给你卷技术，你就解不过他。", "timestamp": "02:55:47" },
+              { "type": "data_point", "text": "姚顺宇估计Gemini市场份额约20%（粗略估计），Gemini 2.5被视为Google开始上道的标志。", "full_text": "姚顺宇粗略估计Gemini市场份额约20%，Gemini 2.5是业内感知到Google开始上道的标志。", "timestamp": "02:55:47" }
+            ]
+          },
+          {
+            "claim": "OpenAI失去top-down能力后陷入过渡态——「踏实做事的人没有DeepMind多」",
+            "importance": 4,
+            "explanation": "Ilya离开后OpenAI失去了明确的技术方向感。姚顺宇面试OpenAI时「没有找到特别合适的事和人」。他最终没有选择OpenAI的核心原因是文化——「感觉踏实做事的人没有DeepMind多，更没有Anthropic多。」",
+            "insight_type": "causal_claim",
+            "evidence": [
+              { "type": "quote", "text": "对OpenAI的文化有比较大的担心——踏实做事的人没有DeepMind多。", "full_text": "我觉得OpenAI最后没有去的一个转折原因还是我对它的文化是有比较大的担心的。就是感觉踏实做事的人没有DeepMind多，更没有Anthropic多。", "timestamp": "02:49:53" },
+              { "type": "data_point", "text": "姚顺宇面试OpenAI时未能找到合适的方向和团队——这与他面试DeepMind的体验形成鲜明对比。", "full_text": "姚顺宇面试OpenAI时没有找到特别合适的事和人，但面试DeepMind时找到了方向和团队。", "timestamp": "02:49:53" }
+            ]
+          },
+          {
+            "claim": "组织天然倾向熵增——最好状态是最不稳定的，需要leader持续维护",
+            "importance": 4,
+            "explanation": "姚顺宇提出了组织管理的热力学类比：最好的状态往往是能量最高的状态，也最不稳定，容易向低能态滑落。这就是为什么top-down模式需要持续的领导力投入——不是一次设置好就行，而是需要不断对抗自然倾向。",
+            "insight_type": "mental_model",
+            "evidence": [
+              { "type": "quote", "text": "最好的那个状态往往都是最不稳定的一个状态，很容易往不好的方向滑——得有一个leader来控制。", "full_text": "最好的那个状态往往都是最不稳定的一个状态，就很容易往不好的那个方向滑。所以得有一个leader来控制这个事儿。", "timestamp": "03:19:43" },
+              { "type": "data_point", "text": "姚顺宇观察：很多公司在没有强技术leader的情况下，即使组织架构不变，执行力和方向感也会持续退化。", "full_text": "组织运行得好不好，看起来是组织的问题，但其实归根结底是技术leader的问题。", "timestamp": "03:19:43" }
+            ]
+          },
+          {
+            "claim": "Dario的「先有最前沿模型才有安全话语权」策略是「非常幼稚的」——多边制衡才是可行方案",
+            "importance": 3,
+            "explanation": "姚顺宇与Anthropic官方立场有根本分歧。他认为Dario Amodei提出的「先拥有最前沿模型才能获得安全话语权」的策略在现实中是「非常幼稚的，不会发生」。他提出核武器式的多边制衡方案——多个国家/组织拥有制衡能力才是可行的AI安全机制。",
+            "insight_type": "counterintuitive",
+            "evidence": [
+              { "type": "quote", "text": "核武器最终受到控制的方法是multiparty control——大家互相都有毁灭对方的能力。", "full_text": "核武器最后最终受到控制的方法就是multiparty control。大家有很多个有核武器的国家，他们互相都有毁灭对方的能力，所以通过这样一种制衡才稳定住。", "timestamp": "02:33:35" },
+              { "type": "data_point", "text": "姚顺宇明确表示不同意Anthropic的AI安全策略路线——他认为单边领先无法带来真正的安全。", "full_text": "姚顺宇认为Anthropic的「先有最前沿模型才有话语权」策略是非常幼稚的。", "timestamp": "02:33:35" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "硅谷新兴AI lab绝大多数将在2-3年内关闭或转型——缺乏独特组织DNA和创始团队凝聚力的公司无法在范式成熟期竞争。", "time_horizon": "24-36 months", "confidence": "high" },
+          { "text": "Anthropic的top-down模式将面临团队规模扩大后的管理挑战——当前模式依赖小团队的紧密信任，规模化后需要组织升级。", "time_horizon": "24 months", "confidence": "medium" },
+          { "text": "AI安全将逐渐从单边控制转向多边制衡框架——类似核不扩散条约的国际AI治理框架将在未来3年成型。", "time_horizon": "36 months", "confidence": "low" }
         ]
       },
       {
@@ -844,17 +1006,60 @@
         "summary": "AI产品交互形态远未定型，ChatGPT本质是搜索的延伸",
         "arguments": [
           {
-            "claim": "模型能力远超chatbot所能承载",
+            "claim": "模型能力远超chatbot所能承载——用聊天框限制模型是对能力的巨大浪费",
+            "importance": 5,
+            "explanation": "姚顺宇的核心质疑：「这个模型明明有那么多的能力，但居然用的方法是chatbot，就是不太make sense。」模型能做的事远不止回答问题——它能执行长周期任务、使用工具、与环境交互。但当前的chatbot范式把这些能力都压缩进了「一问一答」的模式。",
+            "insight_type": "counterintuitive",
             "evidence": [
-              { "type": "quote", "text": "模型有那么多能力，但居然用的是chatbot，不太make sense。", "full_text": "这个模型明明有那么多的能力，但居然用的方法是chatbot，就是不太make sense。", "timestamp": "02:58:16" }
+              { "type": "quote", "text": "模型有那么多能力，但居然用的是chatbot——不太make sense。", "full_text": "这个模型明明有那么多的能力，但居然用的方法是chatbot，就是不太make sense。", "timestamp": "02:58:16" },
+              { "type": "data_point", "text": "除了AI coding之外，目前没有哪个场景是AI真正原生的、变得非常成功的应用场景——ChatGPT本质上是搜索的延伸。", "full_text": "目前来说我觉得没有哪一个场景真正的形成了数据飞轮，甚至AI纯粹原生的应用场景。", "timestamp": "15:14" }
             ]
           },
           {
-            "claim": "Long Horizon是解锁新形态的关键",
+            "claim": "AI应用创业只有两条生存路径：Cursor式（逃逸速度+自研模型）或Midjourney式（niche市场）",
+            "importance": 5,
+            "explanation": "姚顺宇量化了两种路径的生存概率：赌大市场约万分之一（1/10000），吃小市场约百分之一（1/100）。目前大型AI应用尚未看到成功逃逸出模型公司掌心的案例——Manus和Open Cloud最终都被收购。目前只在模型侧有壁垒。",
+            "insight_type": "framework",
             "evidence": [
-              { "type": "quote", "text": "train is finite, but use is infinite.", "full_text": "train is finite, but use is infinite.", "timestamp": "02:42:06" }
+              { "type": "quote", "text": "你要不要抱着万分之一的生存几率去赌一票大的，还是抱着百分之一的生存几率先去吃一个小的事。", "full_text": "你要不要抱着1‱的生存几率去赌一票大的，还是抱着1%的生存几率去先吃另一个小的事情。", "timestamp": "19:51" },
+              { "type": "data_point", "text": "Cursor正在自研Composer模型，与Anthropic关系从合作伙伴变为竞合——这是逃逸速度路径的标准剧本。Midjourney是niche市场路径的成功标杆。", "full_text": "Cursor与Anthropic的关系从亲密合作伙伴变为微妙竞合，Midjourney则是AI图像生成领域niche市场的成功案例。", "timestamp": "19:51" }
+            ]
+          },
+          {
+            "claim": "Long Horizon是解锁新AI产品形态的关键——「train is finite, but use is infinite」",
+            "importance": 4,
+            "explanation": "姚顺宇认为，让模型在有限context训练后能在使用时处理无限长的任务，是解锁个人助手等全新应用的关键。这个方向的核心哲学来源于对人类记忆机制的观察——人的context很短，但能选择性遗忘和retrieve。2026年最重要的技术叙事就是「train with finite context, use as infinite context」。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "train is finite, but use is infinite.", "full_text": "train is finite, but use is infinite.", "timestamp": "02:42:06" },
+              { "type": "data_point", "text": "姚顺宇预测2026年有机会实现「train with finite context, use as infinite context」的技术突破——这是解锁个人助手等全新产品形态的前提。", "full_text": "模型做到train with finite context，use as infinite context。我觉得这件事儿今年是有机会能够做实现的。", "timestamp": "23:43" }
+            ]
+          },
+          {
+            "claim": "AI替代工作的顺序与人类直觉完全相反——最难的工作最先被替代",
+            "importance": 5,
+            "explanation": "这是整场访谈最令人意外的洞察：数学、编程、AI研究这些人类觉得最难的工作反而最先被AI攻克，产品经理这种没有客观标准的工作AI反而做不好。原因在于：凡是能用客观标准量化的工作，AI都能系统性追平和超越人类——「你一旦知道怎么评价好坏，就知道怎么训练。」",
+            "insight_type": "counterintuitive",
+            "evidence": [
+              { "type": "quote", "text": "过去大家觉得最智力上有挑战的工作其实应该越容易做好——因为想清楚怎么评价就知道怎么训练。", "full_text": "过去大家往往会觉得最智力上有挑战的工作……越是这些事儿其实应该越容易做好。因为你一旦想清楚这个事儿怎么去评价，你就知道怎么训练。", "timestamp": "45:10" },
+              { "type": "data_point", "text": "产品经理是姚顺宇「想不明白该怎么训练AI去做的事儿」——因为没有客观评价标准，「没有标准就是没有刻度」。", "full_text": "做好一个产品经理是一个我现在想不明白该怎么训练AI去做的事儿……没有标准就是没有刻度。", "timestamp": "46:17" }
+            ]
+          },
+          {
+            "claim": "AI是高度中心化的技术——让千分之一的人完成过去所有人的工作",
+            "importance": 4,
+            "explanation": "姚顺宇指出AI对社会结构的根本性冲击：它不是让所有人平均受益的普惠技术，而是让少部分人变得更强、大部分人失去独特价值。开发效率提升20到50倍，但工作时间反而变长了——速度越快越想试更多想法。",
+            "insight_type": "causal_claim",
+            "evidence": [
+              { "type": "quote", "text": "AI是一个很centralized的technology——让少部分人变得更强，但让大部分人失去独特价值。", "full_text": "AI是一个很centralized的technology，它会让少部分人变得更强，但会让大部分人失去他们的独特价值。", "timestamp": "47:09" },
+              { "type": "data_point", "text": "姚顺宇自己体验：AI让开发效率提升20到50倍，但工作时间反而变长了——速度越快越想试更多想法，工作密度大幅提高。", "full_text": "开发速度变快后越想试更多想法，工作时间反而变长了。", "timestamp": "38:36" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "未来12-18个月将出现超越chatbot范式的AI原生产品形态——可能以Long Horizon Agent或个人AI助手的形态出现。", "time_horizon": "12-18 months", "confidence": "high" },
+          { "text": "AI应用层将在模型公司边界清晰后出现真正的平台型公司——当前「只有模型侧有壁垒」的格局将在24个月内改变。", "time_horizon": "24 months", "confidence": "medium" },
+          { "text": "产品经理角色将是最后被AI替代的职业之一——因为缺乏客观评价标准，「没有标准就是没有刻度」。", "time_horizon": "36+ months", "confidence": "medium" }
         ]
       },
       {
@@ -864,23 +1069,59 @@
         "summary": "追求本质的难——从物理到AI，始终选择「自己不太会的事」",
         "arguments": [
           {
-            "claim": "主动选择underdog位置然后突破",
+            "claim": "姚顺宇的职业选择始终遵循同一原则：主动选择「自己不太会的事儿」",
+            "importance": 5,
+            "explanation": "从清华基科班选择凝聚态理论，到放弃已有范式级成果的凝聚态方向转向高能理论物理，再到从Anthropic跳到DeepMind探索新方向——每一步都是主动走出舒适区。「如果为了被折磨而被折磨，那这个人就是有心理疾病。但是如果一个人是为了学习更多的东西、丰富自己的经历和能力而被折磨，我觉得是值得的。」",
+            "insight_type": "mental_model",
             "evidence": [
-              { "type": "quote", "text": "我这个人的个性就是总是爱干一些自己不太会的事儿。", "full_text": "我这个人的个性就是总是爱干一些自己不太会的事儿。", "timestamp": "01:11:10" }
+              { "type": "quote", "text": "我这个人的个性就是总是爱干一些自己不太会的事儿。", "full_text": "我这个人的个性就是总是爱干一些自己不太会的事儿。", "timestamp": "01:11:10" },
+              { "type": "data_point", "text": "姚顺宇从Anthropic跳到DeepMind不是因为不满，而是因为「纯做语言模型已经不是蓝海了」——主动离开舒适区寻找新的学习机会。", "full_text": "纯做语言模型已经不是一个蓝海了。我觉得晚了，就是末班车已经发车了。", "timestamp": "03:33:45" }
             ]
           },
           {
-            "claim": "人生最重要的道理：胆子要大",
+            "claim": "人生最重要的道理是「胆子要大」——不争取永远得不到，争取了也可能得不到，但不争取就绝对得不到",
+            "importance": 5,
+            "explanation": "17岁时为争取清华自主招生考试资格，疯狂给招生办老师发短信。这次经历成为他人生哲学的基石：「从那件事儿得到的人生最重要的道理就是胆子要大。」这也解释了他后来的职业选择模式：主动争取机会，不等待被选择。",
+            "insight_type": "framework",
             "evidence": [
-              { "type": "quote", "text": "不争取永远得不到，争取了也可能得不到，但不争取就绝对得不到。", "full_text": "我从那件事儿得到的人生最重要的道理就是胆子要大。你不争取是永远得不到的，争取了也有可能得不到，但不争取就绝对得不到。", "timestamp": "01:15:25" }
+              { "type": "quote", "text": "不争取永远得不到，争取了也可能得不到，但不争取就绝对得不到。", "full_text": "我从那件事儿得到的人生最重要的道理就是胆子要大。你不争取是永远得不到的，争取了也有可能得不到，但不争取就绝对得不到。", "timestamp": "01:15:25" },
+              { "type": "data_point", "text": "姚顺宇的家庭关系模式是「我一般都是通知」——父母不太管且管不住。这种自主性从小培养了他独立决策的习惯。", "full_text": "我爸妈最好的一点就是他们不太管我，他们可能曾经也试图管过我，后来发现管不住。我一般都是通知。", "timestamp": "01:18:25" }
             ]
           },
           {
-            "claim": "物理五年买了一个大教训",
+            "claim": "物理博士五年买了一个大教训——要做有客观评价标准、能对世界产生影响的事",
+            "importance": 4,
+            "explanation": "姚顺宇在高能理论物理上花了五年，「学了很多知识，买了一个大教训」。当领域完全没有实验数据做约束时，方向好坏退化为主观判断——「依赖于领域内一些老登的主观判断」。他离开不是因为难，而是因为评价标准失效——「我蒙蔽不了自己，骗不了自己。」",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "为什么要把时间浪费在伺候老登身上？", "full_text": "人这一辈子也没多长，为什么要把自己的时间浪费在伺候老登身上？", "timestamp": "01:38:34" }
+              { "type": "quote", "text": "为什么要把时间浪费在伺候老登身上？", "full_text": "人这一辈子也没多长，为什么要把自己的时间浪费在伺候老登身上？", "timestamp": "01:38:34" },
+              { "type": "data_point", "text": "姚顺宇在凝聚态物理的非厄米系统中做过范式级工作——这段经历让他深刻理解了什么是真正有价值的突破。", "full_text": "姚顺宇在本科期间于非厄米系统中做出了范式级别的物理工作。", "timestamp": "01:35:44" }
+            ]
+          },
+          {
+            "claim": "从物理转AI：硬技能几乎没有转化——真正迁移的是性格：刨根问底和系统性做事",
+            "importance": 4,
+            "explanation": "姚顺宇坦诚从工具性技能上说，从物理到AI的转化「非常少」。但物理训练给了他两种性格特质：刨根问底（不满足于表面解释）和系统性做事（设计实验验证假设）。AI领域物理背景过度代表的真正原因是人际网络（connection）和社会选择，而非物理技能本身的独特性。",
+            "insight_type": "counterintuitive",
+            "evidence": [
+              { "type": "quote", "text": "硬实力上其实没什么帮助——从物理到AI的转化非常少。迁移的是性格而非能力。", "full_text": "我觉得硬实力上其实没什么帮助。就是从工具性的技能上来说，其实从物理到AI的转化是非常少的。但是我觉得可能非要问的话，我觉得可能主要的不能说能力，就是性格。", "timestamp": "01:43:14" },
+              { "type": "data_point", "text": "AI领域物理博士比例远高于统计学意义——但姚顺宇认为这主要是人际关系网络效应，而非物理训练本身独特。", "full_text": "姚顺宇解释了AI领域物理背景过度代表的真实原因：人际网络而非技能独特性。", "timestamp": "01:43:14" }
+            ]
+          },
+          {
+            "claim": "「老登」理论：年长者分两种——德高望重（培养年轻人）和老登（不懂还指手画脚）",
+            "importance": 3,
+            "explanation": "姚顺宇对「老登」概念的阐述是访谈中最具个人风格的表达。为什么越来越恨老登？「当你自己有越来越多判断的时候，那些蠢的人就显得更蠢。」直接表达自己的想法「是一个短期一定会有人恨你，但长期大家会欣赏你的事」。他也承认自己可能变成老登——「如果未来我也这样了，'别相信老登'。」",
+            "insight_type": "mental_model",
+            "evidence": [
+              { "type": "quote", "text": "别相信老登。", "full_text": "别相信老登。", "timestamp": "03:45:05" },
+              { "type": "data_point", "text": "姚顺宇的终极行为准则：「当你没有办法理解别人在干什么的时候，别指手画脚」——这是对「老登」行为的反向定义。", "full_text": "当你没有办法理解别人在干什么的时候，别指手画脚。", "timestamp": "01:18:41" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "AI行业将进一步吸引基础科学（物理、数学）背景的人才——但不是因为技能相关性，而是因为人际网络和自我选择效应持续发挥作用。", "time_horizon": "24 months", "confidence": "high" },
+          { "text": "「靠谱」将取代「聪明」成为AI行业招聘的第一筛选标准——姚顺宇的24小时面试方法论将被更多团队借鉴。", "time_horizon": "18 months", "confidence": "medium" }
         ]
       },
       {
@@ -890,29 +1131,82 @@
         "summary": "模型仍在进步，瓶颈在于「不知道教什么」而非技术极限",
         "arguments": [
           {
-            "claim": "大部分「撞墙」感受来自bug而非极限",
+            "claim": "大部分「scaling law撞墙」感受来自工程bug而非科学极限——修好一个bug带来的进展远大于神奇技巧",
+            "importance": 5,
+            "explanation": "姚顺宇区分了三种「墙」：fundamental limit（科学极限）、data wall（数据瓶颈）、bug（工程问题）。他观察到第三种反而是最常见的——很多研究者看到指标不涨就声称撞墙，实际上往往是实现有bug。",
+            "insight_type": "counterintuitive",
             "evidence": [
-              { "type": "quote", "text": "模型学东西的能力越来越强了。", "full_text": "我觉得我个人得到的感受是这个模型学东西的能力越来越强了。", "timestamp": "26:26" }
+              { "type": "quote", "text": "修好一个bug带来的进展远大于一些很神奇的技巧。", "full_text": "很多时候修好一个bug带来的进展是远大于一些很神奇的技巧的。", "timestamp": "29:05" },
+              { "type": "data_point", "text": "姚顺宇从一线体感出发：模型学东西的能力越来越强了——以前让模型学会一件事需要动很多脑筋，现在最重要的是把问题定义清楚、构建合适的数据。", "full_text": "我觉得我个人得到的感受是这个模型学东西的能力越来越强了。以前可能让模型学会干一件事情需要动很多脑筋，但现在可能不需要动那么多脑筋了。最重要的是你是要把这个问题定义清楚，然后想清楚怎么去构建合适的数据。", "timestamp": "26:26" }
             ]
           },
           {
-            "claim": "AI本质简单——因为它能做实验",
+            "claim": "当前瓶颈不是技术到达极限，而是「人类老师不知道下一个东西该教什么」",
+            "importance": 5,
+            "explanation": "姚顺宇对AI平台期给出了精妙区分：「到达平台期有两种可能性。第一种是技术本身到达了……另一种是你想干的事儿到平台期了，我觉得现在就是后者。」模型本身的学习能力还在增长——「模型还是一个非常聪明的小孩」——真正的瓶颈在于人类定义新任务的能力。",
+            "insight_type": "causal_claim",
             "evidence": [
-              { "type": "quote", "text": "AI本质上是简单的，因为它能做实验。", "full_text": "AI本质上是简单的。它本质上简单的点在于他能做实验。", "timestamp": "02:35:18" }
+              { "type": "quote", "text": "模型还是一个非常聪明的小孩，你可以教他很多东西，但我们人类作为老师还不知道下一个东西该教什么。", "full_text": "模型还是一个非常聪明的小孩，你其实可以教他很多东西，但是我们人类作为老师现在还不知道下一个东西该教什么。", "timestamp": "02:16:50" },
+              { "type": "data_point", "text": "SWE-bench各模型均达80%+，benchmark差异已从信号退化为噪声——「幸亏没有人超过83，谁超过谁尴尬」。", "full_text": "光靠打这种公众认知的模型能力benchmark，其实已经没啥太大的意思了。SWE-bench大家都打到80多，幸亏没有人超过83……谁超过谁尴尬。", "timestamp": "03:07:32" }
+            ]
+          },
+          {
+            "claim": "AI本质上是简单的——因为它能做实验。这是AI与物理等「本质难」的科学的根本区别",
+            "importance": 5,
+            "explanation": "姚顺宇认为AI的核心优势在于实验的可重复性和速度：你可以快速设计实验、获取反馈、迭代改进。物理受限于实验数据（特定能标下的数据可能根本不存在），但AI只要有算力就能不断实验。这个特性使AI的进步成为必然——「不管谁来做，这件事儿都会往前走。」",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "AI本质上是简单的。它简单的点在于他能做实验。", "full_text": "AI本质上是简单的。它本质上简单的点在于他能做实验。它和比如说本质上难的东西，比如说物理，它的区别在于那个东西你没有那个能标下的实验数据，你就是理解不了那个能标下的理论。但是AI不被这个所限制。", "timestamp": "02:35:18" },
+              { "type": "data_point", "text": "与物理不同——物理在特定能标下没有实验数据就无法理解理论——AI只要有算力就可以不断设计实验、快速迭代。", "full_text": "AI不受实验数据限制，有算力就能做实验——这是AI与物理等基础科学的本质区别。", "timestamp": "02:35:18" }
+            ]
+          },
+          {
+            "claim": "算法相变理论：范式未定时算法极度关键，范式确定后算法平滑提高效率",
+            "importance": 4,
+            "explanation": "姚顺宇提出了理解算法在AI进步中作用的理论框架：在没有搞清楚怎么做的时候，算法极度关键（如Transformer的发现，是「相变」）；在范式清楚之后，算法变成平滑地提高效率（渐进改进）。当前语言模型的范式已经清楚，所以进步看起来「慢」——但实际上是在平滑地积累。",
+            "insight_type": "framework",
+            "evidence": [
+              { "type": "quote", "text": "自然语言生成在科学上比较清楚……但多模态生成是另一个科学问题还没有解决的领域。", "full_text": "自然语言生成就这个事儿在科学上比较清楚……但是就多模态生成啊，我觉得是另一个事儿，那可能是另一个科学问题还没有解决的领域。", "timestamp": "33:26" },
+              { "type": "data_point", "text": "Transformer的发现属于算法相变——范式级别的突破。之后的优化（RLHF、DPO等）属于平滑改进——在既定范式下提高效率。", "full_text": "姚顺宇用算法相变理论解释为什么Transformer之后的算法突破看起来不如之前「震撼」。", "timestamp": "33:26" }
+            ]
+          },
+          {
+            "claim": "AI研究当前状态类似18-19世纪的热力学——理论和实验不分家",
+            "importance": 3,
+            "explanation": "姚顺宇将当前AI研究与18-19世纪的热力学进行类比：自己设计实验、自己做理论推测、自己验证。那个时代的物理学家没有「理论物理学家」和「实验物理学家」之分——「你就是搞物理的」。当前AI研究者也是同样的复合角色。Scaling law当前是经验规律，但可能像热力学定律一样未来成为科学规律。",
+            "insight_type": "analogy",
+            "evidence": [
+              { "type": "quote", "text": "AI更像是那个时代的物理——理论和实验不分家，你就是搞物理的。", "full_text": "AI其实更多的是你有一个想法，然后你可以用一些数值去验证……更像那个时代的物理，就是那个时代理论和实验不分家，没有什么理论物理学家、实验物理学家，你就是搞物理的。", "timestamp": "01:49:42" },
+              { "type": "data_point", "text": "经验规律和科学规律的界限是模糊的——热力学定律当年被发现时也是经验规律，后来微观机制被理解后才成为科学规律。Scaling law可能走同样的路径。", "full_text": "经验规律和科学规律它之间的界限是很模糊的。比如说我们回头去看这种热力学的定律……这些东西在当年被发现的时候也都是经验规律。但是只是说后来随着时间的发展，我慢慢知道了它的微观机制，它可能变成了一个科学规律。", "timestamp": "01:46:08" }
             ]
           }
+        ],
+        "predictions": [
+          { "text": "SWE-bench等传统benchmark将在12个月内被全面饱和——行业需要新的评价体系来衡量模型能力差异，新benchmark的设计将聚焦于「任务定义的清晰度」而非「raw能力」。", "time_horizon": "12 months", "confidence": "high" },
+          { "text": "预训练模型的基础学习能力在未来2-3年内不会撞到科学极限——真正的瓶颈仍是数据和任务定义，而非模型架构本身。", "time_horizon": "24-36 months", "confidence": "medium" },
+          { "text": "Scaling law将从经验规律升华为科学规律——类似热力学的路径，随着对模型内部机制的深入理解，经验性的scaling关系将被理论解释。", "time_horizon": "36+ months", "confidence": "low" }
         ]
       }
     ],
     "cross_links": [
       { "source": "theme_1.0", "target": "theme_4.0", "relation": "supports" },
       { "source": "theme_1.1", "target": "theme_6.0", "relation": "extends" },
+      { "source": "theme_1.2", "target": "theme_7.0", "relation": "supports" },
+      { "source": "theme_1.3", "target": "theme_4.0", "relation": "supports" },
       { "source": "theme_2.0", "target": "theme_5.1", "relation": "supports" },
+      { "source": "theme_2.1", "target": "theme_5.2", "relation": "supports" },
       { "source": "theme_3.0", "target": "theme_5.0", "relation": "contrasts" },
+      { "source": "theme_3.1", "target": "theme_3.2", "relation": "supports" },
       { "source": "theme_4.0", "target": "theme_6.2", "relation": "contrasts" },
+      { "source": "theme_4.1", "target": "theme_5.0", "relation": "supports" },
+      { "source": "theme_4.3", "target": "theme_7.2", "relation": "extends" },
+      { "source": "theme_5.3", "target": "theme_2.1", "relation": "supports" },
       { "source": "theme_7.0", "target": "theme_2.0", "relation": "supports" },
       { "source": "theme_7.1", "target": "theme_6.1", "relation": "extends" },
-      { "source": "theme_3.1", "target": "theme_1.2", "relation": "supports" }
+      { "source": "theme_7.2", "target": "theme_6.2", "relation": "extends" },
+      { "source": "theme_3.2", "target": "theme_1.2", "relation": "supports" },
+      { "source": "theme_5.4", "target": "theme_1.0", "relation": "extends" },
+      { "source": "theme_6.4", "target": "theme_1.0", "relation": "supports" }
     ]
   }
 }
