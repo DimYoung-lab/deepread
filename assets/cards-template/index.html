@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}} — Learning Cards</title>
+<meta name="description" content="Interactive learning cards — {{TITLE}}">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+<div class="top-bar" id="topBar">
+  <span>{{TITLE_SHORT}}</span>
+  <div class="top-bar-right">
+    <span id="cardCounter"></span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+  </div>
+</div>
+
+<nav class="nav-dots" id="navDots" aria-label="Card navigation">
+  {{NAV_DOTS_HTML}}
+</nav>
+
+<main class="deck" id="deck">
+  {{HERO_CARD_HTML}}
+  {{THEME_CARDS_HTML}}
+  {{CLOSING_CARD_HTML}}
+</main>
+
+<div class="bottom-nav" id="bottomNav">
+  <button id="prevCard" aria-label="Previous card">← Prev</button>
+  <span class="card-counter" id="mobileCounter"></span>
+  <button id="nextCard" aria-label="Next card">Next →</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

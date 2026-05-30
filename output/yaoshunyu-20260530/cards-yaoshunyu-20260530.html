@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张小珺-姚顺宇_原文 — Learning Cards</title>
+<meta name="description" content="Interactive learning cards — 张小珺-姚顺宇_原文">
+<style>
+/* ========================================================================
+   Learning Cards — Design System
+   Mobile-first, typography-driven, card-based learning experience.
+   ======================================================================== */
+
+/* ---- Design Tokens ---- */
+:root {
+  --bg:            #faf8f5;
+  --bg-card:       #ffffff;
+  --bg-alt:        #f3efe8;
+  --text:          #1c1c1c;
+  --text-secondary:#5c5c5c;
+  --text-muted:    #8a8a8a;
+  --accent:        #8b3a3a;
+  --accent-soft:   rgba(139,58,58,0.08);
+  --border:        #e0dbd0;
+  --border-light:  #ede8de;
+
+  --font-body:     "Charter","Georgia","Times New Roman",ui-serif,serif;
+  --font-ui:       "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:     "JetBrains Mono","Fira Code","SF Mono",Consolas,monospace;
+
+  --fs-xs: 0.7rem;   --fs-sm: 0.85rem;   --fs-base: 1.05rem;
+  --fs-md: 1.25rem;  --fs-lg: 1.6rem;    --fs-xl: 2.2rem;
+  --fs-2xl: 3rem;    --fs-hero: clamp(2rem, 6vw, 4rem);
+
+  --lh-body: 1.7;    --lh-heading: 1.25;  --lh-compact: 1.45;
+
+  --sp-xs: 0.3rem;   --sp-sm: 0.6rem;    --sp-md: 1rem;
+  --sp-lg: 1.5rem;   --sp-xl: 2rem;      --sp-2xl: 3rem;
+  --sp-3xl: 5rem;
+
+  --r-sm: 6px;  --r-md: 12px;  --r-lg: 20px;  --r-xl: 28px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:   0 2px 6px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.06);
+  --t-fast: 180ms ease;  --t-normal: 350ms ease;  --t-slow: 600ms cubic-bezier(0.16,1,0.3,1);
+
+  /* Theme accent colors — one per theme */
+  --c1: #8b3a3a; --c2: #3a6b8b; --c3: #5a8b3a; --c4: #8b6d3a;
+  --c5: #8b3a6d; --c6: #3a8b7a; --c7: #8b5a3a;
+}
+
+[data-theme="dark"] {
+  --bg:            #0f0f1a;
+  --bg-card:       #1a1a2e;
+  --bg-alt:        #141428;
+  --text:          #e0e0e0;
+  --text-secondary:#b0b0b0;
+  --text-muted:    #6a6a7a;
+  --accent:        #d4a574;
+  --accent-soft:   rgba(212,165,116,0.1);
+  --border:        #2a2a40;
+  --border-light:  #1f1f35;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+  --shadow-lg:   0 2px 6px rgba(0,0,0,.4), 0 8px 32px rgba(0,0,0,.3);
+  --c1: #d4a574; --c2: #74a3d4; --c3: #8cd474; --c4: #d4b874;
+  --c5: #d474a3; --c6: #74d4b8; --c7: #d49474;
+}
+
+/* ---- Reset ---- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  font-family:var(--font-body);font-size:var(--fs-base);
+  line-height:var(--lh-body);color:var(--text);background:var(--bg);
+  transition:background var(--t-normal),color var(--t-normal);
+  min-height:100dvh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+/* ---- Progress Bar ---- */
+.progress-bar{
+  position:fixed;top:0;left:0;height:3px;
+  background:var(--accent);z-index:1000;
+  transition:width var(--t-fast);
+  border-radius:0 2px 2px 0;
+}
+
+/* ---- Top Bar ---- */
+.top-bar{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:var(--sp-md) var(--sp-lg);
+  background:linear-gradient(180deg,var(--bg) 60%,transparent 100%);
+  font-family:var(--font-ui);font-size:var(--fs-xs);
+  color:var(--text-muted);
+}
+.top-bar-right{display:flex;gap:var(--sp-md);align-items:center}
+.theme-toggle{
+  width:32px;height:32px;border:1px solid var(--border);border-radius:50%;
+  background:var(--bg-card);color:var(--text-secondary);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-sm);transition:all var(--t-fast);
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ---- Deck Container ---- */
+.deck{
+  display:flex;flex-direction:column;align-items:center;
+  padding:var(--sp-3xl) var(--sp-md) var(--sp-3xl);
+  gap:var(--sp-2xl);
+  max-width:680px;margin:0 auto;
+}
+
+/* ---- Card Base ---- */
+.card{
+  width:100%;max-width:600px;
+  background:var(--bg-card);border:1px solid var(--border-light);
+  border-radius:var(--r-xl);padding:var(--sp-2xl) var(--sp-xl);
+  box-shadow:var(--shadow-card);
+  transition:all var(--t-normal);
+  scroll-margin-top:var(--sp-3xl);
+  position:relative;overflow:hidden;
+}
+.card:hover{box-shadow:var(--shadow-lg);}
+
+/* Hero card special treatment */
+.card-hero{
+  text-align:center;padding:var(--sp-3xl) var(--sp-xl);
+  border:2px solid var(--border);
+  background:linear-gradient(180deg,var(--bg-card) 0%,var(--accent-soft) 100%);
+}
+.card-hero .card-badge{
+  display:inline-block;padding:var(--sp-xs) var(--sp-md);
+  background:var(--accent-soft);color:var(--accent);
+  border-radius:99px;font-family:var(--font-ui);
+  font-size:var(--fs-xs);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:var(--sp-lg);
+}
+.card-hero .card-title{
+  font-size:var(--fs-hero);font-weight:700;
+  line-height:1.1;letter-spacing:-0.02em;
+  margin-bottom:var(--sp-md);
+}
+.card-hero .card-subtitle{
+  font-size:var(--fs-md);color:var(--text-secondary);
+  line-height:var(--lh-compact);margin-bottom:var(--sp-lg);
+}
+.card-hero .card-meta{
+  font-family:var(--font-ui);font-size:var(--fs-sm);
+  color:var(--text-muted);margin-bottom:var(--sp-xl);
+}
+.card-hero .card-meta span{
+  display:inline-block;margin:0 var(--sp-sm);
+}
+.hero-actions{
+  display:flex;gap:var(--sp-md);justify-content:center;flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:var(--sp-xs);
+  padding:var(--sp-sm) var(--sp-lg);
+  border-radius:99px;font-family:var(--font-ui);
+  font-size:var(--fs-sm);font-weight:600;cursor:pointer;
+  transition:all var(--t-fast);text-decoration:none;
+}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+}
+.btn-primary:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.btn-secondary{
+  background:transparent;color:var(--accent);border:1.5px solid var(--accent);
+}
+.btn-secondary:hover{background:var(--accent-soft);}
+
+/* ---- Theme Card ---- */
+.card-theme{
+  border-left:5px solid transparent;
+  padding-top:var(--sp-xl);
+}
+.card-theme.theme-1{border-left-color:var(--c1);}
+.card-theme.theme-2{border-left-color:var(--c2);}
+.card-theme.theme-3{border-left-color:var(--c3);}
+.card-theme.theme-4{border-left-color:var(--c4);}
+.card-theme.theme-5{border-left-color:var(--c5);}
+.card-theme.theme-6{border-left-color:var(--c6);}
+.card-theme.theme-7{border-left-color:var(--c7);}
+
+.theme-badge{
+  display:inline-flex;align-items:center;gap:var(--sp-xs);
+  font-family:var(--font-ui);font-size:var(--fs-xs);
+  font-weight:600;text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:var(--sp-md);
+}
+.theme-badge .dot{
+  width:8px;height:8px;border-radius:50%;
+}
+.theme-badge.theme-1{color:var(--c1);}.theme-badge.theme-1 .dot{background:var(--c1);}
+.theme-badge.theme-2{color:var(--c2);}.theme-badge.theme-2 .dot{background:var(--c2);}
+.theme-badge.theme-3{color:var(--c3);}.theme-badge.theme-3 .dot{background:var(--c3);}
+.theme-badge.theme-4{color:var(--c4);}.theme-badge.theme-4 .dot{background:var(--c4);}
+.theme-badge.theme-5{color:var(--c5);}.theme-badge.theme-5 .dot{background:var(--c5);}
+.theme-badge.theme-6{color:var(--c6);}.theme-badge.theme-6 .dot{background:var(--c6);}
+.theme-badge.theme-7{color:var(--c7);}.theme-badge.theme-7 .dot{background:var(--c7);}
+
+.card-theme .card-claim{
+  font-size:var(--fs-xl);font-weight:700;
+  line-height:var(--lh-heading);letter-spacing:-0.01em;
+  margin-bottom:var(--sp-md);
+}
+.card-theme .card-narrative{
+  font-size:var(--fs-base);color:var(--text-secondary);
+  line-height:var(--lh-body);margin-bottom:var(--sp-lg);
+}
+.card-theme .card-narrative p{margin-bottom:var(--sp-md);}
+
+/* ---- Pull Quote ---- */
+.pull-quote{
+  margin:var(--sp-lg) 0;padding:var(--sp-lg);
+  border-left:4px solid var(--accent);
+  background:var(--accent-soft);
+  border-radius:0 var(--r-md) var(--r-md) 0;
+  font-style:italic;font-size:var(--fs-md);
+  line-height:var(--lh-compact);color:var(--text-secondary);
+}
+.pull-quote cite{
+  display:block;margin-top:var(--sp-sm);font-style:normal;
+  font-family:var(--font-mono);font-size:var(--fs-xs);
+  color:var(--text-muted);
+}
+
+/* ---- Expandable Sections ---- */
+.expandable{margin-top:var(--sp-md);}
+.expand-toggle{
+  display:flex;align-items:center;gap:var(--sp-sm);
+  width:100%;padding:var(--sp-sm) 0;
+  background:none;border:none;border-top:1px solid var(--border-light);
+  font-family:var(--font-ui);font-size:var(--fs-sm);
+  color:var(--text-muted);cursor:pointer;
+  transition:color var(--t-fast);
+}
+.expand-toggle:hover{color:var(--accent);}
+.expand-toggle .arrow{
+  display:inline-block;transition:transform var(--t-fast);
+  font-size:var(--fs-xs);
+}
+.expand-toggle.open .arrow{transform:rotate(90deg);}
+.expand-content{
+  display:none;padding:var(--sp-md) 0;
+  font-size:var(--fs-sm);color:var(--text-secondary);
+  line-height:var(--lh-compact);
+}
+.expand-content.visible{display:block;}
+
+.expand-content .insight-item{
+  padding:var(--sp-sm) 0;border-bottom:1px solid var(--border-light);
+}
+.expand-content .insight-item:last-child{border-bottom:none;}
+.expand-content .insight-claim{font-weight:600;color:var(--text);margin-bottom:var(--sp-xs);}
+.expand-content .insight-expl{font-size:var(--fs-sm);color:var(--text-secondary);}
+
+/* ---- Closing Card ---- */
+.card-closing{
+  text-align:center;padding:var(--sp-3xl) var(--sp-xl);
+  border:2px solid var(--border);
+}
+.card-closing h2{
+  font-size:var(--fs-xl);font-weight:700;
+  margin-bottom:var(--sp-lg);letter-spacing:-0.01em;
+}
+.remember-list{
+  text-align:left;list-style:none;padding:0;
+  margin:var(--sp-lg) 0;display:flex;flex-direction:column;gap:var(--sp-md);
+}
+.remember-item{
+  display:flex;gap:var(--sp-md);align-items:flex-start;
+  padding:var(--sp-md);background:var(--accent-soft);
+  border-radius:var(--r-md);
+}
+.remember-num{
+  font-family:var(--font-mono);font-size:var(--fs-lg);
+  font-weight:700;color:var(--accent);line-height:1;
+  flex-shrink:0;
+}
+.remember-text{font-size:var(--fs-base);line-height:var(--lh-compact);}
+
+.role-tabs{
+  display:flex;flex-wrap:wrap;gap:var(--sp-sm);justify-content:center;
+  margin:var(--sp-lg) 0;
+}
+.role-tab{
+  padding:var(--sp-xs) var(--sp-md);border-radius:99px;
+  border:1px solid var(--border);background:var(--bg-card);
+  font-family:var(--font-ui);font-size:var(--fs-sm);
+  cursor:pointer;transition:all var(--t-fast);
+  color:var(--text-secondary);
+}
+.role-tab:hover,.role-tab.active{
+  border-color:var(--accent);color:var(--accent);
+  background:var(--accent-soft);
+}
+.role-content{
+  display:none;text-align:left;font-size:var(--fs-sm);
+  line-height:var(--lh-compact);color:var(--text-secondary);
+}
+.role-content.visible{display:block;}
+
+.closing-links{
+  display:flex;gap:var(--sp-md);justify-content:center;flex-wrap:wrap;
+  margin-top:var(--sp-xl);padding-top:var(--sp-lg);
+  border-top:1px solid var(--border-light);
+}
+
+/* ---- Nav Dots ---- */
+.nav-dots{
+  position:fixed;right:var(--sp-lg);top:50%;transform:translateY(-50%);
+  z-index:800;display:flex;flex-direction:column;gap:var(--sp-sm);
+}
+.nav-dot{
+  width:8px;height:8px;border-radius:50%;border:none;
+  background:var(--border);cursor:pointer;transition:all var(--t-fast);
+}
+.nav-dot:hover{background:var(--text-muted);}
+.nav-dot.active{background:var(--accent);transform:scale(1.4);}
+
+/* ---- Mobile Bottom Nav ---- */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:900;
+  padding:var(--sp-sm) var(--sp-md);
+  background:var(--bg-card);border-top:1px solid var(--border-light);
+  justify-content:space-between;align-items:center;
+  font-family:var(--font-ui);font-size:var(--fs-sm);
+}
+.bottom-nav button{
+  padding:var(--sp-sm) var(--sp-md);border-radius:99px;
+  border:1px solid var(--border);background:var(--bg-card);
+  font-family:var(--font-ui);font-size:var(--fs-sm);
+  cursor:pointer;color:var(--text-secondary);
+  transition:all var(--t-fast);
+}
+.bottom-nav button:hover{border-color:var(--accent);color:var(--accent);}
+.bottom-nav .card-counter{color:var(--text-muted);font-size:var(--fs-xs);}
+
+/* ---- Animated Transitions ---- */
+.card-in-view{animation:cardFadeIn var(--t-slow) both;}
+@keyframes cardFadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ---- Timestamp Badge ---- */
+.timestamp-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--font-mono);font-size:var(--fs-xs);
+  padding:2px 8px;border:1px solid var(--border);
+  border-radius:99px;background:var(--bg-alt);
+  color:var(--text-muted);cursor:pointer;
+  transition:all var(--t-fast);
+}
+.timestamp-badge:hover{border-color:var(--accent);color:var(--accent);}
+.timestamp-badge::before{
+  content:"";display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:var(--accent);
+}
+
+/* ---- Responsive ---- */
+@media(max-width:768px){
+  .deck{padding:var(--sp-xl) var(--sp-md) 120px;gap:var(--sp-xl);}
+  .card{padding:var(--sp-xl) var(--sp-lg);border-radius:var(--r-lg);}
+  .card-hero{padding:var(--sp-2xl) var(--sp-lg);}
+  .card-hero .card-title{font-size:var(--fs-2xl);}
+  .card-theme .card-claim{font-size:var(--fs-lg);}
+  .nav-dots{display:none;}
+  .bottom-nav{display:flex;}
+  .top-bar{padding:var(--sp-sm) var(--sp-md);}
+}
+
+@media(max-width:480px){
+  .deck{padding:var(--sp-lg) var(--sp-sm) 110px;gap:var(--sp-lg);}
+  .card{padding:var(--sp-lg) var(--sp-md);border-radius:var(--r-md);}
+  .card-hero{padding:var(--sp-xl) var(--sp-md);}
+  .card-hero .card-title{font-size:clamp(1.6rem, 8vw, 2.2rem);}
+  .card-theme .card-claim{font-size:var(--fs-md);}
+  .pull-quote{font-size:var(--fs-base);}
+  .hero-actions{flex-direction:column;align-items:center;}
+  .btn{width:100%;justify-content:center;}
+}
+
+/* ---- Print ---- */
+@media print{
+  .progress-bar,.top-bar,.nav-dots,.bottom-nav{display:none!important;}
+  body{background:#fff;color:#000;font-size:11pt;}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid;}
+  .deck{padding:0;gap:1rem;}
+}
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+<div class="top-bar" id="topBar">
+  <span>Learning Cards</span>
+  <div class="top-bar-right">
+    <span id="cardCounter"></span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+  </div>
+</div>
+
+<nav class="nav-dots" id="navDots" aria-label="Card navigation">
+  <button class="nav-dot active" data-index="0" aria-label="Card 1"></button>
+  <button class="nav-dot" data-index="1" aria-label="Card 2"></button>
+  <button class="nav-dot" data-index="2" aria-label="Card 3"></button>
+  <button class="nav-dot" data-index="3" aria-label="Card 4"></button>
+  <button class="nav-dot" data-index="4" aria-label="Card 5"></button>
+  <button class="nav-dot" data-index="5" aria-label="Card 6"></button>
+  <button class="nav-dot" data-index="6" aria-label="Card 7"></button>
+  <button class="nav-dot" data-index="7" aria-label="Card 8"></button>
+  <button class="nav-dot" data-index="8" aria-label="Card 9"></button>
+</nav>
+
+<main class="deck" id="deck">
+  <article class="card card-hero" id="card-0">
+  <div class="card-badge">Learning Cards</div>
+  <h1 class="card-title">AI行业已从个人英雄主义的模型追赶时代，进入系统性工程与组织文化决胜的「集体主义时代」——模型能力趋同后，核心竞争力不再是「AI能不能做到」，而是「任务是否被良好定义」和「谁更靠谱」。</h1>
+  <p class="card-subtitle">一场3h 47m的深度对话，浓缩为7个核心洞察</p>
+  <div class="card-meta"></div>
+  <div class="hero-actions">
+    <button class="btn btn-primary">开始学习 →</button>
+    <a href="#" class="btn btn-secondary" data-goto="closing">跳到总结</a>
+  </div>
+</article>
+  <article class="card card-theme theme-1" id="card-1">
+  <div class="theme-badge theme-1">
+    <span class="dot"></span>
+    Theme 1 / 7
+  </div>
+  <h2 class="card-claim">AI的集体主义时代：个人英雄主义的终结</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">Transformer之后AI研究已进入系统性工程阶段，靠单打独斗产生突破的时代已经过去。核心能力是「靠谱」——对自己做的事有清晰的自我认知。个人贡献被严重高估，AI浪潮本身才是真正的推动力。</p>
+  <div class="card-narrative">
+    <p>姚顺宇在访谈中反复回到一个核心主张：AI行业已经告别了个人英雄主义时代。他用「冲浪」这个比喻贯穿始终——AI浪潮本身是不可阻挡的动量，个人只是冲浪者，浪的大小和方向才是决定性因素。「这个世界在推着我们前进，而不是我们在推着这个世界前进。」</p>
+    <p>这个判断的深层含义是：组织执行力和系统性工程能力已经取代个人才华成为AI行业的核心竞争力。姚顺宇直言「AI这个事儿本来也不太需要脑子」，真正重要的是「靠谱」——做事细致、对自己做的事负责任。这不是谦虚，而是对行业现实的冷静观察：当模型能力趋同后，差异化来自「谁把简单的事做得比谁都干净」。</p>
+    <p>这一主题也解释了姚顺宇对「老登」的批判——那些不懂具体技术却爱指手画脚的人，正是个人英雄主义时代的遗留物。在新的集体主义范式下，「组织运行得好不好，归根结底是技术leader的问题」——技术一号位既要有技术公信力让研究员信服，又要有公司决策权为公司负责。Anthropic之所以成功，正是因为Jared Kaplan和Sam McCandlish同时具备这两种身份，而创始团队「是一块儿趴过战壕的人」。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"这个世界在推着我们前进，而不是我们在推着这个世界前进。"</p>
+    <cite><span class="timestamp-badge" data-time="02:31:14">02:31:14</span> — 对AI发展不可阻挡性的最终总结</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">AI行业已进入集体主义时代——个人英雄主义终结，系统性工程和执行质量成为核心竞争力。</div>
+        <div class="insight-expl">姚顺宇反复论证，Transformer之后的AI研究不再依赖单个天才的灵感迸发，而是依赖组织能否系统性地定义问题、构建数据、优化流程。他用「冲浪」比喻说明个人与时代浪潮的关系：浪的大小和方向才是决定性的，个人只是冲浪者。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">AI行业最重要的特质不是才智而是「靠谱」——做事细致、对自己做的事负责任。</div>
+        <div class="insight-expl">姚顺宇直言「AI这个事儿本来也不太需要脑子」，真正区分从业者的核心特质是靠谱程度。这个看似反智的判断背后是对行业现实的深刻洞察：当模型本身的智能已经不是瓶颈，执行力和可靠性成为真正的分水岭。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">「把简单的事儿做的比谁都干净」是最关键的——工程质量比神奇技巧更有价值。</div>
+        <div class="insight-expl">姚顺宇的RL研究哲学：在范式清楚之后，进步的主要来源不是算法突破，而是把基础工程做到极致。多数宣称「scaling law撞墙」的人是因为工作里有bug没发现——修好一个bug带来的进展远大于一些很神奇的技巧。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">技术一号位必须同时是公司决策人——这是top-down组织模式的前提条件。</div>
+        <div class="insight-expl">姚顺宇揭示了Anthropic执行力的组织密码：Jared Kaplan和Sam McCandlish同时具备技术公信力和公司决策权。这个模式的前提极为苛刻——联合创始团队无一人离开，所有人「是一块儿趴过战壕的人」。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_4, theme_6
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~3 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-2" id="card-2">
+  <div class="theme-badge theme-2">
+    <span class="dot"></span>
+    Theme 2 / 7
+  </div>
+  <h2 class="card-claim">范式成熟度的三层分化：语言→多模态→机器人</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">AI各子领域处于截然不同的成熟阶段——自然语言处理范式已定（工程优化为主），多模态生成范式未定（仍是科学问题），机器人连GPT-1时刻都还没到（feature engineering阶段）。</p>
+  <div class="card-narrative">
+    <p>姚顺宇提供了一个简洁而有力的框架来理解AI各子领域的进展差异。他将AI领域按范式成熟度分为三层：第一层是自然语言处理（含代码生成），范式已经确定——预训练+后训练+RL——现在的进步主要来自更好的数据工程和系统优化。第二层是多模态生成（视频、音频、3D等），范式尚未固定，「是另一个科学问题还没有解决的领域」。第三层是机器人，「甚至还没到GPT-1时刻」，仍处于feature engineering阶段。</p>
+    <p>这个分层框架解释了为什么coding是AI发展最快的场景：语言范式成熟+奖励信号清晰（代码正确性可直接验证）+数据充分（GitHub几十年的高质量代码）。而机器人之所以慢，是因为同时面临范式未定、数据稀缺、评价标准模糊三重困境。</p>
+    <p>这个框架也解释了姚顺宇的职业选择逻辑：他从Anthropic（主要做语言模型后训练）跳到Google DeepMind（可以探索多模态生成和long horizon），因为「纯做语言模型已经不是一个蓝海了」——末班车已经发车。真正的科学突破机会在第二层和第三层。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"我觉得对我来说不管机器人还是多模态生成都没到这个点——就是大家还没有想明白怎么去scale up。"</p>
+    <cite><span class="timestamp-badge" data-time="01:08:30">01:08:30</span> — 界定什么是真正的范式突破</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">AI各领域按范式成熟度可分为三层：语言（范式已定）→ 多模态生成（范式未定）→ 机器人（还没到GPT-1时刻）。</div>
+        <div class="insight-expl">自然语言生成在科学上比较清楚，但多模态生成是另一个科学问题还没有解决的领域。机器人处于feature engineering阶段，连GPT-1时刻都还没到。这个分层决定了各领域的进展速度和投资价值。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">coding是AI发展最快的场景，因为同时具备三个条件：范式成熟、奖励信号清晰、数据充分。</div>
+        <div class="insight-expl">语言生成范式已定+代码正确性可直接验证（reward signal清晰）+GitHub提供几十年高质量代码数据。这三个条件同时满足的场景极为罕见。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">纯做语言模型已经不是蓝海——末班车已经发车。真正的机会在多模态生成、机器人和AI辅助科学。</div>
+        <div class="insight-expl">语言模型的范式已确定，窗口期在2023-2024年关闭。但AI仍有很多蓝海：多模态生成（科学问题未解决）、机器人（GPT-1时刻未到）、AI辅助科学（全新方向）。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_7
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~2 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-3" id="card-3">
+  <div class="theme-badge theme-3">
+    <span class="dot"></span>
+    Theme 3 / 7
+  </div>
+  <h2 class="card-claim">资源约束与创新的辩证关系：算力劣势逼出蒸馏创新</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">中国在算力上的劣势反而催生了独特的创新路径。软蒸馏（异构多模型协作训练）可能使中国实验室成为真正multi-agent训练的先驱。资源约束可以成为创新的催化剂。</p>
+  <div class="card-narrative">
+    <p>姚顺宇提供了一个独特的视角来理解中美AI竞争的底层逻辑：中国的算力劣势不是纯粹的劣势——它逼出了创新。他区分了两种蒸馏：「硬蒸馏」——直接从别家模型取token训练——是「商业上不道德、智力上愚蠢」的；「软蒸馏」——用不同家的异构模型构建协作训练系统——则「技术上很有意思」。</p>
+    <p>他对中国软蒸馏技术的评价很高：「中国的实验室成为了做multi-agent训练的先驱，而且是真正的multi-agent。因为它如果从不同家的模型里，用这种比较聪明的方案，把它们融汇到一个训练系统里的话，每家模型它可能是分布很不一样。」</p>
+    <p>这个判断与中美产品分化的观察形成呼应：「在美国挣钱太容易。挣钱太容易的时候，你就不会费脑筋去想怎么挣钱。」而中国的C端产品「一开始不挣钱，但是一旦他开始挣钱你就拦不住他」。姚顺宇认为ByteDance是一家被严重低估的公司——无论是在模型能力（豆包语音生成「不客气地说就是全世界最好的」）还是产品创新上。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"中国确实在实际的算力资源上来说是占很大劣势的。但是这个很大的劣势可能反而逼出了一些有趣的事儿。比如说中国的模型公司，其实对蒸馏就真的很有研究。"</p>
+    <cite><span class="timestamp-badge" data-time="53:39">53:39</span> — 算力劣势与创新之间的辩证关系</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">中国在算力上的劣势反而逼出了创新——软蒸馏技术使中国实验室成为真正multi-agent训练的先驱。</div>
+        <div class="insight-expl">姚顺宇区分了「硬蒸馏」（直接取token训练，不道德且愚蠢）和「软蒸馏」（异构多模型协作训练，技术上有趣）。他认为中国实验室在多模型异构训练方面走在了前面，这种技术可能是真正multi-agent训练的前身。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">中美产品路径分化的根本原因是经济激励结构：美国to B挣钱太容易，没有动力做C端创新。</div>
+        <div class="insight-expl">姚顺宇指出，美国AI公司主要靠API/token赚钱（to B），利润丰厚。而中国公司因为to B市场不如美国，被迫在C端产品上创新。这种经济激励结构的差异导致了两条完全不同的产品演进路径。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">豆包语音生成能力是世界顶尖水平——这不是产品层面的事，一定是模型层面的事。</div>
+        <div class="insight-expl">姚顺宇对字节跳动的豆包语音生成给予极高评价：「客气的说可能是全世界最好的之一，不客气的说就是全世界最好的。」他强调这不是产品层面的优化，而是底层模型能力的体现。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_4, theme_5
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~2 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-4" id="card-4">
+  <div class="theme-badge theme-4">
+    <span class="dot"></span>
+    Theme 4 / 7
+  </div>
+  <h2 class="card-claim">组织DNA决定AI战略：Top-Down vs Bottom-Up的不同道路</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">Anthropic的top-down（技术一号位做决策、全公司对齐单一赌注）、Google的bottom-up（多方向并行、减少赌的成分）、OpenAI的过渡态（失去top-down能力后方向模糊）——三种组织模式决定了完全不同的技术路线和产品策略。</p>
+  <div class="card-narrative">
+    <p>姚顺宇通过对三家顶级AI实验室的对比，揭示了组织DNA如何从根本上塑造AI战略。Anthropic的模式是top-down：「技术一号位和公司决策人是同一个人」——Jared Kaplan和Sam McCandlish既有技术公信力（能让研究员信服），又有公司决策权（能为公司负责）。这使他们能聚焦单一赌注并全力执行。但这种模式的前提极为苛刻：联合创始团队无一人离开，所有人「是一块儿趴过战壕的人」。</p>
+    <p>Google DeepMind采取bottom-up模式：「大公司的策略是尽量减少做赌的成分」——多方向并行，减少对单一判断的依赖。这种模式的优势是稳定性，代价是决策速度。但Google有一个独特的优势：「找到一个最为简单的产品形态，大家都长一个样，他就疯狂给你卷技术，你就解不过他。」</p>
+    <p>OpenAI处于过渡态：Ilya离开后失去了top-down能力，但也没有完全转向bottom-up。姚顺宇对OpenAI的文化有「比较大的担心」——「感觉踏实做事的人没有DeepMind多，更没有Anthropic多。」他选择DeepMind而非OpenAI的核心原因就在于此。</p>
+    <p>这个分析框架的价值在于：它解释了为什么同样的技术趋势下，不同公司走出了完全不同的路径——不是因为技术能力差异，而是因为组织DNA选择了不同的游戏。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"最好的那个状态往往都是最不稳定的一个状态，就很容易往不好的那个方向滑。所以得有一个leader来控制这个事儿。"</p>
+    <cite><span class="timestamp-badge" data-time="03:19:43">03:19:43</span> — 组织管理的熵增定律</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">Anthropic的top-down模式能成功，是因为技术一号位同时是公司决策人——这个前提极为苛刻，极难复制。</div>
+        <div class="insight-expl">Jared Kaplan和Sam McCandlish同时具备两种身份：技术公信力（能让研究员信服）和公司决策权（能为公司负责）。Dario的CEO角色是「配合而非阻碍」。这个模式的前提是联合创始团队无一人离开——「是一块儿趴过战壕的人」。大多数公司连创始团队团结都维持不住。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Google的竞争策略是找到一个最简单的产品形态，疯狂卷技术——「你就解不过他」。</div>
+        <div class="insight-expl">姚顺宇认为Google传统上在产品方面「有点慢」，但特别擅长在简单产品形态上通过技术实力碾压对手。Gmail、Search、Gemini都是这个模式。Nano Banana（Pixel 9 AI功能）作为爆款产品带来用户，Gemini 3用模型能力留住用户。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">OpenAI失去top-down能力后陷入过渡态——「踏实做事的人没有DeepMind多」。</div>
+        <div class="insight-expl">姚顺宇认为Ilya离开后OpenAI失去了明确的技术方向感。他面试OpenAI时「没有找到特别合适的事和人」。最终没有选择OpenAI的核心原因是对其文化的担忧。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_3
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~3 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-5" id="card-5">
+  <div class="theme-badge theme-5">
+    <span class="dot"></span>
+    Theme 5 / 7
+  </div>
+  <h2 class="card-claim">AI产品交互形态远未定型：Chatbot不是终局</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">姚顺宇对「chatbot是终极形态」的假设提出尖锐批评——模型明明有那么多的能力，但居然用的方法是chatbot。AI原生的成功应用目前只有coding，ChatGPT本质上是搜索的延伸。产品形态的根本性创新尚未发生。</p>
+  <div class="card-narrative">
+    <p>姚顺宇对当前AI产品的形态持激进的批判态度。他的核心质疑是：「这个模型明明有那么多的能力，但居然用的方法是chatbot，就是不太make sense。」ChatGPT虽然取得了巨大成功，但从本质上来说「是搜索的一个延伸」——用户输入查询，模型返回结果。这不是AI原生的交互范式。</p>
+    <p>他的判断是：除了AI coding之外，「没有哪个场景是AI真正原生的、变得非常成功的应用场景」。coding之所以能成为唯一的例外，是因为它天然具备三个条件：reward signal清晰（代码正确性可验证）、数据充分（GitHub几十年积累）、用户价值明确（效率工具天然趋向赢家通吃）。</p>
+    <p>对AI产品创业者，姚顺宇给出了冷酷但实用的二元生存框架：要么像Cursor一样在模型公司追上来之前达到逃逸速度并自研模型（万分之一生存率），要么像Midjourney一样选择小到模型公司「看不上」的niche市场（百分之一生存率）。他认为创业者应该「先吃一个小的，但选择一个有想象空间的小的」。</p>
+    <p>关于下一个产品形态，姚顺宇没有给出明确答案——这恰恰印证了他的判断：AI产品交互形态远未定型。但他指出了方向：long horizon（在有限context下完成更长的工作）、train with finite context but use as infinite context——这些技术突破可能解锁全新的产品形态。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"从某种意义上来说，ChatGPT其实是搜索的一个延伸。"</p>
+    <cite><span class="timestamp-badge" data-time="15:14">15:14</span> — 对ChatGPT本质的冷静判断</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">Chatbot不是AI的终极形态——模型能力远未被当前交互方式充分发挥。ChatGPT本质上是搜索的延伸。</div>
+        <div class="insight-expl">姚顺宇认为，将模型的所有能力塞进一个聊天框是巨大的浪费。模型能做的事远不止回答问题——它能执行长周期任务、使用工具、与环境交互。但当前的chatbot范式把这些能力都压缩进了「一问一答」的模式。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">AI应用创业只有两条生存路径：Cursor式（逃逸速度+自研模型）或Midjourney式（niche市场）。</div>
+        <div class="insight-expl">姚顺宇量化了两种路径的生存概率：赌大市场约万分之一（1‱），吃小市场约百分之一（1%）。目前大型AI应用尚未看到成功逃逸出模型公司掌心的案例——Manus和Open Cloud最终都被收购。目前只在模型侧有壁垒。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Long Horizon是解锁新AI产品形态的关键方向——「train is finite, but use is infinite」。</div>
+        <div class="insight-expl">姚顺宇认为，让模型在有限context训练后能在使用时处理无限长的任务，是解锁个人助手等全新应用的关键。这个方向的核心哲学来源于对人类记忆机制的观察——人的context很短，但能选择性遗忘和retrieve。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_4, theme_7
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~3 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-6" id="card-6">
+  <div class="theme-badge theme-6">
+    <span class="dot"></span>
+    Theme 6 / 7
+  </div>
+  <h2 class="card-claim">选择哲学：追求本质的难，而非表面的新</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">姚顺宇的整个职业生涯都遵循同一原则：「不喜欢做已经会了的事情」。他区分了「本质的难」（科学问题、范式突破）和「表面的难」（工程复杂度），并始终选择前者——从理论物理转向AI，从凝聚态转向高能物理再转回，从Anthropic跳到DeepMind。</p>
+  <div class="card-narrative">
+    <p>姚顺宇的职业生涯是一个关于「选择」的案例研究。从清华基科班选择凝聚态理论，到放弃已有范式级成果的凝聚态方向转向高能理论物理，再到博士后期意识到高能理论的问题转向AI——每一步都是主动选择「自己不太会的事儿」。</p>
+    <p>他的选择逻辑非常清晰：「如果为了被折磨而被折磨，那这个人就是有心理疾病。但是如果一个人是为了学习更多的东西，丰富自己的经历和能力而被折磨，我觉得是值得的。」这种「underdog心态」贯穿始终——主动选择不利环境然后从中突破。</p>
+    <p>但姚顺宇不是盲目的冒险者。他对高能理论物理的放弃恰恰说明了判断力：「当这个领域完全没有实验，没有客观标准的时候，肯定不会只有一个框架出现……那这个时候谁做的好，谁做的不好，其实就依赖于领域内一些老登的主观判断。」他离开不是因为难，而是因为评价标准失效——「我蒙蔽不了自己，骗不了自己。」</p>
+    <p>从物理转到AI，他带走的不是硬技能（「从工具性的技能上来说，其实从物理到AI的转化是非常少的」），而是性格：刨根问底、系统性做事、追求客观评价标准。他选择AI恰恰因为AI符合他的选择标准——可以做实验、有客观评价标准、能对世界产生实质影响。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"人这一辈子也没多长，为什么要把自己的时间浪费在伺候老登身上？"</p>
+    <cite><span class="timestamp-badge" data-time="01:38:34">01:38:34</span> — 离开高能理论物理的根本原因</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">姚顺宇的职业选择始终遵循同一原则：主动选择「自己不太会的事儿」——追求本质的难而非表面的新。</div>
+        <div class="insight-expl">从物理竞赛选择underdog学校，到放弃已有范式级成果的凝聚态方向，再到从Anthropic跳到DeepMind探索新方向——每一步都是主动走出舒适区。但他的冒险是有判断力的：他区分「本质的难」（科学问题）和「表面的难」（工程复杂度），只追求前者。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">从物理转AI，硬技能几乎没有转化——真正迁移的是性格：刨根问底和系统性做事。</div>
+        <div class="insight-expl">姚顺宇坦诚物理训练的硬技能在AI领域几乎没有直接用途。但物理训练给了他两种性格特质：刨根问底（不满足于表面解释）和系统性做事（设计实验验证假设）。AI领域物理背景过度代表的真正原因是人际网络（connection），而非物理技能独特。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">人生最重要的道理是「胆子要大」——不争取永远得不到，争取了也可能得不到，但不争取就绝对得不到。</div>
+        <div class="insight-expl">姚顺宇17岁时为争取清华自主招生考试资格，疯狂给招生办老师发短信。这次经历成为他人生哲学的基石。这也解释了他后来的职业选择模式：主动争取机会，不等待被选择。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_7
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~2 min read
+  </div>
+</article>
+
+<article class="card card-theme theme-7" id="card-7">
+  <div class="theme-badge theme-7">
+    <span class="dot"></span>
+    Theme 7 / 7
+  </div>
+  <h2 class="card-claim">Scaling Law未死：从简单堆砌到系统优化</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">模型进步速度没有放缓，但进步的表现形式在变化。大部分「撞墙」感受来自数据瓶颈或工程bug，而非真正的科学极限。「模型还是一个非常聪明的小孩，我们人类作为老师还不知道下一个东西该教什么。」</p>
+  <div class="card-narrative">
+    <p>姚顺宇从一线研究员的体感出发，对「scaling law撞墙」论给出了系统反驳。他首先区分了三种「墙」：fundamental limit（科学极限）、data wall（数据瓶颈）、bug（工程问题）。他的核心观察是：第三种情况反而是最常见的——「很多时候修好一个bug带来的进展是远大于一些很神奇的技巧的。」</p>
+    <p>他提出了「算法相变」理论来解释算法在AI进步中的作用模式：在没有搞清楚怎么做的时候，算法极度关键（如Transformer的发现）；在范式清楚之后，算法变成平滑地提高效率。当前语言模型的范式已经清楚，所以进步看起来「慢」——但实际上是在平滑地积累。</p>
+    <p>关于当前是否在平台期，他给出了一个精妙的区分：「到达平台期有两种可能性。第一种是技术本身到达了……另一种是你想干的事儿到平台期了，我觉得现在就是后者。」模型本身的学习能力还在增长，「模型还是一个非常聪明的小孩，你其实可以教他很多东西，但是我们人类作为老师现在还不知道下一个东西该教什么。」</p>
+    <p>他对AI本质的判断充满乐观：「AI本质上是简单的。它本质上简单的点在于他能做实验。」与物理不同——物理在特定能标下没有实验数据就无法理解理论——AI不受此限制。只要有算力，就可以不断做实验、不断迭代。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"我觉得我个人得到的感受是这个模型学东西的能力越来越强了。以前可能让模型学会干一件事情需要动很多脑筋，但现在可能不需要动那么多脑筋了。最重要的是你是要把这个问题定义清楚，然后想清楚怎么去构建合适的数据。"</p>
+    <cite><span class="timestamp-badge" data-time="26:26">26:26</span> — 一线研究员对模型进步的真实体感</cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">大部分「scaling law撞墙」感受来自工程bug而非科学极限——修好一个bug带来的进展远大于神奇技巧。</div>
+        <div class="insight-expl">姚顺宇区分了三种「墙」：fundamental limit、data wall和bug。他认为第三种反而是最常见的。很多研究者看到指标不涨就声称撞墙，实际上往往是实现有问题。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">当前瓶颈不是技术到达极限，而是「我们不知道下一个东西该教什么」——模型还是聪明小孩，但人类老师的能力到上限了。</div>
+        <div class="insight-expl">姚顺宇认为模型的学习能力本身仍在增长，真正的瓶颈在于人类定义新任务的能力。这个问题比技术瓶颈更复杂——它需要人的insight，是一个赌注。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">AI本质上是简单的——因为它能做实验。这是AI与物理等「本质难」的科学的根本区别。</div>
+        <div class="insight-expl">姚顺宇认为AI的核心优势在于实验的可重复性和速度：你可以快速设计实验、获取反馈、迭代改进。物理受限于实验数据（特定能标下的数据可能根本不存在），但AI只要有算力就能不断实验。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Scaling law当前是经验规律，但可能像热力学定律一样未来成为科学规律。</div>
+        <div class="insight-expl">姚顺宇将scaling law类比热力学历史：热力学第一定律、第二定律在当年也都是经验规律，后来随着微观机制被理解才成为科学规律。Scaling law可能走同样的路径。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_2, theme_5
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~3 min read
+  </div>
+</article>
+  <article class="card card-closing" id="card-closing">
+  <h2>如果你只记住三件事</h2>
+  <ol class="remember-list">
+    <li class="remember-item">
+      <span class="remember-num">1</span>
+      <span class="remember-text">AI行业最重要的特质不是聪明，而是「靠谱」——做事细致、对自己做的事负责任。</span>
+    </li>
+    <li class="remember-item">
+      <span class="remember-num">2</span>
+      <span class="remember-text">模型benchmark差异已从信号退化为噪声——大家都在80%附近，高一点低一点主要是噪声。</span>
+    </li>
+    <li class="remember-item">
+      <span class="remember-num">3</span>
+      <span class="remember-text">AI应用创业只有两条生存路径：Cursor式的逃逸速度自研模型，或Midjourney式的小到模型公司不屑进入的niche市场。</span>
+    </li>
+  </ol>
+  <h3 style="font-size:var(--fs-md);margin-top:var(--sp-xl);margin-bottom:var(--sp-md)">这对你意味着什么？</h3>
+  <div class="role-tabs">
+    <button class="role-tab active" data-role="engineer">🔧 工程师</button>
+    <button class="role-tab" data-role="pm">📋 产品经理</button>
+    <button class="role-tab" data-role="founder">🚀 创业者</button>
+    <button class="role-tab" data-role="investor">💼 投资人</button>
+  </div>
+  <div class="role-content visible" data-role="engineer">
+    <p>AI coding 已经让开发效率提升 20-50 倍，但这不是终点。核心建议：(1) 不要只做语言模型——末班车已发车，转向多模态生成、机器人或 AI 辅助科学等蓝海方向；(2) 「把简单的事做得比谁都干净」比追求神奇技巧更重要——工程质量是真正的护城河；(3) 培养系统性思维——AI 已进入集体主义时代，个人英雄主义终结。</p>
+  </div>
+  <div class="role-content" data-role="pm">
+    <p>姚顺宇的判断可能让你不安：产品经理是 AI 最难替代的工作——因为「没有标准就是没有刻度」。但这也意味着：(1) 定义清楚「要解决什么问题」成为最稀缺的能力；(2) AI 产品交互形态远未定型——chatbot 不是终局，long horizon 任务执行是下一个前沿；(3) 中国 C 端产品模式（先不挣钱再形成闭环）值得深入研究。</p>
+  </div>
+  <div class="role-content" data-role="founder">
+    <p>姚顺宇给出了冷酷但清晰的生存框架：(1) AI 应用创业只有两条路：Cursor 式逃逸速度（万分之一生存率）或 Midjourney 式 niche 市场（百分之一）；(2) 「先吃一个小的，但选择有想象空间的小的」；(3) 目前只在模型侧有壁垒——如果做应用层，必须想清楚模型公司追上来怎么办。</p>
+  </div>
+  <div class="role-content" data-role="investor">
+    <p>几个值得关注的结构性判断：(1) 语言模型窗口已关闭，多模态生成和机器人是下一波范式突破方向；(2) 中国 AI 人才被严重低估——算力劣势逼出的软蒸馏创新可能是真正的 multi-agent 训练先驱；(3) ByteDance 是被严重低估的公司；(4) 绝大多数硅谷 new AI lab 会死——关注组织 DNA 和技术 leader 质量。</p>
+  </div>
+  <div class="closing-links">
+    <a href="#" class="btn btn-secondary" data-goto="0">← 回到封面</a>
+  </div>
+</article>
+</main>
+
+<div class="bottom-nav" id="bottomNav">
+  <button id="prevCard" aria-label="Previous card">← Prev</button>
+  <span class="card-counter" id="mobileCounter"></span>
+  <button id="nextCard" aria-label="Next card">Next →</button>
+</div>
+
+<script>
+/**
+ * Learning Cards — Interactive Script
+ * Vanilla JS. Swipe, keyboard, touch, and progress tracking.
+ */
+(function(){"use strict";
+
+function ready(fn){document.readyState!=="loading"?fn():document.addEventListener("DOMContentLoaded",fn)}
+
+ready(function(){
+  try{
+    initTheme();
+    initNav();
+    initExpandables();
+    initIntersectionObserver();
+    initRoleTabs();
+    initKeyboardShortcuts();
+    initTouchSupport();
+    initProgressBar();
+    initDotNav();
+  }catch(e){console.error("[Cards] Init error:",e)}
+});
+
+/* ---- Theme ---- */
+function initTheme(){
+  var btn=document.getElementById("themeToggle");if(!btn)return;
+  var s=localStorage.getItem("learning-cards-theme");
+  if(s)document.documentElement.setAttribute("data-theme",s);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)
+    document.documentElement.setAttribute("data-theme","dark");
+  btn.addEventListener("click",function(){
+    var c=document.documentElement.getAttribute("data-theme");
+    var n=c==="dark"?"light":"dark";
+    document.documentElement.setAttribute("data-theme",n);
+    localStorage.setItem("learning-cards-theme",n);
+  });
+}
+
+/* ---- Card Navigation ---- */
+var allCards=[],currentIndex=0;
+
+function initNav(){
+  allCards=document.querySelectorAll(".card");if(!allCards.length)return;
+  currentIndex=0;
+  updateCounter();
+
+  var prev=document.getElementById("prevCard");
+  var next=document.getElementById("nextCard");
+  if(prev)prev.addEventListener("click",function(){goToCard(currentIndex-1)});
+  if(next)next.addEventListener("click",function(){goToCard(currentIndex+1)});
+
+  // Click on hero "Start Learning" button
+  var startBtn=document.querySelector(".btn-primary");
+  if(startBtn&&startBtn.textContent.includes("开始")){
+    startBtn.addEventListener("click",function(e){
+      e.preventDefault();goToCard(1);
+    });
+  }
+}
+
+function goToCard(index){
+  if(index<0||index>=allCards.length)return;
+  currentIndex=index;
+  allCards[index].scrollIntoView({behavior:"smooth",block:"center"});
+  updateCounter();
+  updateActiveDot();
+}
+
+function updateCounter(){
+  var c=document.getElementById("cardCounter");
+  var m=document.getElementById("mobileCounter");
+  var txt=(currentIndex+1)+" / "+allCards.length;
+  if(c)c.textContent=txt;
+  if(m)m.textContent=txt;
+}
+
+/* ---- Expandables ---- */
+function initExpandables(){
+  document.addEventListener("click",function(e){
+    var btn=e.target.closest(".expand-toggle");if(!btn)return;
+    btn.classList.toggle("open");
+    var content=btn.nextElementSibling;
+    if(content&&content.classList.contains("expand-content")){
+      content.classList.toggle("visible");
+    }
+  });
+}
+
+/* ---- Intersection Observer for card tracking ---- */
+function initIntersectionObserver(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&e.intersectionRatio>0.4){
+        e.target.classList.add("card-in-view");
+        // Find index
+        var idx=Array.from(allCards).indexOf(e.target);
+        if(idx>=0){currentIndex=idx;updateCounter();updateActiveDot();}
+      }
+    });
+  },{threshold:[0,0.3,0.5,0.8]});
+
+  allCards.forEach(function(c){obs.observe(c)});
+}
+
+/* ---- Role Tabs (Closing Card) ---- */
+function initRoleTabs(){
+  document.addEventListener("click",function(e){
+    var tab=e.target.closest(".role-tab");if(!tab)return;
+    var role=tab.getAttribute("data-role");
+    // Deactivate all tabs in this group
+    var group=tab.parentElement;
+    group.querySelectorAll(".role-tab").forEach(function(t){t.classList.remove("active")});
+    tab.classList.add("active");
+    // Show matching content
+    var container=group.parentElement;
+    container.querySelectorAll(".role-content").forEach(function(c){c.classList.remove("visible")});
+    var target=container.querySelector('.role-content[data-role="'+role+'"]');
+    if(target)target.classList.add("visible");
+  });
+}
+
+/* ---- Keyboard Shortcuts ---- */
+function initKeyboardShortcuts(){
+  document.addEventListener("keydown",function(e){
+    var inp=e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.isContentEditable;
+    if(inp)return;
+
+    if(e.key==="ArrowRight"||e.key==="ArrowDown"||e.key==="j"){
+      e.preventDefault();goToCard(currentIndex+1);
+    }else if(e.key==="ArrowLeft"||e.key==="ArrowUp"||e.key==="k"){
+      e.preventDefault();goToCard(currentIndex-1);
+    }else if(e.key===" "||e.key==="Enter"){
+      // Expand current card's first expandable
+      var card=allCards[currentIndex];
+      if(card){
+        var toggle=card.querySelector(".expand-toggle");
+        if(toggle){e.preventDefault();toggle.click();}
+      }
+    }else if(e.key>="1"&&e.key<="9"){
+      e.preventDefault();goToCard(parseInt(e.key)-1);
+    }
+  });
+}
+
+/* ---- Touch / Swipe ---- */
+function initTouchSupport(){
+  var startX=0,startY=0;
+  document.addEventListener("touchstart",function(e){
+    startX=e.touches[0].clientX;startY=e.touches[0].clientY;
+  },{passive:true});
+
+  document.addEventListener("touchend",function(e){
+    var dx=e.changedTouches[0].clientX-startX;
+    var dy=e.changedTouches[0].clientY-startY;
+    var absDx=Math.abs(dx),absDy=Math.abs(dy);
+
+    // Only trigger if horizontal swipe is dominant and significant
+    if(absDx>absDy&&absDx>50){
+      if(dx<-30)goToCard(currentIndex+1);
+      else if(dx>30)goToCard(currentIndex-1);
+    }
+  },{passive:true});
+}
+
+/* ---- Progress Bar ---- */
+function initProgressBar(){
+  var bar=document.getElementById("progressBar");if(!bar)return;
+  var tick=false;
+  window.addEventListener("scroll",function(){
+    if(!tick){requestAnimationFrame(function(){
+      var h=document.documentElement.scrollHeight-innerHeight;
+      bar.style.width=(h>0?Math.min((scrollY/h)*100,100):0)+"%";tick=false;
+    });tick=true}
+  },{passive:true});
+}
+
+/* ---- Dot Nav ---- */
+function initDotNav(){
+  var container=document.getElementById("navDots");if(!container)return;
+  container.addEventListener("click",function(e){
+    var dot=e.target.closest(".nav-dot");if(!dot)return;
+    var idx=parseInt(dot.getAttribute("data-index"));
+    if(!isNaN(idx))goToCard(idx);
+  });
+}
+
+function updateActiveDot(){
+  var dots=document.querySelectorAll(".nav-dot");
+  dots.forEach(function(d,i){
+    d.classList[i===currentIndex?"add":"remove"]("active");
+  });
+}
+
+})();
+
+</script>
+</body>
+</html>

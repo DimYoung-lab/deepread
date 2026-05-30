@@ -20,7 +20,7 @@ Transcript file (.docx / .txt / .md)
 [Stage 3: Extract]  → segment_N_extraction.json  (parallel sub-agents)
 [Stage 4: Synthesize] → knowledge.json       (Claude merge + cross-cutting)
 [Stage 4.5: Visual Synthesis] → visual_content.json (Claude — synthesize for HTML presentation)
-[Stage 5: Present]  → 4 output formats      (Claude for MD + scripts/generate_*.py for HTML)
+[Stage 5: Present]  → 4 output formats      (Claude for MD + scripts/generate_*.py for HTML/Cards)
 ```
 
 Each stage produces a well-defined intermediate artifact. This decouples the pipeline so stages can be re-run independently and output formats can be generated in parallel.
@@ -253,15 +253,15 @@ Write directly. Use the full report template in [references/output-templates.md]
 
 Save as `report-[guest-lastname]-[YYYYMMDD].md`.
 
-### Output 3: Interactive HTML Report
+### Output 3: Learning Cards (Interactive)
 
-Generate using the script with `visual_content.json` (primary) and `knowledge.json` (fallback for predictions):
+Generate using the script with `visual_content.json` (primary) and `knowledge.json` (metadata fallback):
 
 ```bash
-python scripts/generate_html.py visual_content.json --output report-[guest-lastname]-[YYYYMMDD].html --knowledge knowledge.json
+python scripts/generate_cards.py visual_content.json --output cards-[guest-lastname]-[YYYYMMDD].html --knowledge knowledge.json
 ```
 
-The script reads `assets/report-template/` (index.html, style.css, script.js), populates template variables from `visual_content.json`, and writes a self-contained HTML file. Uses a three-layer architecture: Hero section (core thesis + takeaways) → Theme-organized content (narrative + curated evidence) → Timeline + Evidence collection.
+The script reads `assets/cards-template/` (index.html, style.css, script.js) and produces a self-contained, mobile-first card-based learning experience. Each cross-cutting theme becomes a card with progressive disclosure: core claim → narrative prose → pull-quote → expandable evidence. Designed for busy professionals to learn from interviews in 10 minutes. Features: swipe/touch navigation, keyboard shortcuts, reading time estimates, role-specific advice, dark/light theme.
 
 ### Output 4: Knowledge Map
 
@@ -285,7 +285,7 @@ output/
     ├── knowledge.json
     ├── tldr-[guest-lastname]-[YYYYMMDD].md
     ├── report-[guest-lastname]-[YYYYMMDD].md
-    ├── report-[guest-lastname]-[YYYYMMDD].html
+    ├── cards-[guest-lastname]-[YYYYMMDD].html
     └── map-[guest-lastname]-[YYYYMMDD].html
 ```
 
@@ -324,7 +324,7 @@ Never deliver outputs without running these checks. See [references/quality-chec
 
 These are bugs discovered in real usage. Read [references/quality-checklist.md](references/quality-checklist.md) for full details.
 
-1. **`<section>` vs `<details>` mismatch**: `generate_html.py` MUST output `<details open>` + `<summary>` for collapsible topic segments. Using `<section>` breaks the Collapse/Expand buttons silently. This is the #1 most common bug.
+1. **Card layout overflow**: `generate_cards.py` cards must use `max-width` and responsive padding. Overly wide cards on mobile break the swipe experience.
 
 2. **DOM reference after removal**: In `clearHighlights()`, NEVER call `m.parentNode.normalize()` after `replaceChild()` — save the parent reference first. Pattern: `var p = m.parentNode; p.replaceChild(newNode, m); p.normalize();`
 
@@ -357,14 +357,14 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | Script | Stage | Purpose |
 |--------|-------|---------|
 | `scripts/parse_docx.py` | 1 | Extract structured turns from .docx |
-| `scripts/generate_html.py` | 5 | Render interactive HTML report from knowledge.json |
+| `scripts/generate_cards.py` | 5 | Render interactive learning cards from visual_content.json |
 | `scripts/generate_mindmap.py` | 5 | Render interactive mind map from knowledge.json |
 
 ## Assets
 
 | Asset | Used By | Purpose |
 |-------|---------|---------|
-| `assets/report-template/index.html` | generate_html.py | HTML report scaffold with template variables |
-| `assets/report-template/style.css` | generate_html.py | Editorial design system (light + dark themes) |
-| `assets/report-template/script.js` | generate_html.py | Search, navigation, theme toggle, keyboard shortcuts |
+| `assets/cards-template/index.html` | generate_cards.py | Learning cards HTML scaffold with template variables |
+| `assets/cards-template/style.css` | generate_cards.py | Mobile-first card design system (light + dark themes) |
+| `assets/cards-template/script.js` | generate_cards.py | Swipe, keyboard, touch navigation, expandable sections |
 | `assets/mindmap-template.html` | generate_mindmap.py | D3.js radial mind map with starfield background |
