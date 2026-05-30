@@ -11,6 +11,7 @@
 
 <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
 
+<!-- ====== HERO SECTION ====== -->
 <header class="site-header" role="banner">
   <div class="header-inner">
     <div class="header-left">
@@ -21,7 +22,7 @@
     </div>
     <div class="header-right">
       <div class="search-box" role="search">
-        <label for="searchInput" class="sr-only">Search segments</label>
+        <label for="searchInput" class="sr-only">Search</label>
         <input type="search" id="searchInput" class="search-input" placeholder="Search…" autocomplete="off">
         <span class="search-badge" id="searchBadge" aria-live="polite"></span>
       </div>
@@ -33,34 +34,42 @@
   </div>
 </header>
 
-<div class="layout">
-  <nav class="sidebar" id="sidebar" aria-label="Table of contents">
-    <div class="sidebar-header">
-      <span class="sidebar-label">Contents</span>
-      <div class="sidebar-actions">
-        <button type="button" class="action-btn" id="expandAll" title="Expand all sections">Expand</button>
-        <button type="button" class="action-btn" id="collapseAll" title="Collapse all sections">Collapse</button>
-      </div>
-    </div>
-    {{SIDEBAR_HTML}}
-  </nav>
+<!-- ====== HERO: Core Thesis + Takeaways ====== -->
+<section class="hero-section" aria-label="Executive summary">
+  {{HERO_HTML}}
+</section>
 
-  <main class="content" id="mainContent">
-    {{CONTENT_HTML}}
-  </main>
-</div>
+<!-- ====== THEME NAVIGATION ====== -->
+<nav class="theme-nav" id="themeNav" aria-label="Theme navigation">
+  {{THEME_NAV_HTML}}
+</nav>
 
+<!-- ====== THEME CONTENT (Main) ====== -->
+<main class="content" id="mainContent">
+  {{THEME_CONTENT_HTML}}
+</main>
+
+<!-- ====== TIMELINE (Secondary) ====== -->
+<section class="timeline-section" aria-label="Segment timeline">
+  <div class="timeline-inner">
+    <h2>Segment Timeline</h2>
+    <p class="timeline-desc">Browse the conversation chronologically. Each segment shows how it contributes to the themes above.</p>
+    {{TIMELINE_HTML}}
+  </div>
+</section>
+
+<!-- ====== EVIDENCE: Curated Quotes ====== -->
 <section class="supplemental" aria-label="Supplemental material">
   <div class="supplemental-inner">
-    {{QUOTES_HTML}}
+    <h2>Complete Evidence Collection</h2>
     {{PREDICTIONS_HTML}}
-    {{THEMES_HTML}}
+    {{EVIDENCE_HTML}}
   </div>
 </section>
 
 <footer class="site-footer" role="contentinfo">
   <div class="footer-inner">
-    <p class="footer-text">Generated with Interview-Based Learning &middot; Interactive Report</p>
+    <p class="footer-text">Generated with Interview-Based Learning · Interactive Report</p>
     <button type="button" class="back-to-top" id="backToTop" aria-label="Back to top">&uarr; Top</button>
   </div>
 </footer>

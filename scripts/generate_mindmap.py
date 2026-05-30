@@ -1,42 +1,57 @@
 #!/usr/bin/env python3
-"""Generate a self-contained interactive mind map HTML page from a knowledge.json file.
+"""Generate a self-contained interactive mind map HTML page from a visual_content.json file.
 
-Reads a knowledge.json file produced by the interview analysis pipeline,
-transforms its segments into the MINDMAP_DATA format, and embeds the data
+Reads a visual_content.json file produced by the interview analysis pipeline,
+extracts its map_data for the mindmap structure, and embeds the data
 into a self-contained HTML file.
 
-Usage:
-    python generate_mindmap.py knowledge.json
-    python generate_mindmap.py knowledge.json --output mindmap.html
-    python generate_mindmap.py knowledge.json --template assets/mindmap-template.html
+Metadata (title, guest, date, duration) can be sourced from an optional
+knowledge.json file, or extracted from the visual_content.json ``meta`` field
+as a fallback.
 
-The knowledge.json file is expected to have this structure::
+Usage:
+    python generate_mindmap.py visual_content.json
+    python generate_mindmap.py visual_content.json --knowledge-json knowledge.json
+    python generate_mindmap.py visual_content.json --output mindmap.html
+    python generate_mindmap.py visual_content.json --template assets/mindmap-template.html
+
+The visual_content.json file is expected to have this structure::
 
     {
-      "metadata": {
-        "title": "Interview Title",
-        "guest": {"name": "Dr. Jane Smith"}  or  "guest": "Dr. Jane Smith",
-        "date": "2026-05-30",
-        "duration": "3h 47m"  or  {"total_seconds": 13620}
+      "meta": {
+        "core_thesis": "...",
+        "duration_formatted": "3h 47m",
+        "stats": {"theme_count": 7, "segment_count": 12, ...}
       },
-      "segments": [
-        {
-          "id": "seg_01",
-          "title": "Neural Architecture",
-          "time_range": {"start": "00:00:00", "end": "00:42:00"},
-          "summary": "Evolution of transformer architectures...",
-          "insights": [
-            {"text": "Sparse attention reduces compute...", "timestamp": "05:30"}
-          ],
-          "golden_quotes": [
-            {"text": "The transformer was just...", "timestamp": "08:15", "speaker": "Guest"}
-          ],
-          "data_points": [
-            {"text": "Training efficiency 3.2x...", "timestamp": "22:00", "type": "statistic"}
-          ]
-        }
-      ]
+      "themes": [...],
+      "segments": [...],
+      "map_data": {
+        "central_thesis": "core thesis text",
+        "theme_nodes": [
+          {
+            "id": "theme_1",
+            "name": "Theme Name",
+            "color": "#3b82f6",
+            "summary": "one-line summary",
+            "arguments": [
+              {
+                "claim": "argument claim text",
+                "evidence": [
+                  {"type": "quote", "text": "short text", "timestamp": "MM:SS"},
+                  {"type": "data_point", "text": "data point text", "timestamp": "MM:SS"}
+                ]
+              }
+            ]
+          }
+        ],
+        "cross_links": [
+          {"source": "theme_1.0", "target": "theme_4.0", "relation": "supports"}
+        ]
+      }
     }
+
+If map_data is missing, the script falls back to transforming the ``segments``
+array using the legacy knowledge.json transformation path.
 """
 
 from __future__ import annotations
@@ -72,7 +87,7 @@ COLOR_PALETTE: list[str] = [
 #     equally weighted when rendered on a dark (#0f0f23) radial-gradient canvas.
 #   - Minimum 25-degree hue separation between neighbours; avoids the cyan/teal
 #     and violet/purple ambiguity common in 12-colour HSL-equispace palettes.
-#   - Colours are tested against WCAG AA for large text (≥18px / bold ≥14px)
+#   - Colours are tested against WCAG AA for large text (>=18px / bold >=14px)
 #     when paired with white (#ffffff) labels on the mind-map topic nodes.
 
 # ---------------------------------------------------------------------------
@@ -89,11 +104,11 @@ MARKER_CONST = "const MINDMAP_DATA ="
 # ---------------------------------------------------------------------------
 
 
-def load_knowledge_json(filepath: str) -> dict[str, Any]:
-    """Load and parse a knowledge.json file.
+def load_json(filepath: str) -> dict[str, Any]:
+    """Load and parse a JSON file.
 
     Args:
-        filepath: Path to the knowledge.json file.
+        filepath: Path to the JSON file.
 
     Returns:
         Parsed JSON as a dictionary.
@@ -142,7 +157,7 @@ def write_output(filepath: str, content: str) -> None:
 
 
 def _extract_metadata(raw: dict[str, Any]) -> dict[str, str]:
-    """Extract and normalise metadata fields from the knowledge JSON.
+    """Extract and normalise metadata fields from a knowledge.json-like dict.
 
     Handles flexible input shapes:
         - ``guest`` may be a plain string or ``{"name": "..."}``.
@@ -150,14 +165,17 @@ def _extract_metadata(raw: dict[str, Any]) -> dict[str, str]:
           ``{"total_seconds": 13620}``.
 
     Args:
-        raw: The full parsed knowledge.json dict.
+        raw: The full parsed knowledge.json dict (expected to have a
+            ``metadata`` key), or a dict that may contain ``meta`` at the
+            top level (from visual_content.json).
 
     Returns:
         A dict with keys ``title``, ``guest``, ``date``, ``duration``.
         All values are plain strings. Missing metadata yields sensible
         defaults rather than raising.
     """
-    meta: dict[str, Any] = raw.get("metadata", {})
+    # Support both knowledge.json "metadata" and visual_content.json "meta"
+    meta: dict[str, Any] = raw.get("metadata", {}) or raw.get("meta", {})
 
     # -- title --
     title: str = meta.get("title", "Untitled Interview")
@@ -185,6 +203,16 @@ def _extract_metadata(raw: dict[str, Any]) -> dict[str, str]:
     else:
         duration = str(duration_raw) if duration_raw else ""
 
+    # Also check visual_content.json style: meta.stats.duration_formatted
+    if not duration:
+        vc_meta = raw.get("meta", {})
+        if isinstance(vc_meta, dict):
+            stats = vc_meta.get("stats", {})
+            if isinstance(stats, dict):
+                df = stats.get("duration_formatted", "")
+                if df:
+                    duration = str(df)
+
     return {
         "title": title,
         "guest": guest,
@@ -193,8 +221,35 @@ def _extract_metadata(raw: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def _merge_metadata(
+    vc_meta: dict[str, str],
+    knowledge_meta: Optional[dict[str, str]],
+) -> dict[str, str]:
+    """Merge metadata from visual_content.json with knowledge.json overrides.
+
+    knowledge.json metadata takes priority for all fields.  Values from
+    visual_content.json are used as fallbacks.
+
+    Args:
+        vc_meta: Metadata extracted from visual_content.json.
+        knowledge_meta: Metadata extracted from knowledge.json, or None.
+
+    Returns:
+        Merged metadata dict with keys ``title``, ``guest``, ``date``,
+        ``duration``.
+    """
+    if knowledge_meta is None:
+        return vc_meta
+
+    merged: dict[str, str] = {}
+    for key in ("title", "guest", "date", "duration"):
+        k_val = knowledge_meta.get(key, "")
+        merged[key] = k_val if k_val else vc_meta.get(key, "")
+    return merged
+
+
 # ---------------------------------------------------------------------------
-# Time-range formatting
+# Time-range formatting (used by legacy segment transform)
 # ---------------------------------------------------------------------------
 
 
@@ -206,7 +261,7 @@ def _format_time_range(segment: dict[str, Any]) -> str:
     the start timestamp or an empty string.
 
     Args:
-        segment: A segment dict from knowledge.json.
+        segment: A segment dict from knowledge.json or visual_content.json.
 
     Returns:
         Formatted time range.
@@ -222,46 +277,189 @@ def _format_time_range(segment: dict[str, Any]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Core data transformation
+# Helper: normalise cross-link source/target from theme_id.index to
+#         topic_index.insight_index
 # ---------------------------------------------------------------------------
 
 
-def transform_to_mindmap_data(raw: dict[str, Any]) -> dict[str, Any]:
-    """Transform knowledge.json data into the ``MINDMAP_DATA`` format expected
-    by the mind map template.
+def _normalise_cross_link_index(
+    raw_index: str,
+    theme_id_to_topic_idx: dict[str, int],
+) -> str:
+    """Convert a cross-link reference like ``"theme_1.0"`` to ``"0.0"``.
+
+    Args:
+        raw_index: A string of the form ``theme_N.insight_idx``.
+        theme_id_to_topic_idx: Mapping from theme id (e.g. ``"theme_1"``)
+            to the 0-based topic index.
+
+    Returns:
+        Normalised index string ``"topic.insight"``, or the original
+        string if parsing fails.
+    """
+    if "." not in raw_index:
+        return raw_index
+    theme_id, _, insight_idx = raw_index.partition(".")
+    topic_idx = theme_id_to_topic_idx.get(theme_id)
+    if topic_idx is None:
+        return raw_index
+    return f"{topic_idx}.{insight_idx}"
+
+
+# ---------------------------------------------------------------------------
+# New: transform from visual_content.json map_data
+# ---------------------------------------------------------------------------
+
+
+def transform_from_map_data(
+    vc_data: dict[str, Any],
+    metadata: dict[str, str],
+) -> dict[str, Any]:
+    """Build the ``MINDMAP_DATA`` dict from visual_content.json's ``map_data``.
 
     Mapping rules:
 
-    * ``metadata.*`` → top-level ``title``, ``guest``, ``date``, ``duration``.
-    * ``segments`` → ``topics`` array (one topic per segment).
-    * Each topic is assigned a distinct colour from ``COLOR_PALETTE``
-      in round-robin order.
-    * ``segment.insights`` → ``topic.insights[]`` (``text``, ``timestamp``).
-    * ``segment.golden_quotes`` → ``topic.quotes[]`` (``text``, ``timestamp``,
-      ``speaker``).
-    * ``segment.data_points`` → ``topic.data_points[]`` (``text``,
-      ``timestamp``, ``type``).
+    * ``map_data.central_thesis`` → top-level ``central_thesis``.
+    * ``map_data.theme_nodes[]`` → ``topics[]`` (one per theme node).
+        - ``name``, ``color``, ``summary`` map directly.
+        - If a theme node has no color, a colour from ``COLOR_PALETTE`` is
+          assigned in order.
+    * Each ``theme_node.arguments[]`` → ``topic.insights[]``.
+        - ``claim`` → ``insight.text``.
+    * Each ``argument.evidence[]`` → ``insight.evidence[]``.
+        - ``text``, ``timestamp``, ``type`` map directly.
+    * ``map_data.cross_links[]`` → ``cross_links[]`` with normalised
+      source/target indices.
 
     Args:
-        raw: The full parsed knowledge.json dict.
+        vc_data: The full parsed visual_content.json dict.
+        metadata: Pre-extracted metadata dict.
 
     Returns:
         A dict conforming to the ``MINDMAP_DATA`` schema.
     """
-    meta = _extract_metadata(raw)
+    map_data: dict[str, Any] = vc_data.get("map_data", {})
+    theme_nodes: list[dict[str, Any]] = map_data.get("theme_nodes", [])
+
+    # Build theme_id → topic_index mapping for cross-link normalisation
+    theme_id_to_topic_idx: dict[str, int] = {}
+    for idx, tn in enumerate(theme_nodes):
+        tid = tn.get("id", "")
+        if tid:
+            theme_id_to_topic_idx[tid] = idx
+
+    # Palette fallback tracker
+    palette_offset: int = 0
+
+    topics: list[dict[str, Any]] = []
+    for tn in theme_nodes:
+        color: str = tn.get("color", "")
+        if not color:
+            color = COLOR_PALETTE[palette_offset % len(COLOR_PALETTE)]
+            palette_offset += 1
+
+        insights: list[dict[str, Any]] = []
+        for arg in tn.get("arguments", []):
+            evidence_items: list[dict[str, str]] = []
+            for ev in arg.get("evidence", []):
+                evidence_items.append(
+                    {
+                        "text": ev.get("text", ""),
+                        "timestamp": ev.get("timestamp", ""),
+                        "type": ev.get("type", "quote"),
+                    }
+                )
+
+            insights.append(
+                {
+                    "text": arg.get("claim", ""),
+                    "evidence": evidence_items,
+                }
+            )
+
+        topics.append(
+            {
+                "name": tn.get("name", ""),
+                "color": color,
+                "summary": tn.get("summary", ""),
+                "insights": insights,
+            }
+        )
+
+    # Normalise cross-links
+    raw_cross_links: list[dict[str, str]] = map_data.get("cross_links", [])
+    cross_links: list[dict[str, str]] = []
+    for cl in raw_cross_links:
+        cross_links.append(
+            {
+                "source": _normalise_cross_link_index(
+                    cl.get("source", ""), theme_id_to_topic_idx
+                ),
+                "target": _normalise_cross_link_index(
+                    cl.get("target", ""), theme_id_to_topic_idx
+                ),
+                "relation": cl.get("relation", "supports"),
+            }
+        )
+
+    result: dict[str, Any] = {
+        "title": metadata["title"],
+        "guest": metadata["guest"],
+        "date": metadata["date"],
+        "duration": metadata["duration"],
+        "central_thesis": map_data.get("central_thesis", ""),
+        "topics": topics,
+        "cross_links": cross_links,
+    }
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Legacy: transform from segments (knowledge.json fallback)
+# ---------------------------------------------------------------------------
+
+
+def transform_from_segments(
+    raw: dict[str, Any],
+    metadata: dict[str, str],
+) -> dict[str, Any]:
+    """Transform knowledge.json / visual_content.json segments into the
+    ``MINDMAP_DATA`` format (legacy fallback path).
+
+    Mapping rules:
+
+    * ``segments`` → ``topics`` array (one topic per segment).
+    * Each topic is assigned a distinct colour from ``COLOR_PALETTE``
+      in round-robin order.
+    * ``segment.insights`` → ``topic.insights[]`` (each with an empty
+      ``evidence`` list for compatibility).
+    * ``segment.golden_quotes`` → ``topic.quotes[]`` (``text``,
+      ``timestamp``, ``speaker``).
+    * ``segment.data_points`` → ``topic.data_points[]`` (``text``,
+      ``timestamp``, ``type``).
+
+    Args:
+        raw: The full parsed JSON dict containing a ``segments`` key.
+        metadata: Pre-extracted metadata dict.
+
+    Returns:
+        A dict conforming to the ``MINDMAP_DATA`` schema.
+    """
     segments: list[dict[str, Any]] = raw.get("segments", [])
 
     topics: list[dict[str, Any]] = []
     for idx, seg in enumerate(segments):
         color = COLOR_PALETTE[idx % len(COLOR_PALETTE)]
 
-        # --- insights ---
-        insights: list[dict[str, str]] = []
+        # --- insights (with empty evidence for compatibility) ---
+        insights: list[dict[str, Any]] = []
         for ins in seg.get("insights", []):
             insights.append(
                 {
                     "text": ins.get("text", ""),
                     "timestamp": ins.get("timestamp", ""),
+                    "evidence": [],
                 }
             )
 
@@ -299,13 +497,47 @@ def transform_to_mindmap_data(raw: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
-    return {
-        "title": meta["title"],
-        "guest": meta["guest"],
-        "date": meta["date"],
-        "duration": meta["duration"],
+    result: dict[str, Any] = {
+        "title": metadata["title"],
+        "guest": metadata["guest"],
+        "date": metadata["date"],
+        "duration": metadata["duration"],
         "topics": topics,
     }
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Unified transform entry point
+# ---------------------------------------------------------------------------
+
+
+def transform_to_mindmap_data(
+    vc_data: dict[str, Any],
+    metadata: dict[str, str],
+) -> dict[str, Any]:
+    """Build ``MINDMAP_DATA`` from visual_content.json, falling back to the
+    legacy segment-based transformation when ``map_data`` is absent.
+
+    Args:
+        vc_data: The full parsed visual_content.json dict.
+        metadata: Merged metadata dict (from knowledge.json + VC meta).
+
+    Returns:
+        A dict conforming to the ``MINDMAP_DATA`` schema.
+    """
+    map_data = vc_data.get("map_data")
+    if map_data and isinstance(map_data, dict) and map_data.get("theme_nodes"):
+        return transform_from_map_data(vc_data, metadata)
+
+    # Fall back to segment-based transformation
+    return transform_from_segments(vc_data, metadata)
+
+
+# ---------------------------------------------------------------------------
+# JavaScript rendering
+# ---------------------------------------------------------------------------
 
 
 def format_mindmap_data_js(data: dict[str, Any], indent: int = 2) -> str:
@@ -335,12 +567,12 @@ def embed_data(template: str, mindmap_data_js: str) -> str:
 
     1. **Marker comment** — replace ``<!-- MINDMAP_DATA_INSERT -->``.
     2. **Mustache placeholder** — replace ``{{MINDMAP_DATA}}``.
-    3. **Existing declaration** — locate ``const MINDMAP_DATA = …;`` via
+    3. **Existing declaration** — locate ``const MINDMAP_DATA = ...;`` via
        brace-depth tracking and replace the whole block.
 
     Args:
         template: The HTML template string.
-        mindmap_data_js: The ``const MINDMAP_DATA = …;`` string to insert.
+        mindmap_data_js: The ``const MINDMAP_DATA = ...;`` string to insert.
 
     Returns:
         Template with data embedded.
@@ -369,7 +601,7 @@ def embed_data(template: str, mindmap_data_js: str) -> str:
 
 
 def _replace_existing_data_block(template: str, mindmap_data_js: str) -> str:
-    """Replace the ``const MINDMAP_DATA = {…};`` block inside *template*.
+    """Replace the ``const MINDMAP_DATA = {...};`` block inside *template*.
 
     The function finds the ``const MINDMAP_DATA =`` prefix, then tracks brace
     depth (respecting JSON string escaping) to locate the matching ``};``.
@@ -452,14 +684,26 @@ def build_argparser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Generate a self-contained interactive mind map HTML page "
-            "from a knowledge.json file produced by the interview "
-            "analysis pipeline."
+            "from a visual_content.json file produced by the interview "
+            "analysis pipeline. Uses the map_data field for the mindmap "
+            "structure, with optional knowledge.json for metadata."
         ),
     )
     parser.add_argument(
-        "knowledge_json",
-        metavar="KNOWLEDGE_JSON",
-        help="Path to the knowledge.json input file.",
+        "visual_content_json",
+        metavar="VISUAL_CONTENT_JSON",
+        help="Path to the visual_content.json input file (primary data source).",
+    )
+    parser.add_argument(
+        "--knowledge-json",
+        "-k",
+        metavar="PATH",
+        default=None,
+        help=(
+            "Path to a knowledge.json file for metadata "
+            "(title, guest, date, duration). "
+            "Metadata is also extracted from visual_content.json as a fallback."
+        ),
     )
     parser.add_argument(
         "--output",
@@ -513,29 +757,58 @@ def main(argv: Optional[list[str]] = None) -> None:
     else:
         template_path = str(_default_template_path())
 
-    # ---- 2. Load knowledge.json -------------------------------------------
+    # ---- 2. Load visual_content.json --------------------------------------
     try:
-        knowledge = load_knowledge_json(args.knowledge_json)
+        vc_data = load_json(args.visual_content_json)
     except FileNotFoundError:
         print(
-            f"Error: file not found: {args.knowledge_json}",
+            f"Error: file not found: {args.visual_content_json}",
             file=sys.stderr,
         )
         sys.exit(1)
     except json.JSONDecodeError as exc:
         print(
-            f"Error: invalid JSON in {args.knowledge_json}: {exc}",
+            f"Error: invalid JSON in {args.visual_content_json}: {exc}",
             file=sys.stderr,
         )
         sys.exit(1)
     except Exception as exc:
         print(
-            f"Error: failed to read {args.knowledge_json}: {exc}",
+            f"Error: failed to read {args.visual_content_json}: {exc}",
             file=sys.stderr,
         )
         sys.exit(2)
 
-    # ---- 3. Load template -------------------------------------------------
+    # ---- 3. Load knowledge.json (optional, for metadata) ------------------
+    knowledge_meta: Optional[dict[str, str]] = None
+    if args.knowledge_json:
+        try:
+            knowledge_data = load_json(args.knowledge_json)
+            knowledge_meta = _extract_metadata(knowledge_data)
+        except FileNotFoundError:
+            print(
+                f"Error: file not found: {args.knowledge_json}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        except json.JSONDecodeError as exc:
+            print(
+                f"Error: invalid JSON in {args.knowledge_json}: {exc}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        except Exception as exc:
+            print(
+                f"Error: failed to read {args.knowledge_json}: {exc}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+    # ---- 4. Extract / merge metadata --------------------------------------
+    vc_meta = _extract_metadata(vc_data)
+    metadata = _merge_metadata(vc_meta, knowledge_meta)
+
+    # ---- 5. Load template -------------------------------------------------
     try:
         template = load_template(template_path)
     except FileNotFoundError:
@@ -551,27 +824,27 @@ def main(argv: Optional[list[str]] = None) -> None:
         )
         sys.exit(2)
 
-    # ---- 4. Transform data into MINDMAP_DATA format -----------------------
+    # ---- 6. Transform data into MINDMAP_DATA format -----------------------
     try:
-        mindmap_data = transform_to_mindmap_data(knowledge)
+        mindmap_data = transform_to_mindmap_data(vc_data, metadata)
     except Exception as exc:
         print(
-            f"Error: failed to transform knowledge data: {exc}",
+            f"Error: failed to transform visual content data: {exc}",
             file=sys.stderr,
         )
         sys.exit(3)
 
-    # ---- 5. Render JavaScript variable ------------------------------------
+    # ---- 7. Render JavaScript variable ------------------------------------
     mindmap_data_js = format_mindmap_data_js(mindmap_data)
 
-    # ---- 6. Embed into template -------------------------------------------
+    # ---- 8. Embed into template -------------------------------------------
     try:
         html_output = embed_data(template, mindmap_data_js)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(4)
 
-    # ---- 7. Write output --------------------------------------------------
+    # ---- 9. Write output --------------------------------------------------
     try:
         write_output(args.output, html_output)
     except OSError as exc:
@@ -581,19 +854,47 @@ def main(argv: Optional[list[str]] = None) -> None:
         )
         sys.exit(1)
 
-    # ---- 8. Summary -------------------------------------------------------
+    # ---- 10. Summary ------------------------------------------------------
     topic_count = len(mindmap_data.get("topics", []))
-    total_items = sum(
-        len(t.get("insights", []))
-        + len(t.get("quotes", []))
-        + len(t.get("data_points", []))
-        for t in mindmap_data.get("topics", [])
+    total_insights = 0
+    total_evidence = 0
+    for t in mindmap_data.get("topics", []):
+        for ins in t.get("insights", []):
+            total_insights += 1
+            total_evidence += len(ins.get("evidence", []))
+    total_quotes = sum(
+        len(t.get("quotes", [])) for t in mindmap_data.get("topics", [])
     )
-    print(
+    total_data_points = sum(
+        len(t.get("data_points", [])) for t in mindmap_data.get("topics", [])
+    )
+    cross_link_count = len(mindmap_data.get("cross_links", []))
+    central_thesis = mindmap_data.get("central_thesis", "")
+
+    used_map_data = "map_data" if central_thesis else "segments (fallback)"
+    parts: list[str] = [
         f"Generated {args.output}  "
         f"({topic_count} topic{'s' if topic_count != 1 else ''}, "
-        f"{total_items} child node{'s' if total_items != 1 else ''})"
-    )
+        f"{total_insights} insight{'s' if total_insights != 1 else ''}",
+    ]
+    if total_evidence:
+        parts.append(
+            f"{total_evidence} evidence node{'s' if total_evidence != 1 else ''}"
+        )
+    if total_quotes:
+        parts.append(
+            f"{total_quotes} quote{'s' if total_quotes != 1 else ''}"
+        )
+    if total_data_points:
+        parts.append(
+            f"{total_data_points} data point{'s' if total_data_points != 1 else ''}"
+        )
+    if cross_link_count:
+        parts.append(
+            f"{cross_link_count} cross-link{'s' if cross_link_count != 1 else ''}"
+        )
+    parts.append(f"source: {used_map_data})")
+    print("  ".join(parts))
 
 
 if __name__ == "__main__":

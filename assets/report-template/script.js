@@ -1,6 +1,7 @@
 /**
  * Interview Report Template — Interactive Script
  * Vanilla JS, zero dependencies. Editorial-grade interactivity.
+ * Supports: theme tabs, evidence toggles, search, scroll-spy, keyboard shortcuts.
  */
 (function(){"use strict";
 
@@ -12,13 +13,13 @@ ready(function(){
     if(hdr){document.documentElement.style.setProperty("--header-height",hdr.offsetHeight+"px")}
     initTheme();
     initSearch();
+    initThemeTabs();
+    initEvidenceToggles();
     initScrollSpy();
     initKeyboardShortcuts();
-    initCollapseControls();
     initReadingProgress();
     initTimestampClicks();
     initBackToTop();
-    initSidebarNav();
   }catch(e){console.error("[Report] Init error:",e)}
 });
 
@@ -46,7 +47,7 @@ function initSearch(){
   function build(){
     if(indexed)return;indexed=true;
     var mc=document.getElementById("mainContent");if(!mc)return;
-    var els=mc.querySelectorAll("section,article,details");secs=[];
+    var els=mc.querySelectorAll(".theme-section,.timeline-segment");secs=[];
     els.forEach(function(e){secs.push({el:e,text:(e.textContent||"").toLowerCase()})});
   }
   input.addEventListener("focus",build);
@@ -93,32 +94,74 @@ function initSearch(){
   }
 }
 
-/* ---- Scroll-Spy ---- */
-function initScrollSpy(){
-  var sb=document.getElementById("sidebar");if(!sb)return;
-  var links=sb.querySelectorAll("a[href^='#']");if(!links.length)return;
-  var map={};links.forEach(function(a){map[a.getAttribute("href").slice(1)]=a});
-  var th=[];for(var i=0;i<=20;i++)th.push(i/20);
-  var obs=new IntersectionObserver(function(entries){
-    var vis={};entries.forEach(function(e){vis[e.target.id]=e.intersectionRatio});
+/* ---- Theme Tab Navigation ---- */
+function initThemeTabs(){
+  var nav=document.getElementById("themeNav");if(!nav)return;
+  var tabs=nav.querySelectorAll(".theme-tab");
+  var sections=document.querySelectorAll(".theme-section");
+  if(!tabs.length||!sections.length)return;
+
+  // Build id→section map
+  var sectionMap={};
+  sections.forEach(function(s){sectionMap[s.id]=s});
+
+  // Click handler
+  tabs.forEach(function(tab){
+    tab.addEventListener("click",function(e){
+      e.preventDefault();
+      var targetId=tab.getAttribute("data-theme-id");
+      var section=document.getElementById(targetId);
+      if(section){
+        section.scrollIntoView({behavior:"smooth",block:"start"});
+        setActiveTab(targetId);
+      }
+    });
+  });
+
+  // IntersectionObserver for active tab tracking
+  var observer=new IntersectionObserver(function(entries){
     var best=null,br=0;
-    Object.keys(vis).forEach(function(id){if(vis[id]>br){br=vis[id];best=id}});
-    if(best){
-      links.forEach(function(a){a.classList.remove("active");a.removeAttribute("aria-current")});
-      var al=map[best];if(al){al.classList.add("active");al.setAttribute("aria-current","true")}
-    }
-  },{rootMargin:"-10% 0px -70% 0px",threshold:th});
-  var mc=document.getElementById("mainContent");if(!mc)return;
-  mc.querySelectorAll("section[id],article[id]").forEach(function(e){obs.observe(e)});
+    entries.forEach(function(e){
+      if(e.intersectionRatio>br){br=e.intersectionRatio;best=e.target.id}
+    });
+    if(best)setActiveTab(best);
+  },{rootMargin:"-20% 0px -60% 0px",threshold:[0,0.1,0.3,0.5,0.8]});
+
+  sections.forEach(function(s){observer.observe(s)});
+
+  function setActiveTab(id){
+    tabs.forEach(function(t){
+      t.classList[t.getAttribute("data-theme-id")===id?"add":"remove"]("active");
+    });
+  }
 }
 
-/* ---- Sidebar Nav Click ---- */
-function initSidebarNav(){
+/* ---- Evidence Toggles ---- */
+function initEvidenceToggles(){
+  document.addEventListener("click",function(e){
+    var btn=e.target.closest(".evidence-toggle");if(!btn)return;
+    var targetId=btn.getAttribute("data-target");
+    var detail=document.getElementById(targetId);
+    if(detail){
+      var isOpen=detail.classList.contains("visible");
+      if(isOpen){detail.classList.remove("visible");btn.classList.remove("open")}
+      else{detail.classList.add("visible");btn.classList.add("open")}
+    }
+  });
+}
+
+/* ---- Scroll-Spy (for segment anchors in timeline) ---- */
+function initScrollSpy(){
+  // Scroll spy is now handled by theme tab observer above.
+  // Keep this for backward compatibility with any sidebar nav.
   var sb=document.getElementById("sidebar");if(!sb)return;
-  sb.addEventListener("click",function(e){
-    var a=e.target.closest("a[href^='#']");if(!a)return;e.preventDefault();
-    var t=document.getElementById(a.getAttribute("href").slice(1));
-    if(t){t.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",a.getAttribute("href"))}
+  var links=sb.querySelectorAll("a[href^='#']");if(!links.length)return;
+  links.forEach(function(a){
+    a.addEventListener("click",function(e){
+      e.preventDefault();
+      var t=document.getElementById(a.getAttribute("href").slice(1));
+      if(t){t.scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",a.getAttribute("href"))}
+    });
   });
 }
 
@@ -134,8 +177,7 @@ function initKeyboardShortcuts(){
       if(si&&document.activeElement===si){si.value="";si.blur();si.dispatchEvent(new Event("input"))}return;
     }
     if(!inp&&(e.key==="j"||e.key==="k")){
-      var mc=document.getElementById("mainContent");if(!mc)return;
-      var sec=mc.querySelectorAll("section[id],article[id]");if(!sec.length)return;
+      var sec=document.querySelectorAll(".theme-section");if(!sec.length)return;
       var ci=-1,st=scrollY+innerHeight/3;
       for(var i=0;i<sec.length;i++){if(sec[i].offsetTop>=st){ci=i;break}}
       if(ci===-1)ci=sec.length-1;
@@ -144,14 +186,6 @@ function initKeyboardShortcuts(){
       sec[ni].scrollIntoView({behavior:"smooth",block:"start"});
     }
   });
-}
-
-/* ---- Collapse / Expand ---- */
-function initCollapseControls(){
-  function all(){return document.querySelectorAll("#mainContent details,.supplemental details")}
-  var eb=document.getElementById("expandAll"),cb=document.getElementById("collapseAll");
-  if(eb)eb.addEventListener("click",function(){all().forEach(function(d){d.setAttribute("open","")})});
-  if(cb)cb.addEventListener("click",function(){all().forEach(function(d){d.removeAttribute("open")})});
 }
 
 /* ---- Reading Progress ---- */

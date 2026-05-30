@@ -563,9 +563,12 @@ MINDMAP_DATA.topics.forEach(t => {
 // BUILD TREE STRUCTURE
 // ============================================================
 function buildTree() {
+  // Use central_thesis for root name if available (new format)
+  const rootName = MINDMAP_DATA.central_thesis || MINDMAP_DATA.title;
+  const rootGuest = MINDMAP_DATA.central_thesis ? MINDMAP_DATA.guest : '';
   const root = {
-    name: MINDMAP_DATA.title,
-    guest: MINDMAP_DATA.guest,
+    name: rootName,
+    guest: rootGuest,
     children: [],
     type: 'root',
     color: '#6366f1',
@@ -582,16 +585,16 @@ function buildTree() {
       color: topic.color,
       type: 'topic',
       depth: 1,
-      _collapsed: true, // collapsed by default (only topics visible)
+      _collapsed: true,
       _id: `topic-${i}`,
       children: []
     };
 
-    // Insights as ring 2
-    topic.insights.forEach((insight, j) => {
+    // Insights as ring 2 (supports both old {text, timestamp} and new {text, evidence[]})
+    (topic.insights || []).forEach((insight, j) => {
       const insightNode = {
-        name: insight.text,
-        timestamp: insight.timestamp,
+        name: insight.text || insight.claim || '',
+        timestamp: insight.timestamp || '',
         type: 'insight',
         color: topic.color,
         depth: 2,
@@ -599,15 +602,33 @@ function buildTree() {
         _id: `topic-${i}-insight-${j}`,
         children: []
       };
+
+      // Evidence items as ring 3 (new format: evidence[] under each insight)
+      (insight.evidence || []).forEach((ev, k) => {
+        const evText = ev.full_text || ev.text || '';
+        const evNode = {
+          name: evText,
+          timestamp: ev.timestamp || '',
+          type: ev.type === 'data_point' ? 'data_point' : 'quote',
+          subtype: ev.type || 'quote',
+          color: topic.color,
+          depth: 3,
+          _collapsed: true,
+          _id: `topic-${i}-insight-${j}-evidence-${k}`,
+          children: []
+        };
+        insightNode.children.push(evNode);
+      });
+
       topicNode.children.push(insightNode);
     });
 
-    // Quotes as ring 2/3 (under each topic)
-    topic.quotes.forEach((quote, k) => {
+    // Legacy quotes support (old format: quotes[] at topic level)
+    (topic.quotes || []).forEach((quote, k) => {
       const quoteNode = {
         name: quote.text,
         timestamp: quote.timestamp,
-        speaker: quote.speaker,
+        speaker: quote.speaker || '',
         type: 'quote',
         color: topic.color,
         depth: 2,
@@ -618,8 +639,8 @@ function buildTree() {
       topicNode.children.push(quoteNode);
     });
 
-    // Data points as ring 2/3
-    topic.data_points.forEach((dp, l) => {
+    // Legacy data points support (old format)
+    (topic.data_points || []).forEach((dp, l) => {
       const dpNode = {
         name: dp.text,
         timestamp: dp.timestamp,
@@ -638,6 +659,54 @@ function buildTree() {
   });
 
   return root;
+}
+
+// ============================================================
+// CROSS-LINK RENDERING
+// ============================================================
+function renderCrossLinks(svg, nodesMap, crossLinks) {
+  if (!crossLinks || !crossLinks.length) return;
+
+  const crossGroup = svg.select('#cross-links-group');
+  if (crossGroup.empty()) {
+    svg.insert('g', ':first-child').attr('id', 'cross-links-group');
+  }
+  const g = svg.select('#cross-links-group');
+  g.selectAll('*').remove();
+
+  crossLinks.forEach(cl => {
+    const [srcTopicIdx, srcInsightIdx] = (cl.source || '').split('.').map(Number);
+    const [tgtTopicIdx, tgtInsightIdx] = (cl.target || '').split('.').map(Number);
+
+    if (isNaN(srcTopicIdx) || isNaN(tgtTopicIdx)) return;
+
+    const srcNode = nodesMap[`topic-${srcTopicIdx}-insight-${srcInsightIdx}`];
+    const tgtNode = nodesMap[`topic-${tgtTopicIdx}-insight-${tgtInsightIdx}`];
+
+    if (!srcNode || !tgtNode) return;
+
+    const relation = cl.relation || 'supports';
+    const dashPattern = relation === 'contrasts' ? '6,4' : relation === 'extends' ? '3,5' : '2,2';
+
+    g.append('path')
+      .attr('d', `M ${srcNode._rx} ${srcNode._ry} Q ${(srcNode._rx + tgtNode._rx) / 2} ${(srcNode._ry + tgtNode._ry) / 2 - 40} ${tgtNode._rx} ${tgtNode._ry}`)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(255,255,255,0.15)')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', dashPattern)
+      .attr('pointer-events', 'none');
+
+    // Small label at midpoint
+    const mx = (srcNode._rx + tgtNode._rx) / 2;
+    const my = (srcNode._ry + tgtNode._ry) / 2 - 50;
+    g.append('text')
+      .attr('x', mx).attr('y', my)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'rgba(255,255,255,0.2)')
+      .attr('font-size', '8px')
+      .attr('pointer-events', 'none')
+      .text(relation);
+  });
 }
 
 // ============================================================
@@ -800,7 +869,13 @@ function buildTree() {
   // Label for node
   function nodeLabel(d) {
     if (!d || !d.data) return '';
-    if (d.data.type === 'root') return MINDMAP_DATA.guest.length ? MINDMAP_DATA.title + '\n' + MINDMAP_DATA.guest : MINDMAP_DATA.title;
+    if (d.data.type === 'root') {
+      // New format: central_thesis takes priority
+      if (MINDMAP_DATA.central_thesis) {
+        return MINDMAP_DATA.central_thesis;
+      }
+      return MINDMAP_DATA.guest.length ? MINDMAP_DATA.title + '\n' + MINDMAP_DATA.guest : MINDMAP_DATA.title;
+    }
     if (d.data.type === 'topic') return d.data.name;
     // Truncate long text for leaf nodes
     const maxLen = 35;
@@ -809,6 +884,10 @@ function buildTree() {
 
   function renderTree() {
     const root = computeLayout(treeData);
+
+    // Build nodes map for cross-link lookup
+    const nodesMap = {};
+    root.descendants().forEach(d => { nodesMap[d.data._id] = d; });
 
     // Collect all visible nodes
     const nodes = root.descendants().reverse();
@@ -942,6 +1021,9 @@ function buildTree() {
       .transition().duration(300)
       .style('opacity', 0)
       .remove();
+
+    // --- CROSS-LINKS ---
+    renderCrossLinks(svg, nodesMap, MINDMAP_DATA.cross_links || []);
 
     // --- INTERACTIONS ---
     // Click to expand/collapse
