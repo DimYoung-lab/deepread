@@ -598,7 +598,7 @@ def write_output(html: str, output_path: str) -> None:
     try:
         out = Path(output_path)
         out.write_text(html, encoding="utf-8")
-        print(f"Cards written to: {out.resolve()}", file=sys.stderr)
+        print(f"学习卡片已写入: {out.resolve()}", file=sys.stderr)
     except OSError as exc:
         print(f"Error writing to {output_path}: {exc}", file=sys.stderr)
         raise

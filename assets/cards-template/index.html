@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{TITLE}} — Learning Cards</title>
-<meta name="description" content="Interactive learning cards — {{TITLE}}">
+<title>{{TITLE}} — 学习卡片</title>
+<meta name="description" content="交互式学习卡片 — {{TITLE}}">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,11 +15,11 @@
   <span>{{TITLE_SHORT}}</span>
   <div class="top-bar-right">
     <span id="cardCounter"></span>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换亮色/暗色主题">🌓</button>
   </div>
 </div>
 
-<nav class="nav-dots" id="navDots" aria-label="Card navigation">
+<nav class="nav-dots" id="navDots" aria-label="卡片导航">
   {{NAV_DOTS_HTML}}
 </nav>
 
@@ -30,9 +30,9 @@
 </main>
 
 <div class="bottom-nav" id="bottomNav">
-  <button id="prevCard" aria-label="Previous card">← Prev</button>
+  <button id="prevCard" aria-label="上一张卡片">← 上一张</button>
   <span class="card-counter" id="mobileCounter"></span>
-  <button id="nextCard" aria-label="Next card">Next →</button>
+  <button id="nextCard" aria-label="下一张卡片">下一张 →</button>
 </div>
 
 <script src="script.js"></script>

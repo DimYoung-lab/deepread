@@ -154,7 +154,7 @@ For each segment, extract along these six dimensions (detailed in [references/an
 | Dimension | Focus | Agent Prompt Key |
 |-----------|-------|-----------------|
 | 1. Key Topics & Concepts | What is being discussed | Identify structural topics, importance levels |
-| 2. Insights & Arguments | Original thinking | Extract frameworks, causal claims, mental models |
+| 2. Insights & Arguments | Original thinking | Extract 分析框架 / 反直觉洞察 / 因果论断 / 心智模型 / 类比 |
 | 3. Golden Quotes | Memorable expression | Find verbatim quotable passages with timestamps |
 | 4. Data Points & Facts | Evidence | Capture statistics, entities, benchmarks, papers |
 | 5. Contradictions & Tensions | Uncertainty | Find self-contradictions, qualifications, doubts |
@@ -315,7 +315,7 @@ Generate using the script with `visual_content.json` (primary) and `knowledge.js
 python scripts/generate_mindmap.py visual_content.json --output map-[guest-lastname]-[YYYYMMDD].html --knowledge-json knowledge.json
 ```
 
-Produces a self-contained interactive radial mind map (D3.js via CDN). **Hierarchy**: Central thesis node → Theme ring (7 cross-cutting themes) → Argument ring → Evidence ring (mixed quote circles + data-point diamonds). **Visual encoding**: Argument node size scales by importance (1-5), prediction nodes use dashed borders, data-point nodes render as diamonds. **Features**: Cross-theme connection lines (supports/contrasts/extends), rich tooltips (type badge + explanation + confidence stars), stats bar in title. Falls back to segment-based hierarchy if `map_data` is unavailable.
+Produces a self-contained interactive radial mind map (D3.js via CDN). **Hierarchy**: Central thesis node → Theme ring (7 cross-cutting themes) → Argument ring → Evidence ring (mixed quote circles + data-point diamonds). **Visual encoding**: Argument node size scales by importance (1-5), prediction nodes use dashed borders, data-point nodes render as diamonds. **Features**: Cross-theme connection lines (supports/contrasts/extends), rich tooltips with Chinese type badges (反直觉洞察/分析框架/心智模型/因果论断/类比) and explanation text, stats bar in title. Falls back to segment-based hierarchy if `map_data` is unavailable.
 
 ### Output 5: Social Media Post
 
@@ -365,7 +365,7 @@ output/
 After generating all outputs, run the verification checks in [references/quality-checklist.md](references/quality-checklist.md). At minimum:
 
 1. **Open the Learning Cards** (Output 3) in a browser. Check: card navigation (arrows/swipe), theme toggle, expandable sections, role tabs, zero JS errors in console.
-2. **Open the mind map** (Output 4) in a browser. Check: central thesis node renders, theme ring with 7 nodes, click to expand works, Expand All renders all evidence nodes, cross-theme connection lines visible, zero JS errors.
+2. **Open the mind map** (Output 4) in a browser. Check: central thesis node renders, theme ring with 7 nodes, click to expand works, "全部展开" renders all evidence nodes, cross-theme connection lines visible, zero JS errors.
 3. **Spot-check the TL;DR** (Output 1): verify all 6 sections present, 5-7 takeaways, quotes have timestamps.
 4. **Spot-check the Deep-Dive** (Output 2): verify all 8 sections present, all segments covered, 3+ quotes spot-checked against knowledge.json for verbatim accuracy.
 5. **Spot-check the Social Media Post** (Output 5): verify 3-5 takeaways, 1-2 quote-card-ready quotes, hashtags present, platform variants present.

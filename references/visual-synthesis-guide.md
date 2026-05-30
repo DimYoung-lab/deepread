@@ -215,7 +215,7 @@ For each theme, select:
             "claim": "支撑论点（≤50字符）",
             "importance": 5,
             "explanation": "完整解释文本（tooltip中显示）",
-            "insight_type": "counterintuitive",
+            "insight_type": "反直觉洞察",
             "evidence": [
               { "type": "quote", "text": "精选引文（≤120字符，tooltip显示全文）", "full_text": "完整引文", "timestamp": "00:00:45" },
               { "type": "data_point", "text": "数据点摘要", "timestamp": "" }

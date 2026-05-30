@@ -892,29 +892,29 @@ def main(argv: Optional[list[str]] = None) -> None:
     cross_link_count = len(mindmap_data.get("cross_links", []))
     central_thesis = mindmap_data.get("central_thesis", "")
 
-    used_map_data = "map_data" if central_thesis else "segments (fallback)"
+    used_map_data = "map_data" if central_thesis else "segments (legacy fallback)"
     parts: list[str] = [
-        f"Generated {args.output}  "
-        f"({topic_count} topic{'s' if topic_count != 1 else ''}, "
-        f"{total_insights} insight{'s' if total_insights != 1 else ''}",
+        f"已生成 {args.output}  "
+        f"({topic_count} 个主题, "
+        f"{total_insights} 个论点",
     ]
     if total_evidence:
         parts.append(
-            f"{total_evidence} evidence node{'s' if total_evidence != 1 else ''}"
+            f"{total_evidence} 条证据"
         )
     if total_quotes:
         parts.append(
-            f"{total_quotes} quote{'s' if total_quotes != 1 else ''}"
+            f"{total_quotes} 条引文"
         )
     if total_data_points:
         parts.append(
-            f"{total_data_points} data point{'s' if total_data_points != 1 else ''}"
+            f"{total_data_points} 个数据点"
         )
     if cross_link_count:
         parts.append(
-            f"{cross_link_count} cross-link{'s' if cross_link_count != 1 else ''}"
+            f"{cross_link_count} 条交叉连线"
         )
-    parts.append(f"source: {used_map_data})")
+    parts.append(f"数据源: {used_map_data})")
     print("  ".join(parts))
 
 

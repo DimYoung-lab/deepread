@@ -41,12 +41,12 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 1 | **Zero JS errors** | Open browser console, load page | No errors |
 | 2 | **7 theme nodes visible (or 12 segment topics if legacy fallback)** | Count topic nodes in legend or visual | 7 themes (or 12 segments in legacy) with labels and "+N" child count badges |
 | 3 | **Node expansion works** | Click a topic node | Child argument/insight nodes animate into view; diamond-shaped data-point nodes visible; prediction nodes with dashed borders |
-| 4 | **Expand All works** | Click "Expand All" button | All argument nodes visible (~34 arguments + 68 evidence for a full interview in new format; >700 circles for legacy format) |
-| 5 | **Collapse All works** | Click "Collapse All" button | Returns to topic-only view (~8 circles: 1 root + 7 themes) |
+| 4 | **全部展开 works** | 点击「全部展开」按钮 | All argument nodes visible (~34 arguments + 68 evidence for a full interview in new format; >700 circles for legacy format) |
+| 5 | **全部收起 works** | 点击「全部收起」按钮 | Returns to topic-only view (~8 circles: 1 root + 7 themes) |
 | 6 | **Search filters nodes** | Type a term in search box | Matching nodes remain visible/highlighted, non-matching dim or hide |
 | 7 | **Zoom/Pan works** | Mouse wheel scroll, click-drag on canvas | Map zooms in/out smoothly, pans with drag |
-| 8 | **Reset View works** | Click "Reset View" button or double-click canvas | Returns to default zoom and centering |
-| 9 | **Tooltips on hover** | Hover over argument node | Tooltip shows type badge, explanation text, importance stars (★) |
+| 8 | **重置视图 works** | 点击「重置视图」按钮或双击画布 | Returns to default zoom and centering |
+| 9 | **Tooltips on hover** | Hover over argument node | Tooltip shows Chinese type badge (e.g., 反直觉洞察/因果论断/心智模型) and explanation text. All node types at same depth show consistent tooltip format — no per-node star ratings (importance is encoded in node size). |
 | 10 | **Title bar complete** | Check top bar | Shows interview title, guest name, date, duration, AND stats bar (insight/quote/prediction counts) |
 | 11 | **No SVG interception** | Click several topic nodes that are visually close to link paths | All clicks register; `.link { pointer-events: none }` in CSS |
 | 12 | **Importance sizing** | Check argument node sizes | Higher importance (5) nodes visibly larger than lower (3) |

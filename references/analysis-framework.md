@@ -78,11 +78,11 @@ The guest's **original thinking** — claims, frameworks, mental models, and rea
 
 | Type | Description | Signal Phrases |
 |------|-------------|----------------|
-| **framework** | A structured way of thinking about a problem | "I think about this in three layers...", "The way I frame it is..." |
-| **causal_claim** | An assertion about cause and effect | "X leads to Y because...", "The real reason for Z is..." |
-| **counterintuitive** | A claim that contradicts conventional wisdom | "People think X but actually Y", "The surprising thing is..." |
-| **analogy** | A comparison that illuminates a concept | "It's like...", "Think of it as...", "The closest parallel is..." |
-| **mental_model** | A reusable thinking tool or heuristic | "My rule of thumb is...", "I always ask myself..." |
+| **分析框架** (framework) | A structured way of thinking about a problem | "I think about this in three layers...", "The way I frame it is..." |
+| **因果论断** (causal_claim) | An assertion about cause and effect | "X leads to Y because...", "The real reason for Z is..." |
+| **反直觉洞察** (counterintuitive) | A claim that contradicts conventional wisdom | "People think X but actually Y", "The surprising thing is..." |
+| **类比** (analogy) | A comparison that illuminates a concept | "It's like...", "Think of it as...", "The closest parallel is..." |
+| **心智模型** (mental_model) | A reusable thinking tool or heuristic | "My rule of thumb is...", "I always ask myself..." |
 
 ### How to Identify
 
@@ -107,7 +107,7 @@ The guest's **original thinking** — claims, frameworks, mental models, and rea
     {
       "claim": "Scaling laws have not hit a fundamental wall — what people are seeing is a data wall, which is an engineering problem, not a theoretical limit.",
       "explanation": "The guest argues that the apparent slowdown in pre-training improvements is caused by running out of high-quality training data, not by any limit in model architecture. He points to continued improvements from better data curation and synthetic data generation as evidence that the scaling paradigm still works.",
-      "type": "counterintuitive",
+      "type": "反直觉洞察",
       "source_timestamp": "00:32:15",
       "confidence": "high",
       "related_insights": []
@@ -120,7 +120,7 @@ The guest's **original thinking** — claims, frameworks, mental models, and rea
 |-------|------|-------------|
 | `claim` | string | The core assertion, one sentence, in the guest's own framing |
 | `explanation` | string | 2–4 sentences expanding the reasoning, evidence, and context |
-| `type` | enum | One of: `framework`, `causal_claim`, `counterintuitive`, `analogy`, `mental_model` |
+| `type` | enum | 以下之一：`分析框架`、`因果论断`、`反直觉洞察`、`类比`、`心智模型` |
 | `source_timestamp` | string | Primary timestamp for this insight |
 | `confidence` | enum: `high` / `medium` / `tentative` | How confidently the guest asserts this |
 | `related_insights` | array of strings | IDs of related insights (cross-references within the segment) |

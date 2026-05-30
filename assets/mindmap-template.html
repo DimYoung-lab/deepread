@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Knowledge Mind Map — Interview-Based Learning</title>
+<title>知识图谱 — Interview-Based Learning</title>
 <style>
   :root {
     --bg-deep: #0f0f23;
@@ -251,6 +251,8 @@
   .tt-type.insight { background: rgba(139,92,246,0.2); color: #a78bfa; }
   .tt-type.quote { background: rgba(245,158,11,0.2); color: #fbbf24; }
   .tt-type.prediction { background: rgba(245,158,11,0.2); color: #fbbf24; }
+  .tt-type.data { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .tt-type.generic { background: rgba(255,255,255,0.08); color: #94a3b8; }
 
   /* Legend */
   #legend {
@@ -357,7 +359,7 @@
 
 <div id="search-box">
   <span class="search-icon">🔍</span>
-  <input type="text" id="search-input" placeholder="Search nodes...">
+  <input type="text" id="search-input" placeholder="搜索节点...">
 </div>
 
 <div id="map-container"></div>
@@ -365,14 +367,14 @@
 <div id="tooltip"></div>
 
 <div id="legend">
-  <h3>Topics</h3>
+  <h3>主题</h3>
   <div id="legend-items"></div>
 </div>
 
 <div id="controls">
-  <button class="ctrl-btn active" id="btn-expand-all" title="Expand all branches">Expand All</button>
-  <button class="ctrl-btn" id="btn-collapse-all" title="Collapse to topics only">Collapse All</button>
-  <button class="ctrl-btn" id="btn-reset" title="Reset zoom &amp; position">⟲ Reset View</button>
+  <button class="ctrl-btn active" id="btn-expand-all" title="展开所有分支">全部展开</button>
+  <button class="ctrl-btn" id="btn-collapse-all" title="收起至仅主题">全部收起</button>
+  <button class="ctrl-btn" id="btn-reset" title="重置缩放与位置">⟲ 重置视图</button>
 </div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -552,9 +554,9 @@ document.getElementById('title-duration').innerHTML = '&#x23F1;&#xFE0F; ' + MIND
 
 if (MINDMAP_DATA.stats) {
   document.getElementById('title-stats').textContent =
-    MINDMAP_DATA.stats.insight_count + ' insights · ' +
-    MINDMAP_DATA.stats.quote_count + ' quotes · ' +
-    MINDMAP_DATA.stats.prediction_count + ' predictions';
+    MINDMAP_DATA.stats.insight_count + ' 个洞察 · ' +
+    MINDMAP_DATA.stats.quote_count + ' 条引文 · ' +
+    MINDMAP_DATA.stats.prediction_count + ' 个预测';
 }
 
 // ============================================================
@@ -570,9 +572,9 @@ MINDMAP_DATA.topics.forEach(t => {
 
 // Add visual distinction legend entries
 var visualLegend = [
-  { symbol: '●', label: 'Argument', color: '#a78bfa' },
-  { symbol: '◇', label: 'Data point', color: '#60a5fa' },
-  { symbol: '◌', label: 'Prediction', color: '#f59e0b' }
+  { symbol: '●', label: '论点', color: '#a78bfa' },
+  { symbol: '◇', label: '数据点', color: '#60a5fa' },
+  { symbol: '◌', label: '预测', color: '#f59e0b' }
 ];
 var legendSep = document.createElement('div');
 legendSep.style.cssText = 'width:100%;height:1px;background:rgba(255,255,255,0.08);margin:4px 0;';
@@ -587,6 +589,27 @@ visualLegend.forEach(function(vl) {
 // ============================================================
 // BUILD TREE STRUCTURE
 // ============================================================
+
+// Chinese display names for insight_type values (fallback for existing English data)
+var INSIGHT_TYPE_CN = {
+  'counterintuitive': '反直觉洞察',
+  'framework': '分析框架',
+  'mental_model': '心智模型',
+  'causal_claim': '因果论断',
+  'analogy': '类比',
+  'insight': '洞察',
+  'claim': '论点'
+};
+
+// Chinese labels for each node type at depth 2
+var NODE_TYPE_CN = {
+  'insight': '洞察',
+  'prediction': '预测',
+  'data_point': '数据',
+  'quote': '引文',
+  'statistic': '数据'
+};
+
 function buildTree() {
   // Use central_thesis for root name if available (new format)
   const rootName = MINDMAP_DATA.central_thesis || MINDMAP_DATA.title;
@@ -1124,7 +1147,7 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
           showTooltip(event, {
             text: MINDMAP_DATA.title,
             subtitle: MINDMAP_DATA.guest,
-            type: 'interview',
+            type_css: 'interview',
             time: MINDMAP_DATA.duration
           });
           return;
@@ -1133,7 +1156,7 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
           showTooltip(event, {
             text: d.data.name,
             subtitle: d.data.time_range,
-            type: 'topic',
+            type_css: 'topic',
             time: d.data.time_range,
             summary: d.data.summary,
             color: d.data.color
@@ -1141,19 +1164,37 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
           return;
         }
         if (d.data.type === 'insight') {
+          var rawType = d.data.insight_type || 'insight';
           showTooltip(event, {
-            type: d.data.insight_type || 'insight',
+            type_css: 'insight',
+            type_cn: INSIGHT_TYPE_CN[rawType] || rawType,
             timestamp: d.data.timestamp,
             text: d.data.name,
             explanation: d.data.explanation || '',
-            importance: d.data.importance || 3,
+            color: d.data.color
+          });
+        } else if (d.data.type === 'prediction') {
+          showTooltip(event, {
+            type_css: 'prediction',
+            type_cn: '预测',
+            text: d.data.name,
+            timestamp: d.data.timestamp,
+            color: d.data.color
+          });
+        } else if (d.data.type === 'data_point') {
+          showTooltip(event, {
+            type_css: 'data',
+            type_cn: '数据',
+            text: d.data.name,
+            timestamp: d.data.timestamp,
             color: d.data.color
           });
         } else {
           showTooltip(event, {
+            type_css: 'quote',
+            type_cn: '引文',
             text: d.data.name,
             timestamp: d.data.timestamp,
-            type: d.data.type === 'quote' ? 'quote' : d.data.subtype || d.data.type,
             speaker: d.data.speaker,
             color: d.data.color
           });
@@ -1200,14 +1241,14 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
     if (info.time) {
       html += `<span class="tt-time">${info.time}</span>`;
     }
-    if (info.type && info.type !== 'topic' && info.type !== 'interview') {
-      html += `<span class="tt-type ${info.type}">${info.type}</span>`;
+    if (info.type_cn && info.type_css !== 'topic' && info.type_css !== 'interview') {
+      html += `<span class="tt-type ${info.type_css}">${info.type_cn}</span>`;
     }
     if (info.speaker) {
       html += `<div class="tt-speaker">— ${info.speaker}</div>`;
     }
     html += `<div class="tt-text">${info.text}</div>`;
-    if (info.subtitle && info.type === 'topic') {
+    if (info.subtitle && info.type_css === 'topic') {
       html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:2px;">${info.subtitle}</div>`;
     }
     if (info.summary) {
@@ -1216,15 +1257,8 @@ function renderCrossLinks(svg, nodesMap, crossLinks) {
     if (info.explanation) {
       html += `<div style="color:#94a3b8;font-size:0.72rem;margin-top:4px;line-height:1.4;font-style:italic;">${info.explanation}</div>`;
     }
-    if (info.importance) {
-      html += `<div style="margin-top:4px;display:flex;gap:2px;">`;
-      for (var impI = 0; impI < 5; impI++) {
-        html += `<span style="color:${impI < info.importance ? '#fbbf24' : '#374151'};font-size:10px;">★</span>`;
-      }
-      html += `</div>`;
-    }
-    if (info.subtitle && info.type === 'interview') {
-      html += `<div style="color:#94a3b8;font-size:0.78rem;margin-top:2px;">Guest: ${info.subtitle}</div>`;
+    if (info.subtitle && info.type_css === 'interview') {
+      html += `<div style="color:#94a3b8;font-size:0.78rem;margin-top:2px;">嘉宾: ${info.subtitle}</div>`;
     }
     tooltip.innerHTML = html;
     tooltip.classList.add('visible');
