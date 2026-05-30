@@ -13,7 +13,7 @@ requirements, and formatting conventions.
 |---|--------|--------|---------------|------------------|
 | 1 | TL;DR Quick Summary | Markdown | 500–800 words | Time-pressed readers scanning for signal |
 | 2 | Deep-Dive Report | Markdown | Comprehensive (full transcript coverage) | Researchers, analysts, domain specialists |
-| 3 | Interactive HTML Report | HTML/CSS/JS | Self-contained single file | Engaged readers who navigate non-linearly |
+| 3 | Learning Cards | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
 | 4 | Knowledge Map | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
 
 ---
@@ -274,146 +274,128 @@ When inserting a data point callout, classify it:
 
 ---
 
-## 3. Interactive HTML Report Specification
+## 3. Learning Cards Specification
 
-**Purpose:** A self-contained, single-file HTML page that wraps the Deep-Dive
-Report content with navigation, search, theming, and interaction affordances.
-No build step, no external dependencies (all CSS/JS inline).
+**Purpose:** A mobile-first card deck that presents interview knowledge as a
+swipeable, tap-through experience — 9 cards total, each building on the last
+to form a complete narrative arc. Optimized for busy professionals absorbing
+insights in short bursts.
 
-**File:** `interview-report.html` — fully standalone, openable directly in a
-browser.
+**File:** `cards-[guest-lastname]-[YYYYMMDD].html`
 
-### Required Features
+### Card Deck Structure (9 Cards Total)
 
-#### 3.1 Layout & Navigation
+| Card | Type | Purpose |
+|------|------|---------|
+| 1 | Hero Cover | Guest name, show name, date, duration, dominant theme |
+| 2 | Theme Card 1 | First cross-cutting theme from the interview |
+| 3 | Theme Card 2 | Second cross-cutting theme |
+| 4 | Theme Card 3 | Third cross-cutting theme |
+| 5 | Theme Card 4 | Fourth cross-cutting theme |
+| 6 | Theme Card 5 | Fifth cross-cutting theme |
+| 7 | Theme Card 6 | Sixth cross-cutting theme |
+| 8 | Theme Card 7 | Seventh cross-cutting theme |
+| 9 | Closing Card | Key takeaways summary, reading guide links, share actions |
 
-- **Fixed left sidebar** (280px wide, `position: sticky` on desktop) containing:
-  - Report title (linked — scrolls to top)
-  - Section navigation links (generated from `<h2>` and `<h3>` headings)
-  - Scroll-spy active state: highlight the nav item corresponding to the
-    currently visible section using `IntersectionObserver`
-  - Search input field at the top of the sidebar
-- **Main content area**: fluid width, max-width 800px, centered with padding.
-- **Responsive breakpoint at 768px**: sidebar collapses to a horizontal
-  top navigation bar. On mobile, the sidebar is hidden by default with a
-  hamburger toggle.
+### Card Anatomy
 
-#### 3.2 Section Collapse
+Each card follows a fixed upper-half / lower-half layout:
 
-- All topic sections (chapters of the Deep Dive) are wrapped in
-  `<details>` / `<summary>` elements.
-- Sections are **open by default** on desktop, **collapsed by default**
-  on mobile.
-- "Expand All" and "Collapse All" buttons at the top of the content area
-  (hidden when all sections are already in the target state).
+```
+┌──────────────────────────┐
+│  Badge (theme category)  │  ← top of card
+│                          │
+│  Claim (bold headline)   │  ← 1–2 lines, large type
+│                          │
+│  Narrative paragraph     │  ← 2–4 sentences, readable prose
+│                          │
+│  Pull-quote              │  ← verbatim quote in italic, with timestamp
+│                          │
+│  ▼ Expand Evidence      │  ← toggle to reveal supporting data
+│  ┌──────────────────┐    │
+│  │ Data point 1     │    │  ← hidden until expanded
+│  │ Data point 2     │    │
+│  │ Cross-reference  │    │
+│  └──────────────────┘    │
+└──────────────────────────┘
+```
 
-#### 3.3 Search
+**Badge**: A small pill label indicating theme category (e.g., "Technology",
+"Policy", "Economics", "Culture"). Rendered in the theme's accent color.
 
-- **Search-as-you-type**: results update on every keystroke (debounced
-  150ms).
-- Search scope: all text content in the main content area.
-- **Real-time highlighting**: matching text is wrapped in `<mark>` elements
-  with a yellow background (`#ff0` in light mode, `#b8860b` in dark mode).
-- **Result count** displayed in the sidebar: "N matches" / "No matches".
-- Press `Escape` to clear the search and remove highlights.
-- Press `/` to focus the search input.
+**Claim**: A single bold sentence — the card's thesis. Large type, no more
+than 2 lines on a mobile screen at comfortable reading size.
 
-#### 3.4 Timestamp Badges
+**Narrative**: 2–4 sentences expanding on the claim. Written for a busy
+professional reader — concise, concrete, no jargon without explanation.
 
-- Styling: monospace font (`Consolas`, `Menlo`, or `monospace`),
-  pill-shaped (`border-radius: 999px`), inline-block.
-- Appearance: subtle background tone, small padding (2px 8px), font-size
-  0.85em.
-- Behavior: clicking a timestamp badge scrolls the page to the
-  corresponding quote or section and briefly highlights the target element
-  with a CSS animation (pulse or flash background, 1.5s duration).
+**Pull-quote**: One verbatim quote from the transcript that anchors the
+claim. Italic, with a left border accent and timestamp in `HH:MM:SS` format.
 
-#### 3.5 Theme Toggle
+**Expandable Evidence**: Hidden by default, revealed on tap/click. Contains
+supporting data points, statistics, and cross-references to other cards or
+the full Deep-Dive Report.
 
-- Two themes: **Light** and **Dark**.
-- Default: respect `prefers-color-scheme` media query. If no preference,
-  default to light.
-- Toggle button in the sidebar (sun/moon icon via CSS or Unicode).
-- Persist user choice to `localStorage` under key `theme-preference` with
-  values `"light"` or `"dark"`.
-- On page load, check localStorage first, then fall back to system
-  preference.
+### Navigation
 
-**Light theme palette:**
-- Background: `#ffffff`
+| Method | Behavior |
+|--------|----------|
+| Swipe left/right (touch) | Advance to next card / return to previous card |
+| Arrow Left / Arrow Right | Same as swipe |
+| Keys `1`–`9` | Jump directly to card by number |
+| `j` / `k` | Next card / previous card (vim-style) |
+| `Space` | Advance to next card |
+| `Home` / `End` | Jump to first card / last card |
+| `Escape` | Collapse any expanded evidence panel |
+
+- Navigation wraps: from card 9, advancing goes to card 1 (and vice versa).
+- A progress indicator (dots or a numbered pill, e.g. "3 / 9") is visible
+  at the bottom of each card.
+- Shortcuts are disabled when focus is in an input or textarea.
+
+### Responsive Design
+
+- **Mobile-first**: card fills the viewport (100vw x 100dvh), single card
+  visible at a time, large touch targets (minimum 44px).
+- **Tablet (768px+)**: card max-width 600px, centered with generous padding,
+  evidence panel may remain open as a side panel.
+- **Desktop (1024px+)**: card max-width 720px, evidence panel slides in
+  from the right or expands inline with smooth animation.
+
+### Theme Support
+
+- **Dark mode** and **Light mode** themes.
+- Default: respect `prefers-color-scheme`. Fallback to light.
+- Toggle button with sun/moon icon in the card footer or a fixed corner.
+- Persist preference to `localStorage` under key `card-theme-preference`.
+
+**Light palette:**
+- Card background: `#ffffff`
 - Text: `#1a1a2e`
-- Sidebar background: `#f8f9fa`
 - Accent: `#2563eb`
 - Quote border: `#94a3b8`
-- Code / timestamp background: `#e2e8f0`
+- Evidence panel background: `#f8f9fa`
 
-**Dark theme palette:**
-- Background: `#0f172a`
+**Dark palette:**
+- Card background: `#0f172a`
 - Text: `#e2e8f0`
-- Sidebar background: `#1e293b`
 - Accent: `#60a5fa`
 - Quote border: `#475569`
-- Code / timestamp background: `#334155`
+- Evidence panel background: `#1e293b`
 
-#### 3.6 Reading Progress Bar
+### Card Transition Animation
 
-- Thin bar (3–4px height) fixed to the top of the viewport, spanning the
-  full width.
-- Width percentage = `scrollY / (documentHeight - viewportHeight)`.
-- Color: accent color from the active theme.
-- `z-index: 1000` to stay above all content.
-
-#### 3.7 Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| `/` | Focus search input |
-| `j` | Scroll to next topic section |
-| `k` | Scroll to previous topic section |
-| `Escape` | Clear search and blur input |
-| `o` | Toggle expand/collapse all sections |
-| `t` | Toggle theme |
-
-- Shortcuts are disabled when focus is in an input or textarea.
-- Display a small toast or notification on first shortcut use to confirm.
-
-#### 3.8 Quote Block Styling
-
-- Quotes rendered as `<blockquote>` elements styled with:
-  - Left border (4px, accent-adjacent color)
-  - Slightly indented (margin-left: 1.5rem)
-  - Italic text
-  - Optional: subtle background tint (2–3% opacity)
-  - Timestamp badge positioned top-right or inline after the quote text
-
-#### 3.9 Data Point Cards
-
-- Each data point rendered as a `<div class="datapoint-card">` with:
-  - A visual type badge (one of: statistic, entity, benchmark, paper, event,
-    forecast)
-  - The data value in bold or emphasized text
-  - Source context in smaller text below
-  - Subtle border and background to distinguish from prose
-
-#### 3.10 Print Stylesheet
-
-- `@media print` rules:
-  - Hide sidebar, progress bar, search controls, theme toggle,
-    expand/collapse buttons
-  - Remove background colors (print on white)
-  - Use black text, serif font
-  - Expand all collapsed sections before print
-  - Remove shadows and border-radius
-  - Ensure page breaks avoid splitting sections
+- Transition between cards: a subtle slide (horizontal translate) with fade,
+  duration 250–350ms, easing `cubic-bezier(0.4, 0, 0.2, 1)`.
+- Respect `prefers-reduced-motion: reduce` — disable slide, use instant
+  cross-fade instead.
 
 ### CSS Architecture
 
-- Use CSS custom properties for all themeable values and switch them via a
-  `data-theme` attribute on `<html>`.
-- No CSS framework dependency. All styles handwritten or generated from
-  specification.
-- Mobile-first media queries: base styles for mobile, then `@media (min-width:
-  768px)` for desktop layout.
+- All styles inline in a `<style>` block. No external dependencies.
+- Use CSS custom properties for themeable values, switched via a `data-theme`
+  attribute on `<html>`.
+- Mobile-first media queries.
 
 ---
 
@@ -431,21 +413,23 @@ from CDN.
 
 ```
 Level 0 (Central Node):
-  └─ Interview Title + Guest Name
+  └─ Central Thesis — the interview's single overarching argument
      │
-Level 1 (Ring 1 — Topic Segments, 8–12 nodes):
-  └─ Topic A ─── Topic B ─── Topic C ─── ...
+Level 1 (Ring 1 — Cross-Cutting Themes, 5–8 nodes):
+  └─ Theme A ─── Theme B ─── Theme C ─── ...
      │              │              │
-Level 2 (Ring 2 — Key Insights, 3–8 per topic):
-  └─ Insight A1   └─ Insight B1   └─ Insight C1
-     Insight A2      Insight B2      Insight C2
-     Insight A3      Insight B3      ...
-     ...             ...
+Level 2 (Ring 2 — Supporting Arguments, 2–5 per theme):
+  └─ Argument A1   └─ Argument B1   └─ Argument C1
+     Argument A2      Argument B2      Argument C2
+     ...              ...              ...
      │
-Level 3 (Leaf Nodes — Quotes & Data Points):
-  └─ Quote A1a     DataPoint A2a
-     Quote A1b     DataPoint A2b
-     DataPoint A1c ...
+Level 3 (Ring 3 — Evidence, 2–5 per argument, plus cross-links):
+  └─ Quote A1a       Data A2a
+     Quote A1b       Data A2b
+     Statistic A1c   ...
+     │
+     └── Cross-links (dashed edges) connect related evidence
+         across different themes and arguments
 ```
 
 ### Visual Design
@@ -573,5 +557,5 @@ parts, where N is the number of topics (clamped to 8–12). Use:
 |--------|-----------------|
 | TL;DR | `tldr-[guest-lastname]-[YYYYMMDD].md` |
 | Deep-Dive | `report-[guest-lastname]-[YYYYMMDD].md` |
-| Interactive HTML | `report-[guest-lastname]-[YYYYMMDD].html` |
+| Learning Cards | `cards-[guest-lastname]-[YYYYMMDD].html` |
 | Knowledge Map | `map-[guest-lastname]-[YYYYMMDD].html` |

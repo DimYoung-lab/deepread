@@ -8,19 +8,17 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 ## Pre-Delivery Verification (MANDATORY)
 
-### HTML Report Checks
+### Learning Cards Checks
 
 | # | Check | Method | Expected |
 |---|-------|--------|----------|
 | 1 | **Zero JS errors** | Open browser console, load page | No `TypeError`, `ReferenceError`, or other red errors. Favicon 404 is ignorable. |
-| 2 | **Collapse/Expand works** | Click "Collapse All" → "Expand All" buttons | All sections close, then all re-open. Chevron rotates on click. |
-| 3 | **Search returns results** | Type a known term (e.g., guest name) | Matching text highlighted with `<mark>`, non-matching sections dimmed, result count badge updates |
-| 4 | **Search clears cleanly** | Press Escape after search | All highlights removed (>0 `<mark>` elements), no JS errors, all sections visible |
-| 5 | **Theme toggle works** | Click theme toggle, reload page | Theme switches light↔dark, preference persists across reload (localStorage) |
-| 6 | **Sidebar navigation** | Click each sidebar link | Page scrolls to correct section, URL hash updates to `#seg-seg_XX` |
-| 7 | **All 12 segments present** | Count sidebar links or content sections | 12 topic segments in sidebar and main content |
-| 8 | **Timestamps are clickable** | Click a timestamp badge | Page scrolls to and briefly highlights the referenced content |
-| 9 | **Keyboard shortcuts** | Press `/`, `j`, `k`, `Escape` | `/` focuses search, `j`/`k` navigate sections, `Escape` clears search |
+| 2 | **Card count (9)** | Count `.card` elements | 9 learning cards: 1 hero, 7 theme, 1 closing |
+| 3 | **Theme cards (7)** | Count `.card-theme` elements | 7 theme cards present |
+| 4 | **Keyboard navigation** | Press Left/Right arrow keys | Cards advance forward/backward smoothly |
+| 5 | **Swipe support** | Swipe left/right on touch device or emulator | Cards advance forward/backward |
+| 6 | **Role tabs** | Verify ARIA attributes | Cards container has `role="tablist"`, each card has `role="tabpanel"` |
+| 7 | **Expandable sections** | Click expand-toggle on a card | Card content expands/collapses, toggle icon rotates |
 
 ### Mind Map Checks
 
@@ -59,11 +57,11 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 **Symptom:** Collapse/Expand buttons have no effect. Console shows no errors but sections don't collapse.
 
-**Root Cause:** `generate_html.py` outputs `<section>` elements for topic segments, but the JS collapse/expand functions and CSS styling target `<details>` elements.
+**Root Cause:** `generate_cards.py` outputs `<section>` elements for topic segments, but the JS collapse/expand functions and CSS styling target `<details>` elements.
 
 **Fix:** Always use `<details open>` + `<summary>` for collapsible topic content. Supplemental sections (quotes collection, predictions table, cross-cutting themes) can remain as `<section>` since they're not collapsible.
 
-**Prevention:** After any change to `generate_html.py`, run Check #2 (Collapse/Expand) from HTML Report Checks above.
+**Prevention:** After any change to `generate_cards.py`, run Check #2 (Collapse/Expand) from HTML Report Checks above.
 
 ### Pitfall 2: DOM Node Reference After Removal (HIGH)
 
@@ -186,7 +184,7 @@ document.querySelectorAll('details[open]').length             // → count of op
 
 ### Pitfall 9: Playwright `file://` Protocol Blocked (LOW)
 
-**Symptom:** `playwright-cli open "file:///C:/path/to/report.html"` fails with "Access to file: protocol is blocked."
+**Symptom:** `playwright-cli open "file:///C:/path/to/cards.html"` fails with "Access to file: protocol is blocked."
 
 **Root Cause:** Playwright blocks `file://` URLs for security reasons.
 
@@ -194,7 +192,7 @@ document.querySelectorAll('details[open]').length             // → count of op
 ```bash
 cd output/yaoshunyu-20260530
 python -m http.server 8765 &
-playwright-cli open "http://localhost:8765/report.html"
+playwright-cli open "http://localhost:8765/cards.html"
 ```
 
 **Prevention:** Document in test procedures that a local HTTP server is required. The regression test script should include server startup.
@@ -230,7 +228,7 @@ After any change to the skill files, run this sequence:
 ```bash
 # 1. Verify Python scripts compile
 python -c "import py_compile; py_compile.compile('scripts/parse_docx.py', doraise=True)"
-python -c "import py_compile; py_compile.compile('scripts/generate_html.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
 
 # 2. Parse a known-good transcript
@@ -246,21 +244,24 @@ assert len(d['turns']) > 900
 print('Parse: OK')
 "
 
-# 4. Generate HTML from known-good knowledge.json
-python scripts/generate_html.py output/knowledge.json --output /tmp/test_report.html
+# 4. Generate cards HTML from visual_content.json
+python scripts/generate_cards.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_cards.html --knowledge output/knowledge.json
 
-# 5. Verify HTML contains key elements
+# 5. Verify cards HTML contains key elements
 python -c "
-with open('/tmp/test_report.html') as f: html = f.read()
-assert '<details open' in html, 'Missing <details> elements'
-assert '<summary class=\"segment-header\">' in html, 'Missing <summary> elements'
-assert 'report-title' in html
-assert 'searchInput' in html
-print('HTML: OK')
+with open('/tmp/test_cards.html') as f: html = f.read()
+assert '<div class=\"card\">' in html, 'Missing card elements'
+assert 'card-hero' in html, 'Missing card-hero'
+assert 'card-theme' in html, 'Missing card-theme'
+assert 'card-closing' in html, 'Missing card-closing'
+assert 'pull-quote' in html, 'Missing pull-quote'
+assert 'expand-toggle' in html, 'Missing expand-toggle'
+assert 'nav-dot' in html, 'Missing nav-dot'
+print('Cards HTML: OK')
 "
 
-# 6. Generate mind map from known-good knowledge.json
-python scripts/generate_mindmap.py output/knowledge.json --output /tmp/test_map.html
+# 6. Generate mind map from visual_content.json
+python scripts/generate_mindmap.py output/yaoshunyu-20260530/visual_content.json --knowledge-json output/knowledge.json --output /tmp/test_map.html
 
 # 7. Verify mind map contains MINDMAP_DATA
 python -c "

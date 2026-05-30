@@ -23,7 +23,7 @@
 |------|------|----------|
 | 📝 **TL;DR 摘要** | 7大核心观点 + 8条金句 | 5 分钟 |
 | 📄 **深度报告** | 完整逐话题分析，99+ 引用块 | 30-45 分钟 |
-| 🌐 **交互式 HTML** | 可搜索/暗色模式/时间戳导航 | 自由浏览 |
+| 🌐 **学习卡片** | 卡片滑动/主题切换/移动优先 | 通勤学习 |
 | 🗺️ **知识图谱** | D3.js 径向思维导图 | 可视化探索 |
 
 ---
@@ -71,7 +71,7 @@ transcripts/
 output/yaoshunyu-20260530/
 ├── tldr-yaoshunyu-20260530.md          ← 5分钟速读
 ├── report-yaoshunyu-20260530.md        ← 完整深度报告
-├── report-yaoshunyu-20260530.html      ← 交互式网页
+├── cards-yaoshunyu-20260530.html      ← 学习卡片
 └── map-yaoshunyu-20260530.html         ← 知识图谱
 ```
 
@@ -116,7 +116,7 @@ interview-based-learning/
 │   └── yaoshunyu.docx
 ├── scripts/                     ← Python 脚本
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
-│   ├── generate_html.py         ← knowledge.json → 交互式 HTML
+│   ├── generate_cards.py         ← visual_content.json → 学习卡片
 │   └── generate_mindmap.py      ← knowledge.json → 知识图谱
 ├── references/                  ← 按需加载的参考文档
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
@@ -125,15 +125,15 @@ interview-based-learning/
 │   └── quality-checklist.md     ← QA 检查清单 + 常见坑位
 ├── assets/                      ← 模板与静态资源
 │   ├── mindmap-template.html    ← D3.js 知识图谱模板
-│   └── report-template/
-│       ├── index.html           ← HTML 报告支架
-│       ├── style.css            ← 编辑级设计系统（亮/暗主题）
-│       └── script.js            ← 搜索/导航/主题/键盘快捷键
+│   └── cards-template/
+│       ├── index.html           ← 学习卡片支架
+│       ├── style.css            ← 卡片设计系统（亮/暗主题）
+│       └── script.js            ← 滑动/导航/主题/键盘快捷键
 └── output/                      ← 运行时输出（中间产物 gitignored）
     └── yaoshunyu-20260530/      ← 姚顺宇访谈示例输出
         ├── tldr-*.md
         ├── report-*.md
-        ├── report-*.html
+        ├── cards-*.html
         └── map-*.html
 ```
 
@@ -182,7 +182,7 @@ interview-based-learning/
 
 - **Python 3.10+** + `python-docx`（解析 .docx 文件）
 - **Claude Code**（流水线编排 + 知识提取 + Markdown 报告生成）
-- 浏览器（查看 HTML 报告和知识图谱，无需服务器）
+- 浏览器（查看学习卡片和知识图谱，无需服务器）
 
 安装 Python 依赖：
 
@@ -214,11 +214,11 @@ pip install python-docx
 ```bash
 # 回归测试（详见 references/quality-checklist.md）
 python -c "import py_compile; py_compile.compile('scripts/parse_docx.py', doraise=True)"
-python -c "import py_compile; py_compile.compile('scripts/generate_html.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
 ```
 
-并在浏览器中验证 HTML 报告和知识图谱的交互功能。
+并在浏览器中验证学习卡片和知识图谱的交互功能。
 
 ---
 
