@@ -1,6 +1,6 @@
 # Output Templates & Format Specifications
 
-This reference defines the four canonical output formats produced by the
+This reference defines the six canonical output formats produced by the
 interview-based-learning pipeline. Every generated artifact must conform to its
 template below — use these as the source of truth for structure, content
 requirements, and formatting conventions.
@@ -15,6 +15,8 @@ requirements, and formatting conventions.
 | 2 | Deep-Dive Report | Markdown | Comprehensive (full transcript coverage) | Researchers, analysts, domain specialists |
 | 3 | Learning Cards | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
 | 4 | Knowledge Map | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
+| 5 | Social Media Post | Markdown | 2000–4000 words | Social media followers, general public |
+| 6 | Short Podcast | Markdown + MP3 | 10–15 min audio | Commuters, multitaskers, auditory learners |
 
 ---
 
@@ -277,9 +279,9 @@ When inserting a data point callout, classify it:
 ## 3. Learning Cards Specification
 
 **Purpose:** A mobile-first card deck that presents interview knowledge as a
-swipeable, tap-through experience — 9 cards total, each building on the last
+card-based tap/scroll experience — exactly 9 cards, each building on the last
 to form a complete narrative arc. Optimized for busy professionals absorbing
-insights in short bursts.
+insights in short bursts on a phone.
 
 **File:** `cards-[guest-lastname]-[YYYYMMDD].html`
 
@@ -287,8 +289,8 @@ insights in short bursts.
 
 | Card | Type | Purpose |
 |------|------|---------|
-| 1 | Hero Cover | Guest name, show name, date, duration, dominant theme |
-| 2 | Theme Card 1 | First cross-cutting theme from the interview |
+| 1 | Hero Cover | Guest name, show name, date, duration, dominant theme; sets the hook |
+| 2 | Theme Card 1 | First cross-cutting theme — the most important insight |
 | 3 | Theme Card 2 | Second cross-cutting theme |
 | 4 | Theme Card 3 | Third cross-cutting theme |
 | 5 | Theme Card 4 | Fourth cross-cutting theme |
@@ -297,34 +299,39 @@ insights in short bursts.
 | 8 | Theme Card 7 | Seventh cross-cutting theme |
 | 9 | Closing Card | Key takeaways summary, reading guide links, share actions |
 
+Each Theme Card (2–8) distills one cross-cutting theme from the interview into
+a self-contained, card-sized insight. The cards are ordered by significance,
+not chronology — the most impactful theme comes first.
+
 ### Card Anatomy
 
-Each card follows a fixed upper-half / lower-half layout:
+Each card follows a fixed upper-half / lower-half layout optimized for
+thumb-reachable content on mobile:
 
 ```
-┌──────────────────────────┐
-│  Badge (theme category)  │  ← top of card
-│                          │
-│  Claim (bold headline)   │  ← 1–2 lines, large type
-│                          │
-│  Narrative paragraph     │  ← 2–4 sentences, readable prose
-│                          │
-│  Pull-quote              │  ← verbatim quote in italic, with timestamp
-│                          │
-│  ▼ Expand Evidence      │  ← toggle to reveal supporting data
-│  ┌──────────────────┐    │
-│  │ Data point 1     │    │  ← hidden until expanded
-│  │ Data point 2     │    │
-│  │ Cross-reference  │    │
-│  └──────────────────┘    │
-└──────────────────────────┘
+┌──────────────────────────────┐
+│  Badge (theme category)      │  ← top of card, accent pill
+│                              │
+│  Claim (bold headline)       │  ← 1–2 lines, largest type on card
+│                              │
+│  Narrative paragraph         │  ← 2–4 sentences, readable prose
+│                              │
+│  Pull-quote                  │  ← verbatim quote in italic, with timestamp
+│                              │
+│  ▼ Expand Evidence           │  ← tap to reveal supporting data
+│  ┌──────────────────────┐    │
+│  │ Data point 1         │    │  ← hidden until expanded
+│  │ Data point 2         │    │
+│  │ Cross-reference link │    │
+│  └──────────────────────┘    │
+└──────────────────────────────┘
 ```
 
 **Badge**: A small pill label indicating theme category (e.g., "Technology",
 "Policy", "Economics", "Culture"). Rendered in the theme's accent color.
 
-**Claim**: A single bold sentence — the card's thesis. Large type, no more
-than 2 lines on a mobile screen at comfortable reading size.
+**Claim**: A single bold sentence — the card's thesis. Large type (min 20px
+on mobile), no more than 2 lines on a mobile screen at comfortable reading size.
 
 **Narrative**: 2–4 sentences expanding on the claim. Written for a busy
 professional reader — concise, concrete, no jargon without explanation.
@@ -333,10 +340,12 @@ professional reader — concise, concrete, no jargon without explanation.
 claim. Italic, with a left border accent and timestamp in `HH:MM:SS` format.
 
 **Expandable Evidence**: Hidden by default, revealed on tap/click. Contains
-supporting data points, statistics, and cross-references to other cards or
-the full Deep-Dive Report.
+supporting data points, statistics, and cross-references to other cards, the
+Knowledge Map, or the full Deep-Dive Report.
 
 ### Navigation
+
+Navigation is card-based: the user moves through the deck one card at a time.
 
 | Method | Behavior |
 |--------|----------|
@@ -349,14 +358,14 @@ the full Deep-Dive Report.
 | `Escape` | Collapse any expanded evidence panel |
 
 - Navigation wraps: from card 9, advancing goes to card 1 (and vice versa).
-- A progress indicator (dots or a numbered pill, e.g. "3 / 9") is visible
-  at the bottom of each card.
-- Shortcuts are disabled when focus is in an input or textarea.
+- A visible progress indicator at the bottom of each card shows current
+  position (e.g., "3 / 9" with filled/empty dots or numbered pill).
+- Keyboard shortcuts are disabled when focus is in an input or textarea.
 
 ### Responsive Design
 
-- **Mobile-first**: card fills the viewport (100vw x 100dvh), single card
-  visible at a time, large touch targets (minimum 44px).
+- **Mobile-first (default)**: card fills the viewport (`100vw` x `100dvh`),
+  single card visible at a time, large touch targets (minimum 44px).
 - **Tablet (768px+)**: card max-width 600px, centered with generous padding,
   evidence panel may remain open as a side panel.
 - **Desktop (1024px+)**: card max-width 720px, evidence panel slides in
@@ -385,8 +394,8 @@ the full Deep-Dive Report.
 
 ### Card Transition Animation
 
-- Transition between cards: a subtle slide (horizontal translate) with fade,
-  duration 250–350ms, easing `cubic-bezier(0.4, 0, 0.2, 1)`.
+- Transition between cards: a horizontal slide with fade, duration 250–350ms,
+  easing `cubic-bezier(0.4, 0, 0.2, 1)`.
 - Respect `prefers-reduced-motion: reduce` — disable slide, use instant
   cross-fade instead.
 
@@ -395,7 +404,7 @@ the full Deep-Dive Report.
 - All styles inline in a `<style>` block. No external dependencies.
 - Use CSS custom properties for themeable values, switched via a `data-theme`
   attribute on `<html>`.
-- Mobile-first media queries.
+- Mobile-first media queries; cards are designed for phone screens first.
 
 ---
 
@@ -411,26 +420,38 @@ from CDN.
 
 ### Node Hierarchy
 
+The knowledge map is organized as a labeled, hierarchical tree with four levels
+and cross-links between leaf nodes:
+
 ```
-Level 0 (Central Node):
-  └─ Central Thesis — the interview's single overarching argument
-     │
-Level 1 (Ring 1 — Cross-Cutting Themes, 5–8 nodes):
+Central Thesis (Level 0):
+  └─ The interview's single overarching argument — placed at the center
+
+Themes (Level 1 — Cross-Cutting Themes, 5–8 nodes):
   └─ Theme A ─── Theme B ─── Theme C ─── ...
      │              │              │
-Level 2 (Ring 2 — Supporting Arguments, 2–5 per theme):
+Arguments (Level 2 — Supporting Arguments, 2–5 per theme):
   └─ Argument A1   └─ Argument B1   └─ Argument C1
      Argument A2      Argument B2      Argument C2
      ...              ...              ...
      │
-Level 3 (Ring 3 — Evidence, 2–5 per argument, plus cross-links):
+Evidence (Level 3 — Quotes, Data, Statistics, 2–5 per argument):
   └─ Quote A1a       Data A2a
      Quote A1b       Data A2b
      Statistic A1c   ...
      │
      └── Cross-links (dashed edges) connect related evidence
-         across different themes and arguments
+         across different themes and arguments, forming a network
+         layer on top of the tree structure.
 ```
+
+The hierarchy flows from abstract to concrete: the **central thesis** is the
+broadest claim, **themes** break it into major dimensions, **arguments**
+support each theme with specific reasoning, and **evidence** anchors every
+argument in quotes, data points, or statistics from the transcript.
+Cross-links reveal connections between evidence nodes across different
+branches of the tree, transforming the pure hierarchy into an interconnected
+knowledge graph.
 
 ### Visual Design
 
@@ -535,14 +556,295 @@ parts, where N is the number of topics (clamped to 8–12). Use:
 
 ---
 
+## 5. Social Media Post (Markdown)
+
+**Purpose:** A long-form social media post (e.g., LinkedIn article, Substack,
+X long-form, or newsletter-ready) that transforms the interview's deepest
+insights into a narrative-driven, shareable piece. Written with a hook-driven
+structure optimized for social platform reading behavior — short paragraphs,
+strong lead, memorable quotes, and clear takeaways.
+
+**Length:** 2000–4000 words.
+
+**File:** `social-[guest-lastname]-[YYYYMMDD].md`
+
+### Template Structure
+
+```markdown
+# [Attention-Grabbing Title]
+
+*By [Author Name] | [YYYY-MM-DD] | Based on my conversation with [Guest Name] on [Show Name]*
+
+## Lead
+
+[1–2 paragraphs. Open with a hook — a provocative question, a startling
+statistic, a counterintuitive claim, or a vivid scene. Then state what the
+conversation revealed and why it matters. The lead must make the reader
+want to continue. Avoid generic openings like "Recently I had the pleasure
+of speaking with..."]
+
+---
+
+## [Theme 1: Subheading — A compelling, specific statement]
+
+[2–3 paragraphs of narrative. Tell the story of this theme as the guest
+unfolded it — context, insight, implication. Use concrete details, not
+abstractions. Show the reader why this theme matters in their world.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 2: Subheading]
+
+[2–3 paragraphs. Same structure. Each theme section should feel like a
+mini-essay that could stand alone but builds toward the larger argument.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 3: Subheading]
+
+[2–3 paragraphs.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 4: Subheading]
+
+[2–3 paragraphs.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 5: Subheading]
+
+[2–3 paragraphs.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 6: Subheading]
+
+[2–3 paragraphs.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## [Theme 7: Subheading]
+
+[2–3 paragraphs.]
+
+> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+
+---
+
+## If You Only Remember 3 Things
+
+1. **[Single-sentence insight].** One line of context or implication.
+2. **[Single-sentence insight].** One line of context or implication.
+3. **[Single-sentence insight].** One line of context or implication.
+
+---
+
+## Who This Is For
+
+[1–2 sentences. Define the audience with specificity: role, domain,
+seniority, or problem context. Example: "Product leaders navigating the
+shift from SaaS to AI-native experiences who need mental models, not
+hype."]
+
+---
+
+## Go Deeper
+
+[Link to the full Deep-Dive Report, Learning Cards, and Knowledge Map.
+1–2 sentences inviting the reader to explore the complete analysis.]
+
+*Full conversation: [URL to original interview/podcast episode]*
+```
+
+### Structure Rules
+
+- **7 theme sections exactly.** Extract the seven most significant themes
+  from the interview and present them in order of descending impact (most
+  important first, not chronological).
+- **Each theme section** must have: a compelling subheading (a claim, not a
+  label), 2–3 narrative paragraphs, and at least one verbatim quote with
+  timestamp.
+- **Lead** must be hook-driven. Do not open with biographical pleasantries
+  or an "I sat down with..." cliche. Start with the most arresting insight
+  or question.
+- **"If You Only Remember 3 Things"** is the distillation section. These
+  three takeaways must be self-contained, memorable, and actionable.
+- All quotes must be verbatim and timestamped.
+
+### Voice
+
+- Conversational but authoritative. Write as if explaining to a smart,
+  curious peer over coffee.
+- Avoid academic tone. Avoid marketing hype. Avoid bullet-point lists
+  (except the "3 Things" section).
+- Use short paragraphs (3–5 sentences max). Social readers scan; dense
+  blocks lose them.
+
+---
+
+## 6. Short Podcast Script (Markdown + MP3)
+
+**Purpose:** A script optimized for text-to-speech (TTS) synthesis that
+distills the interview into a compact, listenable audio piece. Produces both
+the plain-text script and, when TTS tooling is available, an MP3 audio file.
+Designed for consumption during commutes, workouts, or household tasks.
+
+**Duration:** 10–15 minutes of audio (approximately 2500–3500 characters of
+spoken script at ~250 characters per minute).
+
+**Files:**
+- Script: `podcast-script-[guest-lastname]-[YYYYMMDD].md`
+- Audio: `podcast-[guest-lastname]-[YYYYMMDD].mp3`
+
+### Template Structure
+
+```
+=== SHORT PODCAST SCRIPT ===
+Guest: [Full Name]
+Show: [Show Name]
+Date: [YYYY-MM-DD]
+Estimated duration: [10–15] min
+Target character count: 2500–3500 characters (spoken text only)
+================================
+
+=== OPENING (30 seconds) ===
+
+[1 paragraph, ~125 characters. Hook the listener immediately with the
+most compelling idea from the conversation. Identify the guest, the show,
+and the central thesis. Avoid "Welcome to..." cliches. Start with the
+insight, then attribute it.
+
+Example pattern: "[Guest] believes [surprising claim]. I sat down with
+her on [Show] to understand why. Here's what I learned in our
+[XX]-minute conversation."]
+
+=== TRANSITION: Opening → Theme 1 ===
+
+[A single sentence, ~50 characters, bridging from the opening to the
+first theme. Smooth, spoken-word cadence. Example: "Let's start with
+the biggest idea she shared — [theme summary]."]
+
+=== THEME 1: [Subheading — conversational, not academic] (1–2 min) ===
+
+[2 paragraphs, ~300–500 characters. Tell the story of this theme as if
+explaining it to a friend. Include the guest's key claim, the reasoning,
+and why it matters. Use concrete examples. End with a verbatim quote
+from the transcript, introduced naturally.
+
+Intro to quote: "Here's how [guest first name] put it..."
+Quote: "[verbatim quote]"
+
+Closing line for this theme: a single sentence that crystallizes the
+insight and transitions to the next theme.]
+
+=== TRANSITION: Theme 1 → Theme 2 ===
+
+[A bridging sentence (~50 chars). Pattern: "That connects directly to
+something else [guest first name] talked about — [next theme hook]."]
+
+=== THEME 2: [Subheading] (1–2 min) ===
+
+[Same structure as Theme 1. ~300–500 characters.]
+
+=== TRANSITION: Theme 2 → Theme 3 ===
+
+=== THEME 3: [Subheading] (1–2 min) ===
+
+=== TRANSITION: Theme 3 → Theme 4 ===
+
+=== THEME 4: [Subheading] (1–2 min) ===
+
+=== TRANSITION: Theme 4 → Theme 5 ===
+
+=== THEME 5: [Subheading] (1–2 min) ===
+
+=== TRANSITION: Theme 5 → Theme 6 ===
+
+=== THEME 6: [Subheading] (1–2 min) ===
+
+=== TRANSITION: Theme 6 → Theme 7 ===
+
+=== THEME 7: [Subheading] (1–2 min) ===
+
+=== TRANSITION: Theme 7 → Closing ===
+
+[A sentence that signals the summary is coming. Pattern: "So after
+[X minutes] with [guest first name], here's what I'm taking away."]
+
+=== CLOSING (1 minute) ===
+
+[1 paragraph, ~250 characters. Synthesize the 3 most important takeaways
+into a cohesive closing statement. No new ideas — only synthesis. End
+with a call to action: where to find the full report, learning cards,
+and original interview.
+
+Final line pattern: "For the full deep-dive, learning cards, and
+knowledge map, visit [link]. The original conversation with [guest
+name] is at [URL]."]
+
+=== END OF SCRIPT ===
+
+Character count: [XXXX]
+Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
+```
+
+### Script Writing Rules
+
+- **Plain text only.** No markdown in the spoken sections (stage directions
+  and section markers use `===` delimiters). The script is fed directly to
+  a TTS engine; formatting artifacts would be read aloud.
+- **Write for the ear, not the eye.** Use short sentences. Prefer concrete
+  nouns and active verbs. Avoid parentheticals, footnotes, and nested
+  clauses. Read every line aloud (or mentally) before finalizing.
+- **Natural transitions.** Every theme section must begin with a transition
+  sentence that connects it to the previous theme. The listener should feel
+  guided, not jolted.
+- **Quotes must be verbatim** from the transcript. Introduce them naturally
+  so the shift to the guest's voice is clear in TTS ("Here's how she put
+  it..." or "In his words...").
+- **Closing must synthesize**, not summarize. Don't list all 7 themes again.
+  Distill into 3 integrated takeaways.
+- **Character budget**: aim for 2500–3500 characters of spoken text. At
+  ~250 characters per minute, this yields 10–14 minutes of audio. Stay
+  within budget — longer scripts produce audio over the 15-minute target.
+
+### TTS Production Notes
+
+- The script file is the source of truth; the MP3 is a render of it.
+- If TTS tooling is not available in the current environment, produce only
+  the Markdown script file. Include a note at the top: "MP3 not generated
+  — TTS tooling unavailable in this environment."
+- When TTS is available, use a high-quality neural voice. Preferred voice
+  characteristics: warm, conversational, clear. Avoid robotic or overly
+  formal voices.
+- Before rendering, strip all `===` delimiters, transition markers, and
+  stage directions. Only the spoken text (including the natural quote
+  introductions) goes to the TTS engine.
+
+---
+
 ## Cross-Format Consistency Rules
 
-1. **Timestamps**: All timestamps across all four formats use the same
+1. **Timestamps**: All timestamps across all six formats use the same
    `HH:MM:SS` or `[HH:MM:SS]` format. No variation.
 2. **Guest naming**: Use the guest's full name on first mention in every
    format, then last name only. Consistent across all outputs.
 3. **Topic naming**: Topic titles must be identical across the Deep-Dive
-   Report, HTML sidebar links, and Knowledge Map topic nodes.
+   Report, Learning Cards, Knowledge Map, Social Media Post, and Podcast
+   Script.
 4. **Quote attribution**: Every quote in every format must include a
    timestamp. Quotes must be verbatim — if a quote appears in multiple
    formats, it must be identical in each.
@@ -559,3 +861,6 @@ parts, where N is the number of topics (clamped to 8–12). Use:
 | Deep-Dive | `report-[guest-lastname]-[YYYYMMDD].md` |
 | Learning Cards | `cards-[guest-lastname]-[YYYYMMDD].html` |
 | Knowledge Map | `map-[guest-lastname]-[YYYYMMDD].html` |
+| Social Media Post | `social-[guest-lastname]-[YYYYMMDD].md` |
+| Short Podcast Script | `podcast-script-[guest-lastname]-[YYYYMMDD].md` |
+| Short Podcast Audio | `podcast-[guest-lastname]-[YYYYMMDD].mp3` |

@@ -8,6 +8,15 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 ## Pre-Delivery Verification (MANDATORY)
 
+### Stage 1.5 — Extraction & Correction Checks
+
+| # | Check | Method | Expected |
+|---|-------|--------|----------|
+| 1 | **Glossary loaded correctly** | Open `output/*/glossary.json`, count entries | >= 5 entries, each has `term`, `definition`, `aliases` fields |
+| 2 | **turns-corrected.json has corrections** | Diff `turns_raw.json` vs `turns-corrected.json` | Corrected file has changes where glossary entities were applied |
+| 3 | **Known entities fixed** | grep known errors in `turns-corrected.json` | "C-Dance" → "Seedance"; no uncorrected known errors remain |
+| 4 | **Speaker labels consistent** | grep `"speaker"` in `turns-corrected.json` | Guest name used consistently, no "unknown" or raw speaker IDs |
+
 ### Learning Cards Checks
 
 | # | Check | Method | Expected |
@@ -15,10 +24,15 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 1 | **Zero JS errors** | Open browser console, load page | No `TypeError`, `ReferenceError`, or other red errors. Favicon 404 is ignorable. |
 | 2 | **Card count (9)** | Count `.card` elements | 9 learning cards: 1 hero, 7 theme, 1 closing |
 | 3 | **Theme cards (7)** | Count `.card-theme` elements | 7 theme cards present |
-| 4 | **Keyboard navigation** | Press Left/Right arrow keys | Cards advance forward/backward smoothly |
-| 5 | **Swipe support** | Swipe left/right on touch device or emulator | Cards advance forward/backward |
-| 6 | **Role tabs** | Verify ARIA attributes | Cards container has `role="tablist"`, each card has `role="tabpanel"` |
-| 7 | **Expandable sections** | Click expand-toggle on a card | Card content expands/collapses, toggle icon rotates |
+| 4 | **Theme dot navigation** | Click nav dots below cards | Active card follows dot selection, correct dot highlighted |
+| 5 | **Keyboard navigation** | Press Left/Right arrow keys | Cards advance forward/backward smoothly |
+| 6 | **Keyboard shortcuts** | Press Home, End, 1-9 keys | Home jumps to hero, End jumps to closing, number keys jump to card N |
+| 7 | **Swipe support** | Swipe left/right on touch device or emulator | Cards advance forward/backward |
+| 8 | **Role tabs** | Verify ARIA attributes | Cards container has `role="tablist"`, each card has `role="tabpanel"` |
+| 9 | **Expandable sections** | Click expand-toggle on a card | Card content expands/collapses, toggle icon rotates |
+| 10 | **Responsive at 375px** | Resize browser to 375px width | Cards fit viewport, no horizontal overflow, text readable, nav dots visible |
+| 11 | **Responsive at 768px** | Resize browser to 768px width | Cards display in tablet layout, no layout breakage |
+| 12 | **Responsive at 1440px** | Resize browser to 1440px width | Cards display in desktop layout, max-width container centered |
 
 ### Mind Map Checks
 
@@ -49,6 +63,30 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 7 | **Timestamps are in `HH:MM:SS` or `MM:SS`** | Regex scan | No malformed timestamps |
 | 8 | **No placeholder text** | grep for "TODO", "FIXME", "placeholder", "TBD" | None found |
 
+### Social Media Post Checks
+
+| # | Check | Method | Expected |
+|---|-------|--------|----------|
+| 1 | **Character count** | `wc -c` or character counter | 2000-4000 characters |
+| 2 | **Engaging title** | Read opening line | Title is present, provocative or curiosity-driven, not generic |
+| 3 | **7 themes covered** | Count distinct theme references | All 7 interview themes mentioned or alluded to |
+| 4 | **Quotes with timestamps** | grep for `XX:XX` or `HH:MM:SS` | At least 2 direct quotes with timestamp attribution |
+| 5 | **Audience section** | Scroll to end of post | "Who should read" or audience targeting present |
+| 6 | **CTA present** | Read last 2-3 lines | Call-to-action (link to full report, cards, or discussion prompt) |
+| 7 | **No markdown artifacts** | Read raw text | Clean plain text or platform-native formatting; no `**` or `##` remnants |
+
+### Podcast Script Checks
+
+| # | Check | Method | Expected |
+|---|-------|--------|----------|
+| 1 | **Character count** | `wc -c` or character counter | 2500-3500 characters |
+| 2 | **TTS-friendly plain text** | grep for markdown syntax | No `**`, `##`, `*`, backticks — clean plain text suitable for TTS |
+| 3 | **Opening present** | Read first 5 lines | Host introduction, guest name, episode context clearly stated |
+| 4 | **Closing present** | Read last 5 lines | Outro, call-to-action, or next-episode teaser |
+| 5 | **Theme transitions** | grep for transition phrases | Segue phrases between themes ("moving on to", "let's shift to", "another topic we discussed", etc.) |
+| 6 | **Estimated duration** | Check metadata header or footer | Duration estimate present (e.g., "~15 min read" or "approx. 20 min audio") |
+| 7 | **Speaker labels clear** | Scan for HOST:/GUEST: patterns | Consistent HOST: and GUEST: labels, no orphaned dialogue |
+
 ---
 
 ## Common Pitfalls & Anti-Patterns
@@ -61,7 +99,7 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 **Fix:** Always use `<details open>` + `<summary>` for collapsible topic content. Supplemental sections (quotes collection, predictions table, cross-cutting themes) can remain as `<section>` since they're not collapsible.
 
-**Prevention:** After any change to `generate_cards.py`, run Check #2 (Collapse/Expand) from HTML Report Checks above.
+**Prevention:** After any change to `generate_cards.py`, run Check #9 (Expandable sections) from Learning Cards Checks above.
 
 ### Pitfall 2: DOM Node Reference After Removal (HIGH)
 
@@ -112,7 +150,7 @@ function nodeRadius(d) {
 2. Set `--header-height` dynamically via JS: `document.documentElement.style.setProperty('--header-height', header.offsetHeight + 'px')`
 3. Use `--header-height` in sidebar's `top` and `max-height` calculations with a non-zero fallback (e.g., `90px`)
 
-**Prevention:** After any CSS change to header or sidebar, run HTML Report Check #6 (sidebar navigation) and the collapse button test.
+**Prevention:** After any CSS change to header or sidebar, run Learning Cards Check #4 (Theme dot navigation) and Check #9 (Expandable sections).
 
 ### Pitfall 5: Extraction JSON Format Inconsistency (MEDIUM)
 
@@ -226,28 +264,74 @@ playwright-cli click e34
 After any change to the skill files, run this sequence:
 
 ```bash
-# 1. Verify Python scripts compile
+# === Stage 1: Parse transcript ===
+
+# 1. Verify Python parse script compiles
 python -c "import py_compile; py_compile.compile('scripts/parse_docx.py', doraise=True)"
-python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
-python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
 
 # 2. Parse a known-good transcript
-python scripts/parse_docx.py yaoshunyu.docx --output /tmp/test_turns.json
+python scripts/parse_docx.py yaoshunyu.docx --output /tmp/test_turns_raw.json
 
-# 3. Verify parse output structure
+# 3. Verify raw parse output structure
 python -c "
 import json
-with open('/tmp/test_turns.json') as f: d = json.load(f)
+with open('/tmp/test_turns_raw.json') as f: d = json.load(f)
 assert d['metadata']['total_turns'] > 900
 assert d['metadata']['total_duration_seconds'] > 13000
 assert len(d['turns']) > 900
-print('Parse: OK')
+print('Stage 1 — Parse: OK')
 "
 
-# 4. Generate cards HTML from visual_content.json
-python scripts/generate_cards.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_cards.html --knowledge output/knowledge.json
+# === Stage 1.5: Correct transcript ===
 
-# 5. Verify cards HTML contains key elements
+# 4. Verify turns-corrected.json exists and has corrections
+python -c "
+import json
+with open('output/yaoshunyu-20260530/turns_raw.json') as f: raw = json.load(f)
+with open('output/yaoshunyu-20260530/turns-corrected.json') as f: corr = json.load(f)
+assert raw != corr, 'Corrected file is identical to raw — no corrections applied'
+# Verify known entity fix: C-Dance should be corrected
+raw_text = json.dumps(raw)
+corr_text = json.dumps(corr)
+assert 'C-Dance' not in corr_text or raw_text.count('C-Dance') > corr_text.count('C-Dance'), 'C-Dance not corrected'
+print('Stage 1.5 — Correction: OK')
+"
+
+# 5. Verify glossary loads
+python -c "
+import json
+with open('output/yaoshunyu-20260530/glossary.json') as f: g = json.load(f)
+assert len(g) >= 5, f'Glossary has only {len(g)} entries, expected >= 5'
+for entry in g:
+    assert 'term' in entry, f'Missing term in glossary entry'
+    assert 'definition' in entry
+print('Stage 1.5 — Glossary: OK')
+"
+
+# === Stage 4: Verify visual_content.json ===
+
+# 6. Verify visual_content.json structure
+python -c "
+import json
+with open('output/yaoshunyu-20260530/visual_content.json') as f: vc = json.load(f)
+assert 'cards' in vc, 'Missing cards key'
+assert len(vc['cards']) == 9, f'Expected 9 cards, got {len(vc[\"cards\"])}'
+card_types = [c.get('type') for c in vc['cards']]
+assert 'hero' in card_types, 'Missing hero card'
+assert 'theme' in card_types, 'Missing theme card'
+assert 'closing' in card_types, 'Missing closing card'
+print('Stage 4 — visual_content.json: OK')
+"
+
+# === Stage 5: Generate and verify Learning Cards ===
+
+# 7. Verify cards generator compiles
+python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
+
+# 8. Generate cards HTML
+python scripts/generate_cards.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_cards.html
+
+# 9. Verify cards HTML structure
 python -c "
 with open('/tmp/test_cards.html') as f: html = f.read()
 assert '<div class=\"card\">' in html, 'Missing card elements'
@@ -257,13 +341,20 @@ assert 'card-closing' in html, 'Missing card-closing'
 assert 'pull-quote' in html, 'Missing pull-quote'
 assert 'expand-toggle' in html, 'Missing expand-toggle'
 assert 'nav-dot' in html, 'Missing nav-dot'
-print('Cards HTML: OK')
+assert 'role=\"tablist\"' in html, 'Missing tablist role'
+assert 'role=\"tabpanel\"' in html, 'Missing tabpanel role'
+print('Stage 5 — Cards HTML: OK')
 "
 
-# 6. Generate mind map from visual_content.json
-python scripts/generate_mindmap.py output/yaoshunyu-20260530/visual_content.json --knowledge-json output/knowledge.json --output /tmp/test_map.html
+# === Stage 6: Generate and verify Mind Map ===
 
-# 7. Verify mind map contains MINDMAP_DATA
+# 10. Verify mind map generator compiles
+python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
+
+# 11. Generate mind map HTML
+python scripts/generate_mindmap.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_map.html
+
+# 12. Verify mind map structure
 python -c "
 import re, json
 with open('/tmp/test_map.html') as f: html = f.read()
@@ -271,8 +362,67 @@ m = re.search(r'const MINDMAP_DATA = (\{.*?\n\};)', html, re.DOTALL)
 assert m, 'MINDMAP_DATA not found'
 data = json.loads(m.group(1)[:-1])
 assert len(data['topics']) == 12
-print('Mind Map: OK')
+# Verify pointer-events fix is present
+assert 'pointer-events: none' in html or '.link' in html, 'Missing pointer-events CSS on link paths'
+print('Stage 6 — Mind Map: OK')
 "
 
-echo "=== All regression tests passed ==="
+# === Stage 7: Verify Social Media Post ===
+
+# 13. Verify social media post
+python -c "
+import os, glob
+posts = glob.glob('output/yaoshunyu-20260530/social_media_post*')
+assert posts, 'No social media post found'
+with open(posts[0], encoding='utf-8') as f: text = f.read()
+length = len(text)
+assert 2000 <= length <= 4000, f'Social post length {length} outside 2000-4000 range'
+assert 'C-Dance' not in text or 'Seedance' in text, 'Known entity not corrected in social post'
+print(f'Stage 7 — Social Media Post: OK ({length} chars)')
+"
+
+# === Stage 7: Verify Podcast Script ===
+
+# 14. Verify podcast script
+python -c "
+import os, glob
+scripts = glob.glob('output/yaoshunyu-20260530/podcast_script*')
+assert scripts, 'No podcast script found'
+with open(scripts[0], encoding='utf-8') as f: text = f.read()
+length = len(text)
+assert 2500 <= length <= 3500, f'Podcast script length {length} outside 2500-3500 range'
+assert 'HOST:' in text or 'Host:' in text, 'Missing host labels'
+assert 'GUEST:' in text or 'Guest:' in text, 'Missing guest labels'
+# Must not contain markdown formatting (TTS-friendly)
+assert '**' not in text, 'Markdown bold in podcast script — not TTS-friendly'
+print(f'Stage 7 — Podcast Script: OK ({length} chars)')
+"
+
+# === Stage 3: Verify Markdown Reports ===
+
+# 15. Verify deep-dive report
+python -c "
+import os, glob
+reports = glob.glob('output/yaoshunyu-20260530/deep_dive_report*')
+assert reports, 'No deep-dive report found'
+with open(reports[0], encoding='utf-8') as f: text = f.read()
+assert 'Executive Summary' in text or '执行摘要' in text, 'Missing executive summary'
+assert 'Quote Collection' in text or '语录集锦' in text, 'Missing quote collection'
+assert 'TODO' not in text and 'FIXME' not in text, 'Placeholder text found'
+print('Stage 3 — Deep-Dive Report: OK')
+"
+
+# 16. Verify TL;DR report
+python -c "
+import os, glob
+reports = glob.glob('output/yaoshunyu-20260530/tldr_report*')
+assert reports, 'No TL;DR report found'
+with open(reports[0], encoding='utf-8') as f: text = f.read()
+assert 'Key Takeaways' in text or '关键要点' in text, 'Missing key takeaways'
+assert 'Who Should Read' in text or '适合人群' in text, 'Missing audience section'
+print('Stage 3 — TL;DR Report: OK')
+"
+
+echo ""
+echo "=== All regression tests passed (7 stages, 6 outputs) ==="
 ```

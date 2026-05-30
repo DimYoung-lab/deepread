@@ -52,7 +52,7 @@ class Metadata:
 @dataclass
 class Turn:
     index: int
-    speaker: str  # "guest" | "interviewer"
+    speaker: str  # "guest" | "interviewer" | "speaker" | "speaker_1" | ...
     speaker_label: str
     timestamp_raw: str
     timestamp_seconds: int
@@ -138,11 +138,16 @@ def _get_paragraphs(doc: Document) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def parse_transcript(filepath: str) -> Transcript:
+def parse_transcript(
+    filepath: str, num_speakers: Optional[int] = None, language: str = "zh"
+) -> Transcript:
     """Parse a .docx interview transcript into a Transcript object.
 
     Args:
         filepath: Path to the .docx file.
+        num_speakers: Explicit speaker count for role labeling.
+            None (default) auto-detects from the data.
+        language: Language code for the transcript metadata (default 'zh').
 
     Returns:
         Transcript with parsed metadata and turns.
@@ -179,18 +184,15 @@ def parse_transcript(filepath: str) -> Transcript:
         body_start_idx = 0
 
     metadata = _extract_metadata(header_paragraphs)
+    metadata.language = language
 
     # --- Phase 2: parse speaker turns from body ---
     raw_turns = _parse_raw_turns(paragraphs[body_start_idx:])
     if not raw_turns:
         raise ValueError("No speaker turns found in document body.")
 
-    # --- Phase 3: auto-detect guest vs interviewer ---
-    guest_label, interviewer_label = _detect_speaker_roles(raw_turns)
-    speaker_map = {
-        guest_label: "guest",
-        interviewer_label: "interviewer",
-    }
+    # --- Phase 3: auto-detect speaker roles ---
+    speaker_map = _detect_speaker_roles(raw_turns, num_speakers)
 
     # --- Phase 4: build Turn objects ---
     turns: list[Turn] = []
@@ -214,10 +216,11 @@ def parse_transcript(filepath: str) -> Transcript:
         metadata.total_duration_seconds = turns[-1].timestamp_seconds
 
     # Attempt to name the guest / interviewer if the label is obvious
-    if metadata.guest is None:
-        metadata.guest = Person(name=guest_label)
-    if metadata.interviewer is None:
-        metadata.interviewer = Person(name=interviewer_label)
+    for label, role in speaker_map.items():
+        if role == "guest" and metadata.guest is None:
+            metadata.guest = Person(name=label)
+        elif role == "interviewer" and metadata.interviewer is None:
+            metadata.interviewer = Person(name=label)
 
     return Transcript(metadata=metadata, turns=turns)
 
@@ -292,14 +295,26 @@ def _parse_raw_turns(body_paragraphs: list[dict]) -> list[dict]:
     return raw_turns
 
 
-def _detect_speaker_roles(raw_turns: list[dict]) -> tuple[str, str]:
-    """Auto-detect which speaker label is the guest vs interviewer.
+def _detect_speaker_roles(
+    raw_turns: list[dict], num_speakers: Optional[int] = None
+) -> dict[str, str]:
+    """Auto-detect speaker roles from raw turns.
 
-    Heuristic: the guest is the speaker with more turns or, if tied,
-    the one with more total text characters.
+    Heuristic for auto-detection (when num_speakers is None):
+    - The most active speaker comes first; ties are broken by total text length.
+
+    Labeling scheme:
+    - 1 speaker  → "speaker" (monologue / lecture)
+    - 2 speakers → "guest" + "interviewer" (Q&A, existing behaviour)
+    - 3+ speakers → "speaker_1", "speaker_2", ... (panel / debate)
+
+    Args:
+        raw_turns: List of raw turn dicts with 'label', 'timestamp', 'text'.
+        num_speakers: Explicit speaker count for the labeling scheme.
+            None (default) means auto-detect from the data.
 
     Returns:
-        (guest_label, interviewer_label)
+        Dict mapping raw speaker label → role name.
     """
     speakers: dict[str, dict] = {}
     for rt in raw_turns:
@@ -309,22 +324,40 @@ def _detect_speaker_roles(raw_turns: list[dict]) -> tuple[str, str]:
         speakers[label]["count"] += 1
         speakers[label]["total_chars"] += len(rt["text"])
 
-    if len(speakers) < 2:
-        # Only one speaker found
-        keys = list(speakers.keys())
-        return (keys[0], keys[0] if keys else "未知")
-
     # Sort by count descending, then by total_chars descending
-    sorted_speakers = sorted(
-        speakers.items(),
-        key=lambda kv: (kv[1]["count"], kv[1]["total_chars"]),
-        reverse=True,
-    )
+    sorted_labels = [
+        label
+        for label, _ in sorted(
+            speakers.items(),
+            key=lambda kv: (kv[1]["count"], kv[1]["total_chars"]),
+            reverse=True,
+        )
+    ]
 
-    guest_label = sorted_speakers[0][0]
-    interviewer_label = sorted_speakers[1][0]
+    n = len(sorted_labels)
+    if n == 0:
+        return {}
 
-    return (guest_label, interviewer_label)
+    # Determine labeling scheme
+    count = num_speakers if num_speakers is not None else n
+
+    if count <= 1:
+        # Monologue / lecture
+        return {label: "speaker" for label in sorted_labels}
+    elif count == 2:
+        # Q&A: most-active speaker is guest, second is interviewer
+        result: dict[str, str] = {}
+        if n >= 1:
+            result[sorted_labels[0]] = "guest"
+        if n >= 2:
+            result[sorted_labels[1]] = "interviewer"
+        # Any additional speakers beyond 2 get numbered
+        for i in range(2, n):
+            result[sorted_labels[i]] = f"speaker_{i + 1}"
+        return result
+    else:
+        # Panel / debate
+        return {label: f"speaker_{i + 1}" for i, label in enumerate(sorted_labels)}
 
 
 # ---------------------------------------------------------------------------
@@ -409,6 +442,20 @@ def build_argparser() -> argparse.ArgumentParser:
         default=None,
         help="Write JSON to PATH instead of stdout.",
     )
+    parser.add_argument(
+        "--speakers",
+        type=int,
+        metavar="N",
+        default=None,
+        help="Number of speakers (1=monologue, 2=Q&A, 3+=panel). "
+        "Default: auto-detect from transcript data.",
+    )
+    parser.add_argument(
+        "--language",
+        metavar="CODE",
+        default="zh",
+        help="Language code for transcript metadata (default: zh).",
+    )
     return parser
 
 
@@ -417,7 +464,9 @@ def main(argv: Optional[list[str]] = None) -> None:
     args = parser.parse_args(argv)
 
     try:
-        transcript = parse_transcript(args.input)
+        transcript = parse_transcript(
+            args.input, num_speakers=args.speakers, language=args.language
+        )
     except FileNotFoundError:
         print(f"Error: file not found: {args.input}", file=sys.stderr)
         sys.exit(1)

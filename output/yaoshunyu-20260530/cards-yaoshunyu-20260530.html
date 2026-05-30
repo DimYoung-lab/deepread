@@ -49,7 +49,8 @@
   --color-divider:        #d9d2c7;
   --color-rule:           #c4bbb0;
 
-  /* ---- Theme Accent Colors (one per theme card) ---- */
+  /* ---- Theme Accent Colors (default palette — any number of themes supported;
+     cards use inline --theme-color which falls back to --color-accent) ---- */
   --color-theme-1: #722f37;  /* burgundy */
   --color-theme-2: #2f5272;  /* slate blue */
   --color-theme-3: #3a6b4a;  /* forest green */
@@ -636,18 +637,10 @@ code {
    ======================================================================== */
 
 .card-theme {
-  border-top: 3px solid transparent;
+  border-top: 3px solid var(--theme-color, var(--color-accent));
   padding-top: var(--space-10);
   background: var(--color-surface-raised);
 }
-
-.card-theme.theme-1 { border-top-color: var(--color-theme-1); }
-.card-theme.theme-2 { border-top-color: var(--color-theme-2); }
-.card-theme.theme-3 { border-top-color: var(--color-theme-3); }
-.card-theme.theme-4 { border-top-color: var(--color-theme-4); }
-.card-theme.theme-5 { border-top-color: var(--color-theme-5); }
-.card-theme.theme-6 { border-top-color: var(--color-theme-6); }
-.card-theme.theme-7 { border-top-color: var(--color-theme-7); }
 
 .theme-badge {
   display: inline-flex;
@@ -659,6 +652,7 @@ code {
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
   margin-bottom: var(--space-6);
+  color: var(--theme-color, var(--color-accent));
 }
 
 .theme-badge .dot {
@@ -666,22 +660,8 @@ code {
   height: 8px;
   border-radius: var(--radius-full);
   flex-shrink: 0;
+  background: var(--theme-color, var(--color-accent));
 }
-
-.theme-badge.theme-1 { color: var(--color-theme-1); }
-.theme-badge.theme-1 .dot { background: var(--color-theme-1); }
-.theme-badge.theme-2 { color: var(--color-theme-2); }
-.theme-badge.theme-2 .dot { background: var(--color-theme-2); }
-.theme-badge.theme-3 { color: var(--color-theme-3); }
-.theme-badge.theme-3 .dot { background: var(--color-theme-3); }
-.theme-badge.theme-4 { color: var(--color-theme-4); }
-.theme-badge.theme-4 .dot { background: var(--color-theme-4); }
-.theme-badge.theme-5 { color: var(--color-theme-5); }
-.theme-badge.theme-5 .dot { background: var(--color-theme-5); }
-.theme-badge.theme-6 { color: var(--color-theme-6); }
-.theme-badge.theme-6 .dot { background: var(--color-theme-6); }
-.theme-badge.theme-7 { color: var(--color-theme-7); }
-.theme-badge.theme-7 .dot { background: var(--color-theme-7); }
 
 .card-theme .card-claim {
   font-family: var(--font-heading);
@@ -1482,13 +1462,7 @@ code {
   }
 
   /* Show theme colors as subtle tints in print */
-  .card-theme.theme-1 { border-left-color: #666666; }
-  .card-theme.theme-2 { border-left-color: #666666; }
-  .card-theme.theme-3 { border-left-color: #666666; }
-  .card-theme.theme-4 { border-left-color: #666666; }
-  .card-theme.theme-5 { border-left-color: #666666; }
-  .card-theme.theme-6 { border-left-color: #666666; }
-  .card-theme.theme-7 { border-left-color: #666666; }
+  .card-theme { border-left-color: #666666; }
 
   .theme-badge {
     color: #333333;
@@ -1657,8 +1631,8 @@ code {
     <a href="#" class="btn btn-secondary" data-goto="closing">跳到总结</a>
   </div>
 </article>
-  <article class="card card-theme theme-1" id="card-1">
-  <div class="theme-badge theme-1">
+  <article class="card card-theme" id="card-1" style="--theme-color: #6C5CE7">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 1 / 7
   </div>
@@ -1709,8 +1683,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-2" id="card-2">
-  <div class="theme-badge theme-2">
+<article class="card card-theme" id="card-2" style="--theme-color: #00B894">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 2 / 7
   </div>
@@ -1757,8 +1731,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-3" id="card-3">
-  <div class="theme-badge theme-3">
+<article class="card card-theme" id="card-3" style="--theme-color: #E17055">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 3 / 7
   </div>
@@ -1805,8 +1779,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-4" id="card-4">
-  <div class="theme-badge theme-4">
+<article class="card card-theme" id="card-4" style="--theme-color: #0984E3">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 4 / 7
   </div>
@@ -1854,8 +1828,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-5" id="card-5">
-  <div class="theme-badge theme-5">
+<article class="card card-theme" id="card-5" style="--theme-color: #FDCB6E">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 5 / 7
   </div>
@@ -1903,8 +1877,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-6" id="card-6">
-  <div class="theme-badge theme-6">
+<article class="card card-theme" id="card-6" style="--theme-color: #E84393">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 6 / 7
   </div>
@@ -1952,8 +1926,8 @@ code {
   </div>
 </article>
 
-<article class="card card-theme theme-7" id="card-7">
-  <div class="theme-badge theme-7">
+<article class="card card-theme" id="card-7" style="--theme-color: #00CEC9">
+  <div class="theme-badge">
     <span class="dot"></span>
     Theme 7 / 7
   </div>
@@ -2020,25 +1994,7 @@ code {
       <span class="remember-text">AI应用创业只有两条生存路径：Cursor式的逃逸速度自研模型，或Midjourney式的小到模型公司不屑进入的niche市场。</span>
     </li>
   </ol>
-  <h3 style="font-size:var(--fs-md);margin-top:var(--sp-xl);margin-bottom:var(--sp-md)">这对你意味着什么？</h3>
-  <div class="role-tabs">
-    <button class="role-tab active" data-role="engineer">🔧 工程师</button>
-    <button class="role-tab" data-role="pm">📋 产品经理</button>
-    <button class="role-tab" data-role="founder">🚀 创业者</button>
-    <button class="role-tab" data-role="investor">💼 投资人</button>
-  </div>
-  <div class="role-content visible" data-role="engineer">
-    <p>AI coding 已经让开发效率提升 20-50 倍，但这不是终点。核心建议：(1) 不要只做语言模型——末班车已发车，转向多模态生成、机器人或 AI 辅助科学等蓝海方向；(2) 「把简单的事做得比谁都干净」比追求神奇技巧更重要——工程质量是真正的护城河；(3) 培养系统性思维——AI 已进入集体主义时代，个人英雄主义终结。</p>
-  </div>
-  <div class="role-content" data-role="pm">
-    <p>姚顺宇的判断可能让你不安：产品经理是 AI 最难替代的工作——因为「没有标准就是没有刻度」。但这也意味着：(1) 定义清楚「要解决什么问题」成为最稀缺的能力；(2) AI 产品交互形态远未定型——chatbot 不是终局，long horizon 任务执行是下一个前沿；(3) 中国 C 端产品模式（先不挣钱再形成闭环）值得深入研究。</p>
-  </div>
-  <div class="role-content" data-role="founder">
-    <p>姚顺宇给出了冷酷但清晰的生存框架：(1) AI 应用创业只有两条路：Cursor 式逃逸速度（万分之一生存率）或 Midjourney 式 niche 市场（百分之一）；(2) 「先吃一个小的，但选择有想象空间的小的」；(3) 目前只在模型侧有壁垒——如果做应用层，必须想清楚模型公司追上来怎么办。</p>
-  </div>
-  <div class="role-content" data-role="investor">
-    <p>几个值得关注的结构性判断：(1) 语言模型窗口已关闭，多模态生成和机器人是下一波范式突破方向；(2) 中国 AI 人才被严重低估——算力劣势逼出的软蒸馏创新可能是真正的 multi-agent 训练先驱；(3) ByteDance 是被严重低估的公司；(4) 绝大多数硅谷 new AI lab 会死——关注组织 DNA 和技术 leader 质量。</p>
-  </div>
+  <p style="font-size:var(--fs-md);margin-top:var(--sp-xl);color:var(--text-secondary)">阅读完整报告以获取详细分析和建议。</p>
   <div class="closing-links">
     <a href="#" class="btn btn-secondary" data-goto="0">← 回到封面</a>
   </div>

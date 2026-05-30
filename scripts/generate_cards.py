@@ -22,6 +22,56 @@ from pathlib import Path
 from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
+# I18n dictionary
+# ---------------------------------------------------------------------------
+
+UI_TEXT: dict[str, dict[str, str]] = {
+    "zh": {
+        "subtitle": "一场{dur}的深度对话，浓缩为{theme_n}个核心洞察",
+        "start_learning": "开始学习 →",
+        "jump_to_summary": "跳到总结",
+        "why_matters": "为什么这很重要",
+        "related_themes_label": "关联主题",
+        "related_themes_hint": "此主题与以下概念相关联，在知识图谱中可看到连线关系。",
+        "closing_heading": "如果你只记住三件事",
+        "role_question": "这对你意味着什么？",
+        "role_fallback": "阅读完整报告以获取详细分析和建议。",
+    },
+    "en": {
+        "subtitle": "{theme_n} core insights distilled from a {dur} deep conversation",
+        "start_learning": "Start Learning →",
+        "jump_to_summary": "Jump to Summary",
+        "why_matters": "Why This Matters",
+        "related_themes_label": "Related Themes",
+        "related_themes_hint": "This theme connects to the following concepts, visible as linked nodes in the knowledge graph.",
+        "closing_heading": "If You Only Remember Three Things",
+        "role_question": "What Does This Mean For You?",
+        "role_fallback": "Read the full report for detailed analysis and recommendations.",
+    },
+}
+
+
+# ---------------------------------------------------------------------------
+# Color palette (12 colors for cycling)
+# ---------------------------------------------------------------------------
+
+ALL_COLORS: list[str] = [
+    "#6C5CE7",  # Purple
+    "#00B894",  # Green
+    "#E17055",  # Coral/Orange
+    "#0984E3",  # Blue
+    "#FDCB6E",  # Yellow
+    "#E84393",  # Pink
+    "#00CEC9",  # Teal
+    "#D63031",  # Red
+    "#A29BFE",  # Lavender
+    "#55EFC4",  # Mint
+    "#74B9FF",  # Sky blue
+    "#FFEAA7",  # Light yellow
+]
+
+
+# ---------------------------------------------------------------------------
 # Type aliases
 # ---------------------------------------------------------------------------
 
@@ -49,14 +99,17 @@ def timestamp_badge(ts: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def build_hero_card(data: JSON) -> str:
+def build_hero_card(data: JSON, lang: str = "zh") -> str:
     """Build the hero/cover card with core thesis and call-to-action."""
     meta: dict[str, Any] = data.get("meta", {})  # type: ignore[assignment]
+    tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
 
     thesis = esc(meta.get("core_thesis", ""))
     stats = meta.get("stats", {})
     dur = esc(str(stats.get("duration_formatted", "")))
-    theme_n = str(stats.get("theme_count", "7"))
+    theme_n = str(len(data.get("themes", [])))
+
+    subtitle = tx["subtitle"].format(dur=dur, theme_n=theme_n)
 
     lines: list[str] = []
     lines.append('<article class="card card-hero" id="card-0">')
@@ -68,11 +121,7 @@ def build_hero_card(data: JSON) -> str:
     lines.append(f'  <h1 class="card-title">{thesis}</h1>')
 
     # Subtitle
-    lines.append(
-        f'  <p class="card-subtitle">'
-        f'一场{dur}的深度对话，浓缩为{theme_n}个核心洞察'
-        f'</p>'
-    )
+    lines.append(f'  <p class="card-subtitle">{subtitle}</p>')
 
     # Meta
     meta_parts: list[str] = []
@@ -83,8 +132,8 @@ def build_hero_card(data: JSON) -> str:
 
     # Actions
     lines.append('  <div class="hero-actions">')
-    lines.append('    <button class="btn btn-primary">开始学习 →</button>')
-    lines.append('    <a href="#" class="btn btn-secondary" data-goto="closing">跳到总结</a>')
+    lines.append(f'    <button class="btn btn-primary">{tx["start_learning"]}</button>')
+    lines.append(f'    <a href="#" class="btn btn-secondary" data-goto="closing">{tx["jump_to_summary"]}</a>')
     lines.append('  </div>')
 
     lines.append('</article>')
@@ -108,30 +157,33 @@ def _get_guest_name(data: JSON) -> str:
 # ---------------------------------------------------------------------------
 
 
-def build_theme_cards(data: JSON) -> str:
+def build_theme_cards(data: JSON, lang: str = "zh") -> str:
     """Build one card per cross-cutting theme."""
     themes: list[dict[str, Any]] = data.get("themes", [])  # type: ignore[assignment]
 
     cards: list[str] = []
     for i, theme in enumerate(themes):
-        cards.append(_build_single_theme_card(theme, i + 1, len(themes)))
+        cards.append(_build_single_theme_card(theme, i + 1, len(themes), lang))
 
     return "\n\n".join(cards)
 
 
-def _build_single_theme_card(theme: dict[str, Any], num: int, total: int) -> str:
+def _build_single_theme_card(theme: dict[str, Any], num: int, total: int, lang: str = "zh") -> str:
     """Build a single theme card with progressive disclosure."""
+    tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
     tid = theme.get("id", f"theme_{num}")
     name = esc(theme.get("name", "Untitled"))
     summary = esc(theme.get("summary", ""))
     narrative = theme.get("narrative", "")
-    color_idx = ((num - 1) % 7) + 1
+
+    # Use theme's own color if specified, otherwise cycle through ALL_COLORS
+    color = theme.get("color") or ALL_COLORS[(num - 1) % len(ALL_COLORS)]
 
     lines: list[str] = []
-    lines.append(f'<article class="card card-theme theme-{color_idx}" id="card-{num}">')
+    lines.append(f'<article class="card card-theme" id="card-{num}" style="--theme-color: {color}">')
 
     # Badge
-    lines.append(f'  <div class="theme-badge theme-{color_idx}">')
+    lines.append(f'  <div class="theme-badge">')
     lines.append(f'    <span class="dot"></span>')
     lines.append(f'    Theme {num} / {total}')
     lines.append(f'  </div>')
@@ -175,7 +227,7 @@ def _build_single_theme_card(theme: dict[str, Any], num: int, total: int) -> str
     if insights:
         lines.append(f'  <div class="expandable">')
         lines.append(f'    <button class="expand-toggle" aria-expanded="false">')
-        lines.append(f'      <span class="arrow">▸</span> 为什么这很重要')
+        lines.append(f'      <span class="arrow">▸</span> {tx["why_matters"]}')
         lines.append(f'    </button>')
         lines.append(f'    <div class="expand-content">')
         for ins in insights[:5]:
@@ -195,10 +247,10 @@ def _build_single_theme_card(theme: dict[str, Any], num: int, total: int) -> str
         rnames = esc(", ".join(related[:2]))
         lines.append(f'  <div class="expandable">')
         lines.append(f'    <button class="expand-toggle" aria-expanded="false">')
-        lines.append(f'      <span class="arrow">▸</span> 关联主题：{rnames}')
+        lines.append(f'      <span class="arrow">▸</span> {tx["related_themes_label"]}：{rnames}')
         lines.append(f'    </button>')
         lines.append(f'    <div class="expand-content">')
-        lines.append(f'    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>')
+        lines.append(f'    <p>{tx["related_themes_hint"]}</p>')
         lines.append(f'    </div>')
         lines.append(f'  </div>')
 
@@ -218,16 +270,17 @@ def _build_single_theme_card(theme: dict[str, Any], num: int, total: int) -> str
 # ---------------------------------------------------------------------------
 
 
-def build_closing_card(data: JSON) -> str:
+def build_closing_card(data: JSON, lang: str = "zh") -> str:
     """Build the closing card with 'if you only remember 3 things' and role advice."""
     meta: dict[str, Any] = data.get("meta", {})  # type: ignore[assignment]
+    tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
     takeaways = meta.get("key_takeaways", [])
 
     lines: list[str] = []
     lines.append('<article class="card card-closing" id="card-closing">')
 
     # Heading
-    lines.append('  <h2>如果你只记住三件事</h2>')
+    lines.append(f'  <h2>{tx["closing_heading"]}</h2>')
 
     # Top 3 takeaways
     lines.append('  <ol class="remember-list">')
@@ -239,28 +292,27 @@ def build_closing_card(data: JSON) -> str:
         lines.append(f'    </li>')
     lines.append('  </ol>')
 
-    # Role-specific advice
-    lines.append('  <h3 style="font-size:var(--fs-md);margin-top:var(--sp-xl);margin-bottom:var(--sp-md)">这对你意味着什么？</h3>')
-    lines.append('  <div class="role-tabs">')
-    lines.append('    <button class="role-tab active" data-role="engineer">🔧 工程师</button>')
-    lines.append('    <button class="role-tab" data-role="pm">📋 产品经理</button>')
-    lines.append('    <button class="role-tab" data-role="founder">🚀 创业者</button>')
-    lines.append('    <button class="role-tab" data-role="investor">💼 投资人</button>')
-    lines.append('  </div>')
+    # Role-specific advice — read from visual_content meta if present, otherwise fall back
+    role_advice: dict[str, Any] = meta.get("role_advice", {})  # type: ignore[assignment]
+    if isinstance(role_advice, dict) and role_advice:
+        lines.append(f'  <h3 style="font-size:var(--fs-md);margin-top:var(--sp-xl);margin-bottom:var(--sp-md)">{tx["role_question"]}</h3>')
+        lines.append('  <div class="role-tabs">')
+        first = True
+        for role_key in role_advice:
+            active_class = ' active' if first else ''
+            lines.append(f'    <button class="role-tab{active_class}" data-role="{esc(role_key)}">{esc(role_key)}</button>')
+            first = False
+        lines.append('  </div>')
 
-    # Role content panels
-    role_advice = {
-        "engineer": "AI coding 已经让开发效率提升 20-50 倍，但这不是终点。核心建议：(1) 不要只做语言模型——末班车已发车，转向多模态生成、机器人或 AI 辅助科学等蓝海方向；(2) 「把简单的事做得比谁都干净」比追求神奇技巧更重要——工程质量是真正的护城河；(3) 培养系统性思维——AI 已进入集体主义时代，个人英雄主义终结。",
-        "pm": "姚顺宇的判断可能让你不安：产品经理是 AI 最难替代的工作——因为「没有标准就是没有刻度」。但这也意味着：(1) 定义清楚「要解决什么问题」成为最稀缺的能力；(2) AI 产品交互形态远未定型——chatbot 不是终局，long horizon 任务执行是下一个前沿；(3) 中国 C 端产品模式（先不挣钱再形成闭环）值得深入研究。",
-        "founder": "姚顺宇给出了冷酷但清晰的生存框架：(1) AI 应用创业只有两条路：Cursor 式逃逸速度（万分之一生存率）或 Midjourney 式 niche 市场（百分之一）；(2) 「先吃一个小的，但选择有想象空间的小的」；(3) 目前只在模型侧有壁垒——如果做应用层，必须想清楚模型公司追上来怎么办。",
-        "investor": "几个值得关注的结构性判断：(1) 语言模型窗口已关闭，多模态生成和机器人是下一波范式突破方向；(2) 中国 AI 人才被严重低估——算力劣势逼出的软蒸馏创新可能是真正的 multi-agent 训练先驱；(3) ByteDance 是被严重低估的公司；(4) 绝大多数硅谷 new AI lab 会死——关注组织 DNA 和技术 leader 质量。",
-    }
-
-    for role_key, advice in role_advice.items():
-        visible = ' visible' if role_key == "engineer" else ''
-        lines.append(f'  <div class="role-content{visible}" data-role="{role_key}">')
-        lines.append(f'    <p>{esc(advice)}</p>')
-        lines.append(f'  </div>')
+        first = True
+        for role_key, advice in role_advice.items():
+            visible = ' visible' if first else ''
+            lines.append(f'  <div class="role-content{visible}" data-role="{esc(role_key)}">')
+            lines.append(f'    <p>{esc(str(advice))}</p>')
+            lines.append(f'  </div>')
+            first = False
+    else:
+        lines.append(f'  <p style="font-size:var(--fs-md);margin-top:var(--sp-xl);color:var(--text-secondary)">{tx["role_fallback"]}</p>')
 
     # Links to other formats
     lines.append('  <div class="closing-links">')
@@ -347,14 +399,15 @@ def render_cards(
     css_content: str,
     js_content: str,
     knowledge_data: JSON | None = None,
+    lang: str = "zh",
 ) -> str:
     """Produce the final self-contained learning cards HTML."""
     # Build content blocks
     title = build_title(data, knowledge_data)
     title_short = build_title_short(data)
-    hero_html = build_hero_card(data)
-    theme_html = build_theme_cards(data)
-    closing_html = build_closing_card(data)
+    hero_html = build_hero_card(data, lang)
+    theme_html = build_theme_cards(data, lang)
+    closing_html = build_closing_card(data, lang)
     nav_dots_html = build_nav_dots(data)
 
     # Inline CSS and JS
@@ -446,6 +499,13 @@ def build_argparser() -> argparse.ArgumentParser:
         default=None,
         help="Optional path to knowledge.json for metadata.",
     )
+    parser.add_argument(
+        "--lang", "-l",
+        metavar="LANG",
+        default="zh",
+        choices=["zh", "en"],
+        help="Language for UI strings. Default: zh. Supported: zh, en.",
+    )
     return parser
 
 
@@ -485,7 +545,7 @@ def main(argv: Optional[list[str]] = None) -> None:
 
     # Render
     try:
-        html = render_cards(data, html_template, css_content, js_content, knowledge_data)
+        html = render_cards(data, html_template, css_content, js_content, knowledge_data, args.lang)
     except Exception as exc:
         print(f"Error rendering cards: {exc}", file=sys.stderr)
         sys.exit(2)

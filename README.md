@@ -14,17 +14,19 @@
 你只需要提供对话文本（`.docx` / `.txt` / `.md`），它就会自动完成：
 
 ```
-原始笔录 → 解析 → 分段 → 知识提取 → 综合 → 4种输出格式
+原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 6种输出格式
 ```
 
-### 4 种输出格式
+### 6 种输出格式
 
-| 格式 | 说明 | 阅读时间 |
-|------|------|----------|
+| 格式 | 说明 | 阅读/收听时间 |
+|------|------|---------------|
 | 📝 **TL;DR 摘要** | 7大核心观点 + 8条金句 | 5 分钟 |
 | 📄 **深度报告** | 完整逐话题分析，99+ 引用块 | 30-45 分钟 |
 | 🌐 **学习卡片** | 卡片滑动/主题切换/移动优先 | 通勤学习 |
 | 🗺️ **知识图谱** | D3.js 径向思维导图 | 可视化探索 |
+| 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
+| 🎧 **短播客脚本** | 双人对话式播客脚本，可 TTS 转音频 | 10-15 分钟 |
 
 ---
 
@@ -69,10 +71,12 @@ transcripts/
 
 ```
 output/yaoshunyu-20260530/
-├── tldr-yaoshunyu-20260530.md          ← 5分钟速读
-├── report-yaoshunyu-20260530.md        ← 完整深度报告
-├── cards-yaoshunyu-20260530.html      ← 学习卡片
-└── map-yaoshunyu-20260530.html         ← 知识图谱
+├── tldr-yaoshunyu-20260530.md            ← 5分钟速读
+├── report-yaoshunyu-20260530.md          ← 完整深度报告
+├── cards-yaoshunyu-20260530.html         ← 学习卡片
+├── map-yaoshunyu-20260530.html           ← 知识图谱
+├── social-yaoshunyu-20260530.md          ← 社交媒体推文
+└── podcast-script-yaoshunyu-20260530.md  ← 短播客脚本
 ```
 
 ---
@@ -80,14 +84,17 @@ output/yaoshunyu-20260530/
 ## 处理流水线
 
 ```
-Transcript (.docx)
+Transcript (.docx / .txt / .md)
     │
     ▼
-Stage 1: Parse     ── scripts/parse_docx.py      → turns.json
-Stage 2: Segment   ── Claude + segmentation-guide → segments.json
-Stage 3: Extract   ── 6 parallel sub-agents       → 12 extraction files
-Stage 4: Synthesize── Claude merge + themes       → knowledge.json
-Stage 5: Present   ── scripts/generate_*.py       → 4 output formats
+Stage 1: Parse          ── scripts/parse_docx.py         → turns.json
+Stage 1.5: Validate     ── scripts/validate_transcript.py → turns-corrected.json
+Stage 2: Segment        ── Claude + segmentation-guide    → segments.json
+Stage 3: Extract        ── 6 parallel sub-agents          → 12 extraction files
+Stage 4: Synthesize     ── Claude merge + cross-cutting   → knowledge.json
+Stage 4.5: Visual Synth ── Claude + visual-synthesis-guide→ visual_content.json
+Stage 5: Present        ── Claude MD + scripts/generate_*.py → 6 output formats
+Stage 5b: Verify        ── Claude + quality-checklist     → verified outputs
 ```
 
 ### 6 维知识提取
@@ -114,15 +121,19 @@ interview-based-learning/
 ├── .gitignore
 ├── transcripts/                 ← 原始笔录（Word/txt/md）
 │   └── yaoshunyu.docx
-├── scripts/                     ← Python 脚本
+├── scripts/                     ← Python 脚本（5 个）
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
-│   ├── generate_cards.py         ← visual_content.json → 学习卡片
-│   └── generate_mindmap.py      ← knowledge.json → 知识图谱
-├── references/                  ← 按需加载的参考文档
+│   ├── validate_transcript.py   ← 术语校验 + 转录纠错
+│   ├── generate_cards.py        ← visual_content.json → 学习卡片
+│   ├── generate_mindmap.py      ← knowledge.json → 知识图谱
+│   └── generate_audio.py        ← 播客脚本 → TTS 音频
+├── references/                  ← 按需加载的参考文档（6 个）
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
 │   ├── segmentation-guide.md    ← 话题边界检测启发式
-│   ├── output-templates.md      ← 4 种输出格式模板
-│   └── quality-checklist.md     ← QA 检查清单 + 常见坑位
+│   ├── visual-synthesis-guide.md← 视觉内容综合指南
+│   ├── output-templates.md      ← 6 种输出格式模板
+│   ├── quality-checklist.md     ← QA 检查清单 + 常见坑位
+│   └── transcript-glossary.md   ← 术语表 + 专有名词纠错
 ├── assets/                      ← 模板与静态资源
 │   ├── mindmap-template.html    ← D3.js 知识图谱模板
 │   └── cards-template/
@@ -134,7 +145,9 @@ interview-based-learning/
         ├── tldr-*.md
         ├── report-*.md
         ├── cards-*.html
-        └── map-*.html
+        ├── map-*.html
+        ├── social-*.md
+        └── podcast-script-*.md
 ```
 
 ### 文件分类逻辑
@@ -214,8 +227,10 @@ pip install python-docx
 ```bash
 # 回归测试（详见 references/quality-checklist.md）
 python -c "import py_compile; py_compile.compile('scripts/parse_docx.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/validate_transcript.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/generate_audio.py', doraise=True)"
 ```
 
 并在浏览器中验证学习卡片和知识图谱的交互功能。

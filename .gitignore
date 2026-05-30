@@ -6,13 +6,16 @@ __pycache__/
 dist/
 build/
 
-# Runtime output (intermediate processing artifacts)
-output/turns.json
-output/segments.json
-output/knowledge.json
-output/segments/
-output/*.txt
-output/*.tmp
+# Runtime output — intermediate artifacts (per-interview subdirectories)
+output/*/
+!output/*/tldr-*.md
+!output/*/report-*.md
+!output/*/cards-*.html
+!output/*/map-*.html
+!output/*/social-*.md
+!output/*/podcast-script-*.md
+!output/*/podcast-*.mp3
+!output/*/visual_content.json
 
 # OS
 .DS_Store

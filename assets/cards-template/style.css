@@ -41,7 +41,8 @@
   --color-divider:        #d9d2c7;
   --color-rule:           #c4bbb0;
 
-  /* ---- Theme Accent Colors (one per theme card) ---- */
+  /* ---- Theme Accent Colors (default palette — any number of themes supported;
+     cards use inline --theme-color which falls back to --color-accent) ---- */
   --color-theme-1: #722f37;  /* burgundy */
   --color-theme-2: #2f5272;  /* slate blue */
   --color-theme-3: #3a6b4a;  /* forest green */
@@ -628,18 +629,10 @@ code {
    ======================================================================== */
 
 .card-theme {
-  border-top: 3px solid transparent;
+  border-top: 3px solid var(--theme-color, var(--color-accent));
   padding-top: var(--space-10);
   background: var(--color-surface-raised);
 }
-
-.card-theme.theme-1 { border-top-color: var(--color-theme-1); }
-.card-theme.theme-2 { border-top-color: var(--color-theme-2); }
-.card-theme.theme-3 { border-top-color: var(--color-theme-3); }
-.card-theme.theme-4 { border-top-color: var(--color-theme-4); }
-.card-theme.theme-5 { border-top-color: var(--color-theme-5); }
-.card-theme.theme-6 { border-top-color: var(--color-theme-6); }
-.card-theme.theme-7 { border-top-color: var(--color-theme-7); }
 
 .theme-badge {
   display: inline-flex;
@@ -651,6 +644,7 @@ code {
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
   margin-bottom: var(--space-6);
+  color: var(--theme-color, var(--color-accent));
 }
 
 .theme-badge .dot {
@@ -658,22 +652,8 @@ code {
   height: 8px;
   border-radius: var(--radius-full);
   flex-shrink: 0;
+  background: var(--theme-color, var(--color-accent));
 }
-
-.theme-badge.theme-1 { color: var(--color-theme-1); }
-.theme-badge.theme-1 .dot { background: var(--color-theme-1); }
-.theme-badge.theme-2 { color: var(--color-theme-2); }
-.theme-badge.theme-2 .dot { background: var(--color-theme-2); }
-.theme-badge.theme-3 { color: var(--color-theme-3); }
-.theme-badge.theme-3 .dot { background: var(--color-theme-3); }
-.theme-badge.theme-4 { color: var(--color-theme-4); }
-.theme-badge.theme-4 .dot { background: var(--color-theme-4); }
-.theme-badge.theme-5 { color: var(--color-theme-5); }
-.theme-badge.theme-5 .dot { background: var(--color-theme-5); }
-.theme-badge.theme-6 { color: var(--color-theme-6); }
-.theme-badge.theme-6 .dot { background: var(--color-theme-6); }
-.theme-badge.theme-7 { color: var(--color-theme-7); }
-.theme-badge.theme-7 .dot { background: var(--color-theme-7); }
 
 .card-theme .card-claim {
   font-family: var(--font-heading);
@@ -1474,13 +1454,7 @@ code {
   }
 
   /* Show theme colors as subtle tints in print */
-  .card-theme.theme-1 { border-left-color: #666666; }
-  .card-theme.theme-2 { border-left-color: #666666; }
-  .card-theme.theme-3 { border-left-color: #666666; }
-  .card-theme.theme-4 { border-left-color: #666666; }
-  .card-theme.theme-5 { border-left-color: #666666; }
-  .card-theme.theme-6 { border-left-color: #666666; }
-  .card-theme.theme-7 { border-left-color: #666666; }
+  .card-theme { border-left-color: #666666; }
 
   .theme-badge {
     color: #333333;
