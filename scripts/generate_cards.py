@@ -99,42 +99,61 @@ def timestamp_badge(ts: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def build_hero_card(data: JSON, lang: str = "zh") -> str:
-    """Build the hero/cover card with core thesis and call-to-action."""
+def build_hero_card(data: JSON, lang: str = "zh", knowledge_data: JSON | None = None) -> str:
+    """Build the hero/cover card with compact overview and theme index grid."""
     meta: dict[str, Any] = data.get("meta", {})  # type: ignore[assignment]
     tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
+    themes: list[dict[str, Any]] = data.get("themes", [])  # type: ignore[assignment]
 
     thesis = esc(meta.get("core_thesis", ""))
     stats = meta.get("stats", {})
     dur = esc(str(stats.get("duration_formatted", "")))
-    theme_n = str(len(data.get("themes", [])))
+    theme_n = len(themes)
+    insight_count = stats.get("insight_count", theme_n)
 
-    subtitle = tx["subtitle"].format(dur=dur, theme_n=theme_n)
+    # Guest info — prefer knowledge_data metadata, fall back to visual_content meta
+    guest_name = _get_guest_name(knowledge_data) if knowledge_data else _get_guest_name(data)
+    if not guest_name:
+        guest_name = _get_guest_name(data)
+    affiliation = _get_guest_affiliation(knowledge_data) if knowledge_data else _get_guest_affiliation(data)
+    if not affiliation:
+        affiliation = _get_guest_affiliation(data)
+    guest_display = guest_name
+    if affiliation:
+        guest_display = f"{guest_name}, {affiliation}"
 
     lines: list[str] = []
     lines.append('<article class="card card-hero" id="card-0">')
 
-    # Badge
-    lines.append('  <div class="card-badge">Learning Cards</div>')
+    # Guest info row
+    lines.append(f'  <div class="hero-guest">🎙 {esc(guest_display)}</div>')
 
-    # Title
-    lines.append(f'  <h1 class="card-title">{thesis}</h1>')
+    # Stats row
+    lines.append(f'  <div class="hero-stats">⏱ {dur} · {insight_count} core insights</div>')
 
-    # Subtitle
-    lines.append(f'  <p class="card-subtitle">{subtitle}</p>')
+    # Core thesis as a styled pull-quote
+    lines.append(f'  <blockquote class="hero-thesis">{thesis}</blockquote>')
 
-    # Meta
-    meta_parts: list[str] = []
-    guest_info = _get_guest_name(data)
-    if guest_info:
-        meta_parts.append(f"<span>🎙 {esc(guest_info)}</span>")
-    lines.append(f'  <div class="card-meta">{" · ".join(meta_parts) if meta_parts else ""}</div>')
+    # Theme index label
+    lines.append('  <div class="theme-index-label">📋 Content</div>')
 
-    # Actions
-    lines.append('  <div class="hero-actions">')
-    lines.append(f'    <button class="btn btn-primary">{tx["start_learning"]}</button>')
-    lines.append(f'    <a href="#" class="btn btn-secondary" data-goto="closing">{tx["jump_to_summary"]}</a>')
+    # Theme index grid
+    lines.append('  <div class="theme-index">')
+    for i, theme in enumerate(themes):
+        name = esc(theme.get("name", f"Theme {i+1}"))
+        summary = esc(theme.get("summary", ""))
+        color = theme.get("color") or ALL_COLORS[i % len(ALL_COLORS)]
+        # Truncate summary to 60 chars
+        if len(summary) > 60:
+            summary = summary[:57] + "..."
+        lines.append(f'    <button class="theme-index-tile" data-theme-index="{i+1}" style="border-left: 3px solid {color}">')
+        lines.append(f'      <span class="tile-name">{name}</span>')
+        lines.append(f'      <span class="tile-summary">{summary}</span>')
+        lines.append(f'    </button>')
     lines.append('  </div>')
+
+    # Start button
+    lines.append(f'  <button class="btn btn-primary hero-start">{tx["start_learning"]}</button>')
 
     lines.append('</article>')
     return "\n".join(lines)
@@ -152,6 +171,16 @@ def _get_guest_name(data: JSON) -> str:
     return ""
 
 
+def _get_guest_affiliation(data: JSON) -> str:
+    """Extract guest affiliation from metadata."""
+    meta = data.get("meta", data.get("metadata", {}))
+    if isinstance(meta, dict):
+        guest = meta.get("guest", "")
+        if isinstance(guest, dict):
+            return guest.get("affiliation", "")
+    return ""
+
+
 # ---------------------------------------------------------------------------
 # Theme Card Builder
 # ---------------------------------------------------------------------------
@@ -163,6 +192,8 @@ def build_theme_cards(data: JSON, lang: str = "zh") -> str:
 
     cards: list[str] = []
     for i, theme in enumerate(themes):
+        # Attach full themes list so each card can look up the next theme name
+        theme["_all_themes"] = themes
         cards.append(_build_single_theme_card(theme, i + 1, len(themes), lang))
 
     return "\n\n".join(cards)
@@ -261,6 +292,19 @@ def _build_single_theme_card(theme: dict[str, Any], num: int, total: int, lang: 
     lines.append(f'    ⏱ ~{read_time} min read')
     lines.append(f'  </div>')
 
+    # Next-theme navigation (skip for the last card)
+    if num < total:
+        themes_all: list[dict[str, Any]] = theme.get("_all_themes", [])
+        next_name = ""
+        if themes_all and num < len(themes_all):
+            next_name = themes_all[num].get("name", "")
+        if not next_name:
+            next_name = f"Theme {num+1}"
+        lines.append(f'  <div class="next-theme">')
+        lines.append(f'    <span class="next-theme-label">Next</span>')
+        lines.append(f'    <button class="next-theme-btn" data-next-index="{num+1}">{esc(next_name)} →</button>')
+        lines.append(f'  </div>')
+
     lines.append('</article>')
     return "\n".join(lines)
 
@@ -270,8 +314,8 @@ def _build_single_theme_card(theme: dict[str, Any], num: int, total: int, lang: 
 # ---------------------------------------------------------------------------
 
 
-def build_closing_card(data: JSON, lang: str = "zh") -> str:
-    """Build the closing card with 'if you only remember 3 things' and role advice."""
+def build_closing_card(data: JSON, lang: str = "zh", knowledge_data: JSON | None = None) -> str:
+    """Build the closing card with 'if you only remember 3 things', role advice, and external links."""
     meta: dict[str, Any] = data.get("meta", {})  # type: ignore[assignment]
     tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
     takeaways = meta.get("key_takeaways", [])
@@ -314,13 +358,107 @@ def build_closing_card(data: JSON, lang: str = "zh") -> str:
     else:
         lines.append(f'  <p style="font-size:var(--fs-md);margin-top:var(--sp-xl);color:var(--text-secondary)">{tx["role_fallback"]}</p>')
 
-    # Links to other formats
+    # External links to other output formats
+    filenames = _build_output_filenames(data, knowledge_data)
     lines.append('  <div class="closing-links">')
-    lines.append('    <a href="#" class="btn btn-secondary" data-goto="0">← 回到封面</a>')
+    lines.append('    <span class="closing-links-label">Continue Exploring</span>')
+    lines.append(f'    <a href="{esc(filenames["report"])}" class="btn btn-secondary">Full Report →</a>')
+    lines.append(f'    <a href="{esc(filenames["map"])}" class="btn btn-secondary">Knowledge Map →</a>')
+    lines.append(f'    <a href="{esc(filenames["tldr"])}" class="btn btn-secondary">TL;DR →</a>')
     lines.append('  </div>')
 
     lines.append('</article>')
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Output Filename Helper
+# ---------------------------------------------------------------------------
+
+
+def _build_output_filenames(data: JSON, knowledge_data: JSON | None = None) -> dict[str, str]:
+    """Construct relative filenames for report, map, and tldr output files.
+
+    Naming convention:
+        tldr-[guest-slug]-[YYYYMMDD].md
+        report-[guest-slug]-[YYYYMMDD].md
+        map-[guest-slug]-[YYYYMMDD].html
+
+    Guest slug is derived from the guest name (last word of the Latin/pinyin name).
+    Date is extracted from visual_content.json meta.date or knowledge.json metadata.date,
+    falling back to today's date.
+    """
+    # --- guest slug (prefer knowledge_data, fall back to visual_content) ---
+    guest_name = _get_guest_name(knowledge_data) if knowledge_data else ""
+    if not guest_name:
+        guest_name = _get_guest_name(data)
+    slug = _guest_slug(guest_name)
+
+    # --- date ---
+    date_str = _extract_date(data, knowledge_data)
+
+    return {
+        "tldr": f"tldr-{slug}-{date_str}.md",
+        "report": f"report-{slug}-{date_str}.md",
+        "map": f"map-{slug}-{date_str}.html",
+    }
+
+
+def _guest_slug(guest_name: str) -> str:
+    """Derive a filename-safe slug from the guest name.
+
+    Takes the last word of the name (typically the surname/family name in
+    Latin script), strips non-alphanumeric characters, and lowercases.
+    Falls back to 'guest' when the name is empty or purely non-Latin.
+    """
+    if not guest_name:
+        return "guest"
+    # Split on whitespace, take the last word
+    parts = guest_name.strip().split()
+    last = parts[-1] if parts else guest_name
+    # Remove parentheses, brackets, and other non-alphanumeric chars
+    cleaned = "".join(ch for ch in last if ch.isalnum())
+    if not cleaned:
+        return "guest"
+    return cleaned.lower()
+
+
+def _extract_date(data: JSON, knowledge_data: JSON | None = None) -> str:
+    """Extract YYYYMMDD date from available metadata sources.
+
+    Priority order:
+    1. visual_content.json meta.date
+    2. knowledge.json metadata.date
+    3. Today's date (fallback)
+    """
+    from datetime import date as _date
+
+    # Try visual_content meta
+    meta = data.get("meta", {})
+    if isinstance(meta, dict):
+        d = meta.get("date", "")
+        if d and isinstance(d, str) and len(d) >= 8:
+            return _normalize_date(d)
+
+    # Try knowledge metadata
+    if knowledge_data:
+        km = knowledge_data.get("metadata", {})
+        if isinstance(km, dict):
+            d = km.get("date", "")
+            if d and isinstance(d, str) and len(d) >= 8:
+                return _normalize_date(d)
+
+    # Fall back to today
+    return _date.today().strftime("%Y%m%d")
+
+
+def _normalize_date(raw: str) -> str:
+    """Normalize a date string to YYYYMMDD format."""
+    # Strip non-digit characters and take first 8 digits
+    digits = "".join(ch for ch in raw if ch.isdigit())
+    if len(digits) >= 8:
+        return digits[:8]
+    return digits
 
 
 # ---------------------------------------------------------------------------
@@ -405,9 +543,9 @@ def render_cards(
     # Build content blocks
     title = build_title(data, knowledge_data)
     title_short = build_title_short(data)
-    hero_html = build_hero_card(data, lang)
+    hero_html = build_hero_card(data, lang, knowledge_data)
     theme_html = build_theme_cards(data, lang)
-    closing_html = build_closing_card(data, lang)
+    closing_html = build_closing_card(data, lang, knowledge_data)
     nav_dots_html = build_nav_dots(data)
 
     # Inline CSS and JS

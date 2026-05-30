@@ -10,6 +10,7 @@ ready(function(){
   try{
     initTheme();
     initNav();
+    initHeroNav();
     initExpandables();
     initIntersectionObserver();
     initRoleTabs();
@@ -48,13 +49,35 @@ function initNav(){
   if(prev)prev.addEventListener("click",function(){goToCard(currentIndex-1)});
   if(next)next.addEventListener("click",function(){goToCard(currentIndex+1)});
 
-  // Click on hero "Start Learning" button
-  var startBtn=document.querySelector(".btn-primary");
-  if(startBtn&&startBtn.textContent.includes("开始")){
-    startBtn.addEventListener("click",function(e){
-      e.preventDefault();goToCard(1);
+  // Handle hero "Start Reading" button
+  var startBtn = document.querySelector(".hero-start");
+  if (startBtn) {
+    startBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      goToCard(1);
     });
   }
+}
+
+function initHeroNav() {
+  // Theme index tile clicks
+  document.addEventListener("click", function(e) {
+    var tile = e.target.closest(".theme-index-tile");
+    if (!tile) return;
+    var idx = parseInt(tile.getAttribute("data-theme-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
+  // Next-theme button clicks
+  document.addEventListener("click", function(e) {
+    var btn = e.target.closest(".next-theme-btn");
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute("data-next-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
 }
 
 function goToCard(index){

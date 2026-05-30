@@ -1118,7 +1118,103 @@ code {
 .card-theme:nth-child(8)  { animation-delay: 360ms; }
 
 /* ========================================================================
-   20. RESPONSIVE — TABLET BREAKPOINT (768px and below)
+   20. COMPACT HERO OVERVIEW
+   ======================================================================== */
+
+/* Compact Hero Overview */
+.card-hero { text-align: left; padding: var(--space-10) var(--space-8); }
+.card-hero .card-badge { margin-bottom: var(--space-4); }
+.card-hero .card-title { font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-4); }
+
+.hero-guest {
+  font-family: var(--font-ui); font-size: var(--text-sm);
+  color: var(--color-text-secondary); margin-bottom: var(--space-2);
+}
+.hero-stats {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  color: var(--color-text-tertiary); margin-bottom: var(--space-6);
+}
+.hero-thesis {
+  margin: 0 0 var(--space-8) 0; padding: var(--space-5) var(--space-6);
+  background: var(--color-accent-soft); border-radius: var(--radius-lg);
+  box-shadow: inset 4px 0 0 0 var(--color-accent);
+  font-size: var(--text-base); font-style: italic;
+  line-height: var(--leading-compact); color: var(--color-text-secondary);
+}
+.theme-index-label {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  font-weight: 600; color: var(--color-text-tertiary);
+  text-transform: uppercase; letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-4);
+}
+
+/* Theme Index Grid */
+.theme-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+.theme-index-tile {
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-4); border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md); background: var(--color-surface-raised);
+  cursor: pointer; text-align: left; font-family: inherit;
+  transition: all var(--duration-fast);
+  box-shadow: inset 3px 0 0 0 var(--theme-color, var(--color-accent));
+}
+.theme-index-tile:hover {
+  border-color: var(--color-accent); box-shadow: var(--elevation-low), inset 3px 0 0 0 var(--theme-color, var(--color-accent));
+  transform: translateY(-1px);
+}
+.theme-index-tile .tile-name {
+  font-size: var(--text-sm); font-weight: 600; color: var(--color-text-primary);
+  line-height: var(--leading-compact);
+}
+.theme-index-tile .tile-summary {
+  font-size: var(--text-2xs); color: var(--color-text-tertiary);
+  line-height: var(--leading-compact);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ========================================================================
+   21. NEXT-THEME NAVIGATION
+   ======================================================================== */
+
+.next-theme {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-top: var(--space-8); padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+.next-theme-label {
+  font-family: var(--font-ui); font-size: var(--text-2xs);
+  color: var(--color-text-tertiary); text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+.next-theme-btn {
+  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 500;
+  color: var(--color-accent); background: none; border: none;
+  cursor: pointer; padding: 0; transition: color var(--duration-fast);
+}
+.next-theme-btn:hover { color: var(--color-accent-hover); text-decoration: underline; }
+
+/* ========================================================================
+   22. CLOSING LINKS SECTION
+   ======================================================================== */
+
+.closing-links {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  margin-top: var(--space-8); padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+.closing-links-label {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  color: var(--color-text-tertiary); margin-bottom: var(--space-1);
+}
+
+/* ========================================================================
+   23. RESPONSIVE — TABLET BREAKPOINT (768px and below)
    ======================================================================== */
 
 @media (max-width: 768px) {
@@ -1174,6 +1270,9 @@ code {
   .top-bar {
     padding: var(--space-3) var(--space-5);
   }
+
+  .theme-index { grid-template-columns: repeat(2, 1fr); }
+  .card-hero { padding: var(--space-8) var(--space-6); }
 }
 
 /* ========================================================================
@@ -1323,6 +1422,8 @@ code {
   .timestamp-badge {
     font-size: 0.625rem;
   }
+
+  .theme-index { grid-template-columns: 1fr; }
 }
 
 /* ========================================================================
@@ -1622,14 +1723,41 @@ code {
 
 <main class="deck" id="deck">
   <article class="card card-hero" id="card-0">
-  <div class="card-badge">Learning Cards</div>
-  <h1 class="card-title">AI行业已从个人英雄主义的模型追赶时代，进入系统性工程与组织文化决胜的「集体主义时代」——模型能力趋同后，核心竞争力不再是「AI能不能做到」，而是「任务是否被良好定义」和「谁更靠谱」。</h1>
-  <p class="card-subtitle">一场3h 47m的深度对话，浓缩为7个核心洞察</p>
-  <div class="card-meta"></div>
-  <div class="hero-actions">
-    <button class="btn btn-primary">开始学习 →</button>
-    <a href="#" class="btn btn-secondary" data-goto="closing">跳到总结</a>
+  <div class="hero-guest">🎙 姚顺宇 (Yao Shunyu), Google DeepMind</div>
+  <div class="hero-stats">⏱ 3h 47m · 124 core insights</div>
+  <blockquote class="hero-thesis">AI行业已从个人英雄主义的模型追赶时代，进入系统性工程与组织文化决胜的「集体主义时代」——模型能力趋同后，核心竞争力不再是「AI能不能做到」，而是「任务是否被良好定义」和「谁更靠谱」。</blockquote>
+  <div class="theme-index-label">📋 Content</div>
+  <div class="theme-index">
+    <button class="theme-index-tile" data-theme-index="1" style="border-left: 3px solid #6C5CE7">
+      <span class="tile-name">AI的集体主义时代：个人英雄主义的终结</span>
+      <span class="tile-summary">Transformer之后AI研究已进入系统性工程阶段，靠单打独斗产生突破的时代已经过去。核心能力是「靠谱」——对...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="2" style="border-left: 3px solid #00B894">
+      <span class="tile-name">范式成熟度的三层分化：语言→多模态→机器人</span>
+      <span class="tile-summary">AI各子领域处于截然不同的成熟阶段——自然语言处理范式已定（工程优化为主），多模态生成范式未定（仍是科学问题），机...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="3" style="border-left: 3px solid #E17055">
+      <span class="tile-name">资源约束与创新的辩证关系：算力劣势逼出蒸馏创新</span>
+      <span class="tile-summary">中国在算力上的劣势反而催生了独特的创新路径。软蒸馏（异构多模型协作训练）可能使中国实验室成为真正multi-age...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="4" style="border-left: 3px solid #0984E3">
+      <span class="tile-name">组织DNA决定AI战略：Top-Down vs Bottom-Up的不同道路</span>
+      <span class="tile-summary">Anthropic的top-down（技术一号位做决策、全公司对齐单一赌注）、Google的bottom-up（多...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="5" style="border-left: 3px solid #FDCB6E">
+      <span class="tile-name">AI产品交互形态远未定型：Chatbot不是终局</span>
+      <span class="tile-summary">姚顺宇对「chatbot是终极形态」的假设提出尖锐批评——模型明明有那么多的能力，但居然用的方法是chatbot。...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="6" style="border-left: 3px solid #E84393">
+      <span class="tile-name">选择哲学：追求本质的难，而非表面的新</span>
+      <span class="tile-summary">姚顺宇的整个职业生涯都遵循同一原则：「不喜欢做已经会了的事情」。他区分了「本质的难」（科学问题、范式突破）和「表面...</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="7" style="border-left: 3px solid #00CEC9">
+      <span class="tile-name">Scaling Law未死：从简单堆砌到系统优化</span>
+      <span class="tile-summary">模型进步速度没有放缓，但进步的表现形式在变化。大部分「撞墙」感受来自数据瓶颈或工程bug，而非真正的科学极限。「模...</span>
+    </button>
   </div>
+  <button class="btn btn-primary hero-start">开始学习 →</button>
 </article>
   <article class="card card-theme" id="card-1" style="--theme-color: #6C5CE7">
   <div class="theme-badge">
@@ -1681,6 +1809,10 @@ code {
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~3 min read
   </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="2">范式成熟度的三层分化：语言→多模态→机器人 →</button>
+  </div>
 </article>
 
 <article class="card card-theme" id="card-2" style="--theme-color: #00B894">
@@ -1729,6 +1861,10 @@ code {
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~2 min read
   </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="3">资源约束与创新的辩证关系：算力劣势逼出蒸馏创新 →</button>
+  </div>
 </article>
 
 <article class="card card-theme" id="card-3" style="--theme-color: #E17055">
@@ -1776,6 +1912,10 @@ code {
   </div>
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~2 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="4">组织DNA决定AI战略：Top-Down vs Bottom-Up的不同道路 →</button>
   </div>
 </article>
 
@@ -1826,6 +1966,10 @@ code {
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~3 min read
   </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="5">AI产品交互形态远未定型：Chatbot不是终局 →</button>
+  </div>
 </article>
 
 <article class="card card-theme" id="card-5" style="--theme-color: #FDCB6E">
@@ -1875,6 +2019,10 @@ code {
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~3 min read
   </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="6">选择哲学：追求本质的难，而非表面的新 →</button>
+  </div>
 </article>
 
 <article class="card card-theme" id="card-6" style="--theme-color: #E84393">
@@ -1923,6 +2071,10 @@ code {
   </div>
   <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
     ⏱ ~2 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="7">Scaling Law未死：从简单堆砌到系统优化 →</button>
   </div>
 </article>
 
@@ -1996,7 +2148,10 @@ code {
   </ol>
   <p style="font-size:var(--fs-md);margin-top:var(--sp-xl);color:var(--text-secondary)">阅读完整报告以获取详细分析和建议。</p>
   <div class="closing-links">
-    <a href="#" class="btn btn-secondary" data-goto="0">← 回到封面</a>
+    <span class="closing-links-label">Continue Exploring</span>
+    <a href="report-shunyu-20260530.md" class="btn btn-secondary">Full Report →</a>
+    <a href="map-shunyu-20260530.html" class="btn btn-secondary">Knowledge Map →</a>
+    <a href="tldr-shunyu-20260530.md" class="btn btn-secondary">TL;DR →</a>
   </div>
 </article>
 </main>
@@ -2020,6 +2175,7 @@ ready(function(){
   try{
     initTheme();
     initNav();
+    initHeroNav();
     initExpandables();
     initIntersectionObserver();
     initRoleTabs();
@@ -2058,13 +2214,35 @@ function initNav(){
   if(prev)prev.addEventListener("click",function(){goToCard(currentIndex-1)});
   if(next)next.addEventListener("click",function(){goToCard(currentIndex+1)});
 
-  // Click on hero "Start Learning" button
-  var startBtn=document.querySelector(".btn-primary");
-  if(startBtn&&startBtn.textContent.includes("开始")){
-    startBtn.addEventListener("click",function(e){
-      e.preventDefault();goToCard(1);
+  // Handle hero "Start Reading" button
+  var startBtn = document.querySelector(".hero-start");
+  if (startBtn) {
+    startBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      goToCard(1);
     });
   }
+}
+
+function initHeroNav() {
+  // Theme index tile clicks
+  document.addEventListener("click", function(e) {
+    var tile = e.target.closest(".theme-index-tile");
+    if (!tile) return;
+    var idx = parseInt(tile.getAttribute("data-theme-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
+  // Next-theme button clicks
+  document.addEventListener("click", function(e) {
+    var btn = e.target.closest(".next-theme-btn");
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute("data-next-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
 }
 
 function goToCard(index){
