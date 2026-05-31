@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """为播客音频叠加背景音乐（通过 MiniMax Token Plan music-2.6 模型）。
 
-生成与访谈主题匹配的 instrumental 背景音乐，然后用 pydub 将其
+生成与访谈主题匹配的 instrumental 背景音乐，然后用 ffmpeg 将其
 与播客人声混合（BGM 音量 25%，loop 至与人声等长）。
 
 用法：
@@ -160,7 +160,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         mix_audio(str(voice_path), bgm_path, out)
     except Exception as exc:
         print(f"混音失败：{exc}", file=sys.stderr)
-        print("提示：需要安装 pydub：pip install pydub", file=sys.stderr)
+        print("提示：需要安装 ffmpeg：winget install Gyan.FFmpeg", file=sys.stderr)
         print(f"原始 BGM 文件已保存：{bgm_path}")
         sys.exit(1)
 

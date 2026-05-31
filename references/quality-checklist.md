@@ -425,5 +425,5 @@ print('Stage 3 — TL;DR Report: OK')
 "
 
 echo ""
-echo "=== All regression tests passed (7 stages, 10 outputs) ==="
+echo "=== All regression tests passed (7 stages, 8 outputs) ==="
 ```

@@ -520,6 +520,8 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | `scripts/generate_audio.py` | 5 | Render podcast audio via MiniMax Token Plan (mmx CLI) |
 | `scripts/generate_pdf.py` | 5 | Render styled PDFs from Markdown reports |
 | `scripts/generate_bgm_podcast.py` | 5 | Generate BGM + mix with podcast via MiniMax music-2.6 |
+| `scripts/estimate.py` | 0 (pre-run) | Estimate token cost and runtime before pipeline execution |
+| `scripts/_mmx_utils.py` | — | Shared mmx CLI helper (used by generate_audio, generate_bgm_podcast) |
 
 ## Assets
 
