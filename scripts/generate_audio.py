@@ -39,6 +39,7 @@ T2A_WS_URL = "wss://api.minimaxi.com/ws/v1/t2a_v2"
 # Default model and voice
 DEFAULT_MODEL = "speech-2.8-turbo"
 DEFAULT_VOICE = "male-qn-qingse"
+DEFAULT_SPEED = 1.2  # 稍快语速，适合播客
 
 # Chinese chars per second estimate
 CHARS_PER_SECOND = 4.0
@@ -291,8 +292,8 @@ API Key 设置：
         "--speed",
         metavar="FLOAT",
         type=float,
-        default=1.0,
-        help="语速倍率（默认：1.0，范围 0.5–2.0）。",
+        default=DEFAULT_SPEED,
+        help=f"语速倍率（默认：{DEFAULT_SPEED}，范围 0.5–2.0）。",
     )
     parser.add_argument(
         "--vol",
