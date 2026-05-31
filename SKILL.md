@@ -26,7 +26,7 @@ Transcript file (.docx / .txt / .md)
 [Stage 4: Synthesize]   → knowledge.json           (Claude merge + cross-cutting)
 [Stage 4.5: Visual Synthesis] → visual_content.json (Claude; inputs: knowledge.json + optional report-*.md)
 [Stage 5: Present]      → selected output formats   (Claude for MD + scripts/generate_*.py for HTML/Cards/Audio/PDF; at least one required)
-[Stage 5b: Verify]      ── quality checks on all 7 outputs
+[Stage 5b: Verify]      ── quality checks on all 10 outputs
 ```
 
 Each stage produces a well-defined intermediate artifact. This decouples the pipeline so stages can be re-run independently and output formats can be generated in parallel.
@@ -271,7 +271,7 @@ Write `visual_content.json` to the `data/` subdirectory of the interview output.
 
 ## Stage 5: Generate Outputs
 
-**Goal:** Produce selected output formats (at least one). Not all seven are required — choose based on user needs. See "选择性输出模式" section below for per-output dependencies.
+**Goal:** Produce selected output formats (at least one). Not all ten are required — choose based on user needs. See "选择性输出模式" section below for per-output dependencies.
 
 ### Output 1: TL;DR Quick Summary
 
@@ -403,7 +403,7 @@ Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest
 
 ## 选择性输出模式 (Selective Output Generation)
 
-无需每次生成全部 7 种输出。根据需求选择：
+无需每次生成全部 10 种输出。根据需求选择：
 
 | 需求 | 最小流水线 |
 |------|-----------|
@@ -525,7 +525,7 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | [references/segmentation-guide.md](references/segmentation-guide.md) | Stage 2 | How to split transcripts into topics |
 | [references/analysis-framework.md](references/analysis-framework.md) | Stage 3 | Six-dimension extraction taxonomy with JSON schemas |
 | [references/visual-synthesis-guide.md](references/visual-synthesis-guide.md) | Stage 4.5 | How to synthesize content for visual HTML presentation |
-| [references/output-templates.md](references/output-templates.md) | Stage 5 | Templates for all seven output formats |
+| [references/output-templates.md](references/output-templates.md) | Stage 5 | Templates for all ten output formats |
 | [references/quality-checklist.md](references/quality-checklist.md) | Stage 5b (post-generation) | Mandatory QA checks, common pitfalls, regression test script |
 
 ## Scripts

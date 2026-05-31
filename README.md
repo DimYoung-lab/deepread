@@ -17,7 +17,7 @@
 原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 7种输出格式
 ```
 
-### 7 种输出格式
+### 10 种输出格式
 
 | 格式 | 说明 | 阅读/收听时间 |
 |------|------|---------------|
@@ -88,7 +88,11 @@ output/yaoshunyu-20260530/
 │   └── map-yaoshunyu-20260530.html      ← 知识图谱
 ├── audio/                               ← 音频
 │   ├── podcast-script-yaoshunyu-20260530.md ← 短播客脚本
-│   └── podcast-yaoshunyu-20260530.mp3   ← TTS 合成音频
+│   ├── podcast-yaoshunyu-20260530.mp3   ← TTS 合成音频
+│   └── podcast-yaoshunyu-20260530-bgm.mp3 ← BGM 增强版
+├── images/                              ← AI 生成图片
+│   ├── cover-yaoshunyu-20260530.png     ← 访谈封面图
+│   └── quote-01-yaoshunyu-20260530.png  ← 金句图文卡
 ├── data/                                ← 中间数据
 │   ├── turns.json
 │   ├── knowledge.json
@@ -110,11 +114,11 @@ Stage 2: Segment        ── Claude + segmentation-guide    → segments.json
 Stage 3: Extract        ── 6 parallel sub-agents          → 12 extraction files
 Stage 4: Synthesize     ── Claude merge + cross-cutting   → knowledge.json
 Stage 4.5: Visual Synth ── Claude + visual-synthesis-guide→ visual_content.json
-Stage 5: Present        ── Claude MD + scripts/generate_*.py → 7 output formats (可按需选择)
+Stage 5: Present        ── Claude MD + scripts/generate_*.py → 10 output formats (可按需选择)
 Stage 5b: Verify        ── Claude + quality-checklist     → verified outputs
 ```
 
-> **提示**：无需每次生成全部 7 种输出。详见 SKILL.md 中的「选择性输出模式」章节。
+> **提示**：无需每次生成全部 10 种输出。详见 SKILL.md 中的「选择性输出模式」章节。
 
 ### 6 维知识提取
 
@@ -151,7 +155,7 @@ interview-based-learning/
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
 │   ├── segmentation-guide.md    ← 话题边界检测启发式
 │   ├── visual-synthesis-guide.md← 视觉内容综合指南
-│   ├── output-templates.md      ← 7 种输出格式模板
+│   ├── output-templates.md      ← 10 种输出格式模板
 │   ├── quality-checklist.md     ← QA 检查清单 + 常见坑位
 │   └── transcript-glossary.md   ← 术语表 + 专有名词纠错
 ├── assets/                      ← 模板与静态资源
