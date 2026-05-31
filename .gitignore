@@ -47,13 +47,6 @@ ehthumbs.db
 # Playwright test artifacts
 .playwright-cli/
 
-# CosyVoice model weights (large binary files, not tracked in git)
-pretrained_models/
-CosyVoice-*/
-*.pt
-*.pth
-*.onnx
-
 # Temp files
 *.tmp
 *.bak

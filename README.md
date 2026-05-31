@@ -215,33 +215,23 @@ interview-based-learning/
 
 ## 依赖
 
-- **Python 3.10+**（主环境）+ Python 3.10 conda 环境（CosyVoice TTS）
-- `python-docx`（解析 .docx 文件）
+- **Python 3.10+** + `python-docx`（解析 .docx 文件）
 - `markdown-it-py` + `Jinja2` + `playwright`（PDF 生成）
-- **CosyVoice 3.0**（播客 TTS，需 GPU 4+ GB 显存）
+- `websockets`（MiniMax TTS API）
+- **MiniMax Speech API**（播客 TTS，需 API Key）
 - **Claude Code**（流水线编排 + 知识提取 + Markdown 报告生成）
 - 浏览器（查看学习卡片和知识图谱，无需服务器）
 
 安装 Python 依赖：
 
 ```bash
-pip install python-docx markdown-it-py jinja2 playwright
+pip install python-docx markdown-it-py jinja2 playwright websockets
 ```
 
-CosyVoice 3.0 部署（播客 TTS）：
+MiniMax API Key 设置（播客 TTS）：
 
 ```bash
-# 1. 创建 Python 3.10 环境
-conda create -n cosyvoice -y python=3.10
-conda activate cosyvoice
-
-# 2. 克隆仓库并安装依赖
-git clone --recursive https://github.com/FunAudioLLM/CosyVoice.git
-cd CosyVoice
-pip install -r requirements.txt
-
-# 3. 下载模型权重（约 10 GB）
-python -c "from modelscope import snapshot_download; snapshot_download('FunAudioLLM/Fun-CosyVoice3-0.5B-2512', local_dir='pretrained_models/Fun-CosyVoice3-0.5B')"
+export MINIMAX_API_KEY=sk-api-...
 ```
 
 ---
