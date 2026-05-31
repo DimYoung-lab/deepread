@@ -14,10 +14,10 @@
 你只需要提供对话文本（`.docx` / `.txt` / `.md`），它就会自动完成：
 
 ```
-原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 7种输出格式
+原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 8种输出格式
 ```
 
-### 10 种输出格式
+### 8 种输出格式
 
 | 格式 | 说明 | 阅读/收听时间 |
 |------|------|---------------|
@@ -28,8 +28,6 @@
 | 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
 | 🎧 **短播客脚本** | 双人对话式播客脚本，可 TTS 转音频 | 10-15 分钟 |
 | 📕 **精美 PDF** | 深度报告/TL;DR/社交推文的可打印 PDF 版 | 离线阅读/分享 |
-| 🎨 **访谈封面图** | AI 生成杂志风封面，一眼了解主题 | 社交分享/报告封面 |
-| 🖼️ **金句图文卡** | Top 金句配 AI 意境插图 | 朋友圈/微博传播 |
 | 🎵 **BGM 增强播客** | 播客 + 氛围背景音乐 | 沉浸式收听 |
 
 ---
@@ -90,9 +88,6 @@ output/yaoshunyu-20260530/
 │   ├── podcast-script-yaoshunyu-20260530.md ← 短播客脚本
 │   ├── podcast-yaoshunyu-20260530.mp3   ← TTS 合成音频
 │   └── podcast-yaoshunyu-20260530-bgm.mp3 ← BGM 增强版
-├── images/                              ← AI 生成图片
-│   ├── cover-yaoshunyu-20260530.png     ← 访谈封面图
-│   └── quote-01-yaoshunyu-20260530.png  ← 金句图文卡
 ├── data/                                ← 中间数据
 │   ├── turns.json
 │   ├── knowledge.json
@@ -114,11 +109,11 @@ Stage 2: Segment        ── Claude + segmentation-guide    → segments.json
 Stage 3: Extract        ── 6 parallel sub-agents          → 12 extraction files
 Stage 4: Synthesize     ── Claude merge + cross-cutting   → knowledge.json
 Stage 4.5: Visual Synth ── Claude + visual-synthesis-guide→ visual_content.json
-Stage 5: Present        ── Claude MD + scripts/generate_*.py → 10 output formats (可按需选择)
+Stage 5: Present        ── Claude MD + scripts/generate_*.py → 8 output formats (可按需选择)
 Stage 5b: Verify        ── Claude + quality-checklist     → verified outputs
 ```
 
-> **提示**：无需每次生成全部 10 种输出。详见 SKILL.md 中的「选择性输出模式」章节。
+> **提示**：无需每次生成全部 8 种输出。详见 SKILL.md 中的「选择性输出模式」章节。
 
 ### 6 维知识提取
 
@@ -144,18 +139,19 @@ interview-based-learning/
 ├── .gitignore
 ├── transcripts/                 ← 原始笔录（Word/txt/md）
 │   └── yaoshunyu.docx
-├── scripts/                     ← Python 脚本（6 个）
+├── scripts/                     ← Python 脚本（9 个）
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
 │   ├── validate_transcript.py   ← 术语校验 + 转录纠错
 │   ├── generate_cards.py        ← visual_content.json → 学习卡片
 │   ├── generate_mindmap.py      ← visual_content.json → 知识图谱
 │   ├── generate_audio.py        ← 播客脚本 → TTS 音频
-│   └── generate_pdf.py          ← Markdown 报告 → 精美 PDF
+│   ├── generate_pdf.py          ← Markdown 报告 → 精美 PDF
+│   └── estimate.py              ← 成本与 token 估算
 ├── references/                  ← 按需加载的参考文档（6 个）
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
 │   ├── segmentation-guide.md    ← 话题边界检测启发式
 │   ├── visual-synthesis-guide.md← 视觉内容综合指南
-│   ├── output-templates.md      ← 10 种输出格式模板
+│   ├── output-templates.md      ← 8 种输出格式模板
 │   ├── quality-checklist.md     ← QA 检查清单 + 常见坑位
 │   └── transcript-glossary.md   ← 术语表 + 专有名词纠错
 ├── assets/                      ← 模板与静态资源
@@ -233,7 +229,7 @@ interview-based-learning/
 
 ```bash
 # Python
-pip install python-docx markdown-it-py jinja2 playwright pydub
+pip install python-docx markdown-it-py jinja2 playwright
 
 # MiniMax CLI（播客 TTS）
 npm install -g mmx-cli

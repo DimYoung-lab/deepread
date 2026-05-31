@@ -1,6 +1,6 @@
 # Output Templates & Format Specifications
 
-This reference defines the ten canonical output formats produced by the
+This reference defines the eight canonical output formats produced by the
 interview-based-learning pipeline. Every generated artifact must conform to its
 template below — use these as the source of truth for structure, content
 requirements, and formatting conventions.
@@ -18,9 +18,7 @@ requirements, and formatting conventions.
 | 5 | 社交媒体推文 | Markdown | 2000–4000 words | Social media followers, general public |
 | 6 | 短播客 | Markdown + MP3 | 10–15 min audio | Commuters, multitaskers, auditory learners |
 | 7 | 精美 PDF | PDF (via HTML→Playwright) | Print-optimized A4 | Offline readers, report distribution |
-| 8 | 访谈封面图 | PNG (MiniMax image-01) | 2:3 editorial cover | Social sharing, report cover |
-| 9 | 金句图文卡 | PNG (MiniMax image-01) | 3:4 atmospheric illustrations | Social media (WeChat/Micro-blog) |
-| 10 | BGM增强播客 | MP3 (MiniMax music-2.6 + ffmpeg) | Podcast + ambient BGM | Immersive listening |
+| 8 | BGM增强播客 | MP3 (MiniMax music-2.6 + ffmpeg) | Podcast + ambient BGM | Immersive listening |
 
 ---
 
@@ -885,58 +883,7 @@ python scripts/generate_pdf.py output/[dir]/reports/social-[guest]-[YYYYMMDD].md
 
 ---
 
-## 8. 访谈封面图 (Cover Image)
-
-**Purpose:** AI-generated editorial magazine cover that visually represents the interview's core theme. Used as report cover art and social media sharing hero image.
-
-**File:** `cover-[guest-lastname]-[YYYYMMDD].png`
-
-**Generation:**
-```bash
-python scripts/generate_cover.py output/[dir]/data/knowledge.json
-```
-
-**Design spec:**
-- Aspect ratio: 2:3 (portrait magazine cover)
-- Style: Minimalist editorial, cream + burgundy palette, negative space for text overlay
-- Prompt auto-constructed from `knowledge.json` core thesis + cross-cutting themes
-- Uses `--prompt-optimizer` for better prompt quality
-- Model: MiniMax `image-01`, 1 image per interview
-
-**Integration with other outputs:**
-- PDF deep report: Use as optional cover page background (via `--cover-image` flag in `generate_pdf.py`)
-- Social media post (Output 5): Include as header image when publishing
-- Learning Cards (Output 3): Reference as hero card background
-
----
-
-## 9. 金句图文卡 (Quote Cards)
-
-**Purpose:** Artistic atmospheric illustrations paired with the interview's top golden quotes. Designed for social media sharing (WeChat Moments, Weibo, Xiaohongshu).
-
-**File:** `quote-NN-[guest-lastname]-[YYYYMMDD].png` (NN = 01, 02, ...)
-
-**Generation:**
-```bash
-python scripts/generate_quotecards.py output/[dir]/data/knowledge.json --count 4
-```
-
-**Design spec:**
-- Aspect ratio: 3:4 (portrait, social-media-optimized)
-- Style: Atmospheric, soft lighting, poetic mood, warm tones
-- Prompt inspired by the quote's sentiment (first 120 chars)
-- Ample space for text overlay (quotes to be added in post-processing)
-- Model: MiniMax `image-01`, 3-5 images per interview
-- 3-second cooldown between requests to respect TPM limits
-
-**Integration with other outputs:**
-- Social media post (Output 5): Quote card images complement the post text
-- Learning Cards (Output 3): Each theme card can reference its quote illustration
-- PDF deep report: Can be embedded as visual breaks between topic sections
-
----
-
-## 10. BGM增强播客 (BGM-Enhanced Podcast)
+## 8. BGM增强播客 (BGM-Enhanced Podcast)
 
 **Purpose:** Podcast voiceover mixed with ambient instrumental background music, creating a more immersive listening experience for commuters and multitaskers.
 
@@ -964,7 +911,7 @@ python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYM
 
 ## Cross-Format Consistency Rules
 
-1. **Timestamps**: All timestamps across all ten formats use the same
+1. **Timestamps**: All timestamps across all eight formats use the same
    `HH:MM:SS` or `[HH:MM:SS]` format. No variation.
 2. **Guest naming**: Use the guest's full name on first mention in every
    format, then last name only. Consistent across all outputs.
