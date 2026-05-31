@@ -494,9 +494,9 @@ def build_title(data: JSON, knowledge_data: JSON | None = None) -> str:
     return esc(vc_meta.get("title", "Interview — Learning Cards"))
 
 
-def build_title_short(data: JSON) -> str:
+def build_title_short(data: JSON, knowledge_data: JSON | None = None) -> str:
     """Build short title for top bar."""
-    guest = _get_guest_name(data)
+    guest = _get_guest_name(knowledge_data) if knowledge_data else _get_guest_name(data)
     if guest:
         # Take last name or first few chars
         parts = guest.split()
@@ -542,7 +542,7 @@ def render_cards(
     """Produce the final self-contained learning cards HTML."""
     # Build content blocks
     title = build_title(data, knowledge_data)
-    title_short = build_title_short(data)
+    title_short = build_title_short(data, knowledge_data)
     hero_html = build_hero_card(data, lang, knowledge_data)
     theme_html = build_theme_cards(data, lang)
     closing_html = build_closing_card(data, lang, knowledge_data)
