@@ -14,8 +14,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import re
+import shutil
+import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -41,25 +44,62 @@ def build_music_prompt(data: dict | None) -> str:
 
 
 def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
-    """将 BGM 与人声混合。BGM 音量降至 18%，loop 至与人声等长。"""
-    from pydub import AudioSegment
+    """将 BGM 与人声混合。BGM 音量降至 18%，loop 至与人声等长。
 
-    voice = AudioSegment.from_file(voice_path)
-    bgm = AudioSegment.from_file(bgm_path)
+    使用 ffmpeg 直接处理（兼容 Python 3.13+ 无 audioop 模块）。"""
+    import shutil
 
-    # BGM 音量降至 18%
-    bgm = bgm - 15  # -15 dB ≈ 18% volume
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        # Fallback: try common winget path
+        winget_ffmpeg = (
+            Path.home() / "AppData" / "Local" / "Microsoft" / "WinGet"
+            / "Packages" / "Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe"
+        )
+        for root, dirs, _ in os.walk(str(winget_ffmpeg)):
+            candidate = os.path.join(root, "ffmpeg.exe")
+            if os.path.isfile(candidate):
+                ffmpeg = candidate
+                break
+    if not ffmpeg:
+        raise RuntimeError("未找到 ffmpeg，请安装：winget install Gyan.FFmpeg")
 
-    # Loop BGM 至覆盖人声长度
-    voice_duration = len(voice)
-    if len(bgm) < voice_duration:
-        loops = (voice_duration // len(bgm)) + 1
-        bgm = bgm * loops
-    bgm = bgm[:voice_duration]
+    # Step 1: Get voice duration (seconds)
+    probe = subprocess.run(
+        [ffmpeg, "-i", voice_path, "-f", "null", "-"],
+        capture_output=True, text=True,
+    )
+    # Parse duration from stderr
+    duration_match = re.search(r"Duration: (\d+):(\d+):(\d+\.\d+)", probe.stderr)
+    if not duration_match:
+        raise RuntimeError("无法获取人声文件时长")
+    h, m, s = duration_match.groups()
+    voice_dur = int(h) * 3600 + int(m) * 60 + float(s)
 
-    # 叠加（overlay）
-    mixed = voice.overlay(bgm)
-    mixed.export(output_path, format="mp3", bitrate="192k")
+    # Step 2: Lower BGM volume to 18% (0.18 = -15dB)
+    bgm_quiet = str(Path(output_path).with_suffix(".bgm_tmp.mp3"))
+    subprocess.run([
+        ffmpeg, "-y", "-i", bgm_path,
+        "-filter:a", "volume=0.18",
+        "-b:a", "192k", bgm_quiet,
+    ], capture_output=True, check=True)
+
+    # Step 3: Mix — loop BGM to match voice duration, then merge
+    # ffmpeg amix: loops BGM with aloop, then mixes with voice
+    loop_count = max(1, int(voice_dur / 30) + 2)  # estimate loops from ~30s BGM
+    subprocess.run([
+        ffmpeg, "-y",
+        "-i", voice_path,
+        "-stream_loop", str(loop_count), "-i", bgm_quiet,
+        "-filter_complex", f"[1:a]atrim=0:{voice_dur}[bgm];[0:a][bgm]amix=inputs=2:duration=first:weights=1 0.18",
+        "-b:a", "192k", output_path,
+    ], capture_output=True, check=True)
+
+    # Clean up temp file
+    try:
+        os.unlink(bgm_quiet)
+    except OSError:
+        pass
 
 
 def build_argparser() -> argparse.ArgumentParser:
