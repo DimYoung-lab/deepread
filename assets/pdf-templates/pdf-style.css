@@ -116,9 +116,7 @@
 }
 
 @page :first {
-  /* Full-bleed cover — zero margins so .cover-page fills the entire page */
-  margin: 0;
-
+  /* Suppress headers/footers on first page */
   @top-left     { content: none; }
   @top-right    { content: none; }
   @bottom-center { content: none; }
