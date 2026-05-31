@@ -825,18 +825,19 @@ Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
   ~250 characters per minute, this yields 10–14 minutes of audio. Stay
   within budget — longer scripts produce audio over the 15-minute target.
 
-### TTS Production Notes
+### TTS 制作说明
 
-- The script file is the source of truth; the MP3 is a render of it.
-- If TTS tooling is not available in the current environment, produce only
-  the Markdown script file. Include a note at the top: "MP3 not generated
-  — TTS tooling unavailable in this environment."
-- When TTS is available, use a high-quality neural voice. Preferred voice
-  characteristics: warm, conversational, clear. Avoid robotic or overly
-  formal voices.
-- Before rendering, strip all `===` delimiters, transition markers, and
-  stage directions. Only the spoken text (including the natural quote
-  introductions) goes to the TTS engine.
+- 脚本文件是唯一数据源；MP3 是其渲染产物。
+- 使用 CosyVoice 3.0（阿里达摩院 FunAudioLLM）进行语音合成。
+  - 需 GPU（4+ GB 显存），Python 3.10 conda 环境。
+  - 支持自然语言指令控制语速、情绪、风格。
+  - 模型下载约 10 GB，首次使用需运行 modelscope 下载。
+- 如 TTS 环境不可用，仅输出 Markdown 脚本文件，并在文件顶部注明：
+  "MP3 未生成 — TTS 环境不可用（需要 CosyVoice 3.0 + GPU）"
+- 合成前去除所有 `===` 分隔符、转场标记和舞台指示，
+  仅将口播文本（含引述的自然引入语）送入 TTS 引擎。
+- 首选语音特征：温暖、对话感、清晰。避免机械或过度正式的语音。
+- 长文本（>150 字符）会自动分段合成后拼接。
 
 ---
 

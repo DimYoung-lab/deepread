@@ -334,10 +334,10 @@ Save as `reports/social-[guest-lastname]-[YYYYMMDD].md`.
 Generate using the script with `visual_content.json`:
 
 ```bash
-python scripts/generate_audio.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --output output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --voice zh-CN-XiaoxiaoNeural
+python scripts/generate_audio.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --output output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3
 ```
 
-Uses `edge-tts` to render a synthesized short podcast (10–15 minutes) covering the interview's core thesis, key takeaways, and selected golden quotes. Supports multiple voice options — see script `--help` for available voices. Output: MP3 file.
+Uses CosyVoice 3.0 (阿里达摩院 FunAudioLLM) to render a synthesized short podcast (10–15 minutes) covering the interview's core thesis, key takeaways, and selected golden quotes. Supports natural language instruction for voice style control (emotion, speed, tone). Requires GPU with 4+ GB VRAM. Output: MP3 file.
 
 ### Output 7: Styled PDF（新增）
 
@@ -490,7 +490,7 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | `scripts/validate_transcript.py` | 1.5 | Correct ASR errors using glossary |
 | `scripts/generate_cards.py` | 5 | Render learning cards from visual_content.json |
 | `scripts/generate_mindmap.py` | 5 | Render mind map from visual_content.json |
-| `scripts/generate_audio.py` | 5 | Render podcast audio via edge-tts |
+| `scripts/generate_audio.py` | 5 | Render podcast audio via CosyVoice 3.0 |
 | `scripts/generate_pdf.py` | 5 | Render styled PDFs from Markdown reports |
 
 ## Assets
