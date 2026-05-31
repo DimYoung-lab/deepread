@@ -11,10 +11,10 @@ Designed for the interview-based-learning skill's three Markdown outputs:
   - Social media post (--type social)     — narrative article layout
 
 Usage:
-    python generate_pdf.py report-yaoshunyu-20260530.md
-    python generate_pdf.py report-yaoshunyu-20260530.md --type report -o report.pdf
-    python generate_pdf.py tldr-yaoshunyu-20260530.md --type tldr -o tldr.pdf
-    python generate_pdf.py social-yaoshunyu-20260530.md --type social
+    python generate_pdf.py report-guestname-YYYYMMDD.md
+    python generate_pdf.py report-guestname-YYYYMMDD.md --type report -o report.pdf
+    python generate_pdf.py tldr-guestname-YYYYMMDD.md --type tldr -o tldr.pdf
+    python generate_pdf.py social-guestname-YYYYMMDD.md --type social
 """
 
 from __future__ import annotations

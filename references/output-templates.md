@@ -20,7 +20,7 @@ requirements, and formatting conventions.
 | 7 | 精美 PDF | PDF (via HTML→Playwright) | Print-optimized A4 | Offline readers, report distribution |
 | 8 | 访谈封面图 | PNG (MiniMax image-01) | 2:3 editorial cover | Social sharing, report cover |
 | 9 | 金句图文卡 | PNG (MiniMax image-01) | 3:4 atmospheric illustrations | Social media (WeChat/Micro-blog) |
-| 10 | BGM增强播客 | MP3 (MiniMax music-2.6 + pydub) | Podcast + ambient BGM | Immersive listening |
+| 10 | BGM增强播客 | MP3 (MiniMax music-2.6 + ffmpeg) | Podcast + ambient BGM | Immersive listening |
 
 ---
 
@@ -951,7 +951,7 @@ python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYM
 
 **Design spec:**
 - BGM: Instrumental only, warm + contemplative mood, ~80 BPM
-- Mixing: BGM at 18% volume (-15 dB), looped to match voiceover length
+- Mixing: BGM at 30% volume (-10 dB), looped to match voiceover length
 - Output: 192 kbps MP3, mono-compatible
 - Model: MiniMax `music-2.6`, 1 track per interview
 

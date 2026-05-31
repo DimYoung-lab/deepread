@@ -395,7 +395,7 @@ Generate background music and mix with the podcast voiceover:
 python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
 ```
 
-Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using pydub (BGM at 18% volume). Requires `pydub` and `ffmpeg`.
+Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using ffmpeg (BGM at 30% volume). Requires `ffmpeg`.
 
 Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest]-[YYYYMMDD].mp3`.
 
