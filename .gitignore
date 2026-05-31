@@ -30,7 +30,7 @@ ehthumbs.db
 # Playwright test artifacts
 .playwright-cli/
 
-# MiniMax CLI output (mmx speech synthesize creates this by default)
+# MiniMax CLI default output directory
 minimax-output/
 
 # Temp files

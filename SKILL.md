@@ -363,6 +363,44 @@ The script converts Markdown to HTML via markdown-it-py, wraps it in a styled HT
 
 **Requirements:** `markdown-it-py`, `Jinja2`, and `playwright` (all pre-installed in the skill environment).
 
+### Output 8: 访谈封面图（新增）
+
+Generate an editorial cover image from the interview's core themes:
+
+```bash
+python scripts/generate_cover.py output/[dir]/data/knowledge.json
+```
+
+Uses MiniMax Token Plan `image-01` model. Extracts core themes and guest name from `knowledge.json`, constructs an editorial-style prompt, and generates a 2:3 magazine cover image. Supports `--aspect-ratio` and `--output` flags.
+
+Save to `images/cover-[guest]-[YYYYMMDD].png`.
+
+### Output 9: 金句图文卡（新增）
+
+Generate artistic illustrations for the top golden quotes:
+
+```bash
+python scripts/generate_quotecards.py output/[dir]/data/knowledge.json --count 4
+```
+
+Uses MiniMax Token Plan `image-01` model. Extracts top N golden quotes, generates a 3:4 atmospheric illustration for each. Includes 3-second cooldown between requests to respect rate limits.
+
+Save to `images/quote-NN-[guest]-[YYYYMMDD].png`.
+
+### Output 10: 播客BGM增强版（新增）
+
+Generate background music and mix with the podcast voiceover:
+
+```bash
+python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
+```
+
+Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using pydub (BGM at 18% volume). Requires `pydub` and `ffmpeg`.
+
+Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest]-[YYYYMMDD].mp3`.
+
+---
+
 ## 选择性输出模式 (Selective Output Generation)
 
 无需每次生成全部 7 种输出。根据需求选择：
@@ -373,7 +411,7 @@ The script converts Markdown to HTML via markdown-it-py, wraps it in a styled HT
 | 只需交互卡片或知识图谱 | 阶段 1→2→3→4→4.5，然后运行对应脚本 |
 | 从已有 Markdown 生成 PDF | 仅 Output 7（运行 generate_pdf.py）— 无需流水线 |
 | 播客音频 | 阶段 1→2→3→4（+4.5 可获得更丰富内容），写脚本，Output 6 |
-| 完整输出（全部 7 种） | 全部阶段，全部输出 |
+| 完整输出（全部 10 种） | 全部阶段，全部输出 |
 
 ### 独立输出指南
 
@@ -381,6 +419,9 @@ The script converts Markdown to HTML via markdown-it-py, wraps it in a styled HT
 - **Output 3/4**（HTML 交互）：需 visual_content.json + 对应 Python 脚本
 - **Output 6**（播客音频）：需播客脚本 .md 文件 + generate_audio.py
 - **Output 7**（PDF）：需对应 Markdown 文件 + generate_pdf.py
+- **Output 8**（封面图）：需 knowledge.json + generate_cover.py
+- **Output 9**（金句卡）：需 knowledge.json + generate_quotecards.py
+- **Output 10**（播客BGM）：需播客 MP3 + knowledge.json + generate_bgm_podcast.py
 
 ### Output Directory Convention
 
@@ -410,9 +451,14 @@ output/
     ├── html/                                    (Outputs 3, 4)
     │   ├── cards-[guest]-[YYYYMMDD].html        (Output 3)
     │   └── map-[guest]-[YYYYMMDD].html          (Output 4)
-    └── audio/                                   (Output 6)
+    └── audio/                                   (Output 6, 10)
         ├── podcast-script-[guest]-[YYYYMMDD].md
-        └── podcast-[guest]-[YYYYMMDD].mp3
+        ├── podcast-[guest]-[YYYYMMDD].mp3
+        ├── podcast-[guest]-[YYYYMMDD]-bgm.mp3
+        └── bgm-podcast-[guest]-[YYYYMMDD].mp3
+    └── images/                                  (Output 8, 9)
+        ├── cover-[guest]-[YYYYMMDD].png         (Output 8)
+        └── quote-NN-[guest]-[YYYYMMDD].png      (Output 9)
 ```
 
 ### Post-Generation Verification (Stage 5b)
@@ -492,6 +538,9 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | `scripts/generate_mindmap.py` | 5 | Render mind map from visual_content.json |
 | `scripts/generate_audio.py` | 5 | Render podcast audio via MiniMax Token Plan (mmx CLI) |
 | `scripts/generate_pdf.py` | 5 | Render styled PDFs from Markdown reports |
+| `scripts/generate_cover.py` | 5 | Generate interview cover art via MiniMax image-01 |
+| `scripts/generate_quotecards.py` | 5 | Generate golden quote illustrations via MiniMax image-01 |
+| `scripts/generate_bgm_podcast.py` | 5 | Generate BGM + mix with podcast via MiniMax music-2.6 |
 
 ## Assets
 

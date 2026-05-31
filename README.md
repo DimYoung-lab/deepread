@@ -28,6 +28,9 @@
 | 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
 | 🎧 **短播客脚本** | 双人对话式播客脚本，可 TTS 转音频 | 10-15 分钟 |
 | 📕 **精美 PDF** | 深度报告/TL;DR/社交推文的可打印 PDF 版 | 离线阅读/分享 |
+| 🎨 **访谈封面图** | AI 生成杂志风封面，一眼了解主题 | 社交分享/报告封面 |
+| 🖼️ **金句图文卡** | Top 金句配 AI 意境插图 | 朋友圈/微博传播 |
+| 🎵 **BGM 增强播客** | 播客 + 氛围背景音乐 | 沉浸式收听 |
 
 ---
 
@@ -226,7 +229,7 @@ interview-based-learning/
 
 ```bash
 # Python
-pip install python-docx markdown-it-py jinja2 playwright
+pip install python-docx markdown-it-py jinja2 playwright pydub
 
 # MiniMax CLI（播客 TTS）
 npm install -g mmx-cli

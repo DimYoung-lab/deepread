@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -85,22 +84,7 @@ def estimate_duration(text: str) -> str:
 # mmx CLI helper
 # ---------------------------------------------------------------------------
 
-def _find_mmx() -> Optional[str]:
-    """查找 mmx CLI 可执行文件。"""
-    # 先尝试 PATH
-    found = shutil.which("mmx")
-    if found:
-        return found
-    # 常见 npm global 路径
-    candidates = [
-        Path.home() / "AppData" / "Roaming" / "npm" / "mmx.cmd",
-        Path.home() / "AppData" / "Roaming" / "npm" / "mmx",
-        Path("/usr/local/bin/mmx"),
-    ]
-    for p in candidates:
-        if p.is_file():
-            return str(p)
-    return None
+from _mmx_utils import find_mmx as _find_mmx  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
