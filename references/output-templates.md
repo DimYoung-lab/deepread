@@ -828,13 +828,12 @@ Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
 ### TTS 制作说明
 
 - 脚本文件是唯一数据源；MP3 是其渲染产物。
-- 使用 MiniMax Speech API（speech-2.8 系列）进行语音合成。
-  - 需设置环境变量 `MINIMAX_API_KEY`。
-  - 单次最多处理 10,000 字符，无需分段。
-  - 支持多种中文语音（男性/女性/主持人/有声书等）。
-  - 支持语速（0.5–2.0）和音调（-12–12）调节。
-- 如 API Key 不可用，仅输出 Markdown 脚本文件，并注明：
-  "MP3 未生成 — 需要 MiniMax API Key"
+- 使用 MiniMax Token Plan（speech-2.8 系列，通过 `mmx-cli`）进行语音合成。
+  - 需安装 `npm install -g mmx-cli` 并认证 `mmx auth login --api-key sk-cp-...`。
+  - Token Plan Plus：4,000 字符/天，28,000 字符/周。
+  - 支持 30+ 中文语音，语速调节（0.5–2.0）。
+- 如 mmx CLI 不可用，仅输出 Markdown 脚本文件，并注明：
+  "MP3 未生成 — 需要 MiniMax Token Plan（mmx-cli）"
 - 合成前去除所有 `===` 分隔符、转场标记和舞台指示，
   仅将口播文本（含引述的自然引入语）送入 TTS 引擎。
 

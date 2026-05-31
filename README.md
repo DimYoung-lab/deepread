@@ -217,21 +217,20 @@ interview-based-learning/
 
 - **Python 3.10+** + `python-docx`（解析 .docx 文件）
 - `markdown-it-py` + `Jinja2` + `playwright`（PDF 生成）
-- `websockets`（MiniMax TTS API）
-- **MiniMax Speech API**（播客 TTS，需 API Key）
+- `mmx-cli`（MiniMax Token Plan CLI，播客 TTS）
+- **MiniMax Speech API**（播客 TTS，通过 Token Plan 免流量）
 - **Claude Code**（流水线编排 + 知识提取 + Markdown 报告生成）
 - 浏览器（查看学习卡片和知识图谱，无需服务器）
 
-安装 Python 依赖：
+安装依赖：
 
 ```bash
-pip install python-docx markdown-it-py jinja2 playwright websockets
-```
+# Python
+pip install python-docx markdown-it-py jinja2 playwright
 
-MiniMax API Key 设置（播客 TTS）：
-
-```bash
-export MINIMAX_API_KEY=sk-api-...
+# MiniMax CLI（播客 TTS）
+npm install -g mmx-cli
+mmx auth login --api-key sk-cp-...
 ```
 
 ---
