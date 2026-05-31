@@ -160,9 +160,19 @@ For each segment, extract along these six dimensions (detailed in [references/an
 | 5. Contradictions & Tensions | Uncertainty | Find self-contradictions, qualifications, doubts |
 | 6. Predictions & Forecasts | Forward-looking | Extract future claims with horizons and confidence |
 
+### 执行策略（两种模式均可）
+
+**并行模式（推荐，需 Workflow）：**
+适合 Ultracode / Workflow 环境。6 个 Agent 同时提取，约 5 分钟完成。
+
+**串行模式（通用，所有思考强度）：**
+无需 Workflow。使用 `Agent` 工具逐个提取，约 20-30 分钟完成。结果质量与并行模式一致，仅耗时更长。
+
+> 以下为通用提取流程（两种模式共用）：
+
 ### Parallel Execution Strategy
 
-For a 3-hour interview with ~10 segments, use this fan-out pattern:
+For a 3-hour interview with ~10 segments, use this fan-out pattern (if Workflow available):
 
 1. **Assign 1–2 segments per sub-agent** (e.g., 6 sub-agents, each handling 1–2 segments)
 2. **Each sub-agent covers ALL 6 dimensions** for their assigned segments
@@ -371,7 +381,7 @@ Generate background music and mix with the podcast voiceover:
 python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
 ```
 
-Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using ffmpeg (BGM at 30% volume). Requires `ffmpeg`.
+Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using ffmpeg (BGM at 25% volume). Requires `ffmpeg`.
 
 Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest]-[YYYYMMDD].mp3`.
 

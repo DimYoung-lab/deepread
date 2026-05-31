@@ -898,7 +898,7 @@ python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYM
 
 **Design spec:**
 - BGM: Instrumental only, warm + contemplative mood, ~80 BPM
-- Mixing: BGM at 30% volume (-10 dB), looped to match voiceover length
+- Mixing: BGM at 25% volume (-12 dB), looped to match voiceover length
 - Output: 192 kbps MP3, mono-compatible
 - Model: MiniMax `music-2.6`, 1 track per interview
 

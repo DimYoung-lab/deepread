@@ -2,7 +2,7 @@
 """为播客音频叠加背景音乐（通过 MiniMax Token Plan music-2.6 模型）。
 
 生成与访谈主题匹配的 instrumental 背景音乐，然后用 pydub 将其
-与播客人声混合（BGM 音量 30%，loop 至与人声等长）。
+与播客人声混合（BGM 音量 25%，loop 至与人声等长）。
 
 用法：
     python generate_bgm_podcast.py podcast.mp3
@@ -44,7 +44,7 @@ def build_music_prompt(data: dict | None) -> str:
 
 
 def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
-    """将 BGM 与人声混合。BGM 音量 30%，loop 至与人声等长。
+    """将 BGM 与人声混合。BGM 音量 25%，loop 至与人声等长。
 
     使用 ffmpeg 直接处理（兼容 Python 3.13+ 无 audioop 模块）。"""
     import shutil
@@ -76,11 +76,11 @@ def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
     h, m, s = duration_match.groups()
     voice_dur = int(h) * 3600 + int(m) * 60 + float(s)
 
-    # Step 2: Lower BGM volume to 30% (0.30 ≈ -10dB)
+    # Step 2: Lower BGM volume to 30% (0.25 ≈ -10dB)
     bgm_quiet = str(Path(output_path).with_suffix(".bgm_tmp.mp3"))
     subprocess.run([
         ffmpeg, "-y", "-i", bgm_path,
-        "-filter:a", "volume=0.30",
+        "-filter:a", "volume=0.25",
         "-b:a", "192k", bgm_quiet,
     ], capture_output=True, check=True)
 
@@ -91,7 +91,7 @@ def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
         ffmpeg, "-y",
         "-i", voice_path,
         "-stream_loop", str(loop_count), "-i", bgm_quiet,
-        "-filter_complex", f"[1:a]atrim=0:{voice_dur}[bgm];[0:a][bgm]amix=inputs=2:duration=first:weights=1 0.30",
+        "-filter_complex", f"[1:a]atrim=0:{voice_dur}[bgm];[0:a][bgm]amix=inputs=2:duration=first:weights=1 0.25",
         "-b:a", "192k", output_path,
     ], capture_output=True, check=True)
 
