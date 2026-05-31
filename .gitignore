@@ -6,16 +6,32 @@ __pycache__/
 dist/
 build/
 
-# Runtime output — intermediate artifacts (per-interview subdirectories)
-output/*/
-!output/*/tldr-*.md
-!output/*/report-*.md
-!output/*/cards-*.html
-!output/*/map-*.html
-!output/*/social-*.md
-!output/*/podcast-script-*.md
-!output/*/podcast-*.mp3
-!output/*/visual_content.json
+# Runtime output — per-interview directories
+# Strategy: track all final outputs; ignore only intermediate build artifacts.
+
+# Ignore intermediate JSON data
+output/*/data/*
+# But track visual_content.json (needed by HTML generation scripts)
+!output/*/data/visual_content.json
+
+# Ignore per-segment extraction files
+output/*/segments/
+
+# Ignore stale flat files at output root (leftover from pre-reorg structure)
+# These patterns match only files directly in output/<name>/ (not subdirs).
+# Git matches from the repo root; the single * matches one path component.
+output/*/*.json
+output/*/*.mp3
+output/*/*.html
+output/*/*.md
+output/*/*.pdf
+
+# Un-ignore files that ARE in organized subdirectories
+!output/*/reports/*.md
+!output/*/pdf/*.pdf
+!output/*/html/*.html
+!output/*/audio/*.md
+!output/*/audio/*.mp3
 
 # OS
 .DS_Store

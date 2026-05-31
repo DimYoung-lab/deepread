@@ -1,26 +1,27 @@
 # Output Templates & Format Specifications
 
-This reference defines the six canonical output formats produced by the
+This reference defines the seven canonical output formats produced by the
 interview-based-learning pipeline. Every generated artifact must conform to its
 template below — use these as the source of truth for structure, content
 requirements, and formatting conventions.
 
 ---
 
-## Format Overview
+## 输出格式概览
 
 | # | Format | Medium | Length Target | Primary Audience |
 |---|--------|--------|---------------|------------------|
-| 1 | TL;DR Quick Summary | Markdown | 500–800 words | Time-pressed readers scanning for signal |
-| 2 | Deep-Dive Report | Markdown | Comprehensive (full transcript coverage) | Researchers, analysts, domain specialists |
-| 3 | Learning Cards | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
-| 4 | Knowledge Map | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
-| 5 | Social Media Post | Markdown | 2000–4000 words | Social media followers, general public |
-| 6 | Short Podcast | Markdown + MP3 | 10–15 min audio | Commuters, multitaskers, auditory learners |
+| 1 | 速览摘要 | Markdown | 500–800 words | Time-pressed readers scanning for signal |
+| 2 | 深度报告 | Markdown | Comprehensive (full transcript coverage) | Researchers, analysts, domain specialists |
+| 3 | 学习卡片 | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
+| 4 | 知识图谱 | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
+| 5 | 社交媒体推文 | Markdown | 2000–4000 words | Social media followers, general public |
+| 6 | 短播客 | Markdown + MP3 | 10–15 min audio | Commuters, multitaskers, auditory learners |
+| 7 | 精美 PDF | PDF (via HTML→Playwright) | Print-optimized A4 | Offline readers, report distribution |
 
 ---
 
-## 1. TL;DR Quick Summary (Markdown)
+## 1. 速览摘要 (Markdown)
 
 **Purpose:** Distill a 1–3 hour interview into a scannable 5-minute read that
 surfaces the highest-signal content. Do not summarize everything — only the
@@ -35,20 +36,20 @@ insights that matter.
 
 *Guest: [Name], [Affiliation] | Duration: [Xh Ym] | Date: [YYYY-MM-DD]*
 
-## 核心观点 (Key Takeaways)
+## 核心观点
 
 1. **[Bold claim one sentence].** Context or elaboration, 1–2 sentences. Why this matters or what it implies.
 2. **[Bold claim one sentence].** Context or elaboration, 1–2 sentences.
 3. ...
    *(5–7 total, numbered)*
 
-## 最令人意外的洞察 (Most Surprising Insight)
+## 最令人意外的洞察
 
 [One paragraph, 3–5 sentences. Highlight the single most counterintuitive,
 novel, or paradigm-shifting revelation. Explain why it challenges
 conventional wisdom and what the reader should reconsider.]
 
-## 值得引用的金句 (Notable Quotes)
+## 值得引用的金句
 
 > "[Verbatim quote]" — *[HH:MM:SS]*
 
@@ -59,20 +60,20 @@ conventional wisdom and what the reader should reconsider.]
 *(3–5 quotes total. Select only the most memorable, tweetable, or
 revealing lines. Timestamps must be exact.)*
 
-## 适合谁读 (Who Should Read This)
+## 适合谁读
 
 [1–2 sentences defining the ideal reader. Be specific: role, domain,
 seniority level, or problem context. Example: "AI researchers building
 production RAG systems who struggle with chunking strategies."]
 
-## 阅读建议 (Reading Guide)
+## 阅读指南
 
 [2–4 sentences prioritizing which sections or topics to read if time
 is limited. Guide the reader to the highest-signal content. Reference
 specific Deep-Dive Report sections by name when they exist.]
 ```
 
-### Rules for Key Takeaways
+### 核心观点规则
 
 - Each takeaway must be a **claim**, not a topic label. Wrong: "Discussion of
   GPU shortages." Correct: "GPU shortages will persist until 2028 because
@@ -82,7 +83,7 @@ specific Deep-Dive Report sections by name when they exist.]
 - Order by **importance**, not chronological order.
 - Avoid takeaways that merely state the guest's background or biography.
 
-### Rules for Notable Quotes
+### 值得引用的金句规则
 
 - Quotes must be **verbatim** transcript excerpts, not paraphrases.
 - Each quote must carry a timestamp in `*HH:MM:SS*` format.
@@ -90,7 +91,7 @@ specific Deep-Dive Report sections by name when they exist.]
 - Avoid quotes longer than 3 sentences; trim with `[...]` where needed.
 - Do not alter wording — if a quote is slightly unclear, use a different one.
 
-### Rules for Most Surprising Insight
+### 最令人意外的洞察规则
 
 - Must be **genuinely unexpected** relative to mainstream discussion of the
   topic, not just a strong opinion.
@@ -101,7 +102,7 @@ specific Deep-Dive Report sections by name when they exist.]
 
 ---
 
-## 2. Deep-Dive Report (Markdown)
+## 2. 深度报告 (Markdown)
 
 **Purpose:** Comprehensive, reference-quality coverage of the entire interview.
 A reader should be able to cite this report instead of re-watching the
@@ -110,7 +111,7 @@ interview.
 **Length:** Comprehensive (typically 3,000–8,000 words depending on interview
 length). No hard cap — completeness is the priority.
 
-### Full Section Template
+### 完整章节模板
 
 ```markdown
 # [Guest Name] on [Show Name]: Full Report
@@ -119,17 +120,17 @@ length). No hard cap — completeness is the priority.
 
 ---
 
-## 访谈概览 (Interview Overview)
+## 访谈概览
 
-### Guest Bio (1 paragraph)
+### 嘉宾简介
 [Concise background: current role, notable prior roles, key publications
 or achievements, and why they are an authority on the topic. 3–5 sentences.]
 
-### Interview Context
+### 访谈背景
 [What prompted this conversation — book launch, research publication,
 industry event, or ongoing debate. 1–2 sentences.]
 
-### Key Stats
+### 关键数据
 | Metric | Value |
 |--------|-------|
 | Total topics covered | [N] |
@@ -139,7 +140,7 @@ industry event, or ongoing debate. 1–2 sentences.]
 
 ---
 
-## 执行摘要 (Executive Summary)
+## 执行摘要
 
 [Paragraph 1: The overarching argument or thesis of the interview. What is
 the single most important story the guest is telling?]
@@ -153,15 +154,26 @@ reader do differently after understanding this interview?]
 
 ---
 
-## 话题深度分析 (Topic-by-Topic Deep Dive)
+## 阅读指南
+
+| Reader Profile | Recommended Sections | Estimated Time |
+|---------------|---------------------|----------------|
+| Executive / Decision-maker | 执行摘要, 预测总结 | 5 min |
+| Practitioner / Engineer | 话题深度分析 (technical topics), 跨领域主题 | 20 min |
+| Researcher / Analyst | Full report | 45 min |
+| Casual listener | 速览摘要 | 3 min |
+
+---
+
+## 话题深度分析
 
 ### [Topic 1 Title] *(HH:MM:SS – HH:MM:SS)*
 
-#### 背景 (Context)
+#### 背景
 [1 paragraph: why this topic matters, how it fits into the broader
 conversation, and what the guest brings to it.]
 
-#### 核心论点 (Key Arguments)
+#### 核心论点
 
 [2–4 paragraphs of narrative analysis. Cover:
 - The guest's position or claim
@@ -169,13 +181,13 @@ conversation, and what the guest brings to it.]
 - Counterpoints or nuance they acknowledge
 - How this relates to other topics in the interview]
 
-> **Key Quote** *(HH:MM:SS)*:
+> **核心引述** *(HH:MM:SS)*:
 > "[Verbatim quote]"
 
-> **Key Quote** *(HH:MM:SS)*:
+> **核心引述** *(HH:MM:SS)*:
 > "[Verbatim quote]"
 
-> **Data Point Callout:**
+> **数据点:**
 > - **[Label]**: [Value and source context]
 > - **[Label]**: [Value and source context]
 
@@ -187,21 +199,21 @@ conversation, and what the guest brings to it.]
 
 ---
 
-## 跨领域主题 (Cross-Cutting Themes)
+## 跨领域主题
 
 ### [Theme Name]
 
 [1 paragraph: the pattern observed across multiple topics, with
 specific examples from different segments.]
 
-**Examples across topics:**
+**跨话题例证:**
 - From **[Topic A]**: [quote or paraphrase with timestamp]
 - From **[Topic B]**: [quote or paraphrase with timestamp]
 - From **[Topic C]**: [quote or paraphrase with timestamp]
 
 ---
 
-## 矛盾与未解问题 (Contradictions & Open Questions)
+## 矛盾与未解问题
 
 | # | Tension / Question | Context | Resolution Status |
 |---|-------------------|---------|-------------------|
@@ -210,7 +222,7 @@ specific examples from different segments.]
 
 ---
 
-## 预测总结 (Predictions Summary)
+## 预测总结
 
 | # | Prediction | Time Horizon | Confidence | Conditions / Caveats |
 |---|-----------|--------------|------------|----------------------|
@@ -219,7 +231,7 @@ specific examples from different segments.]
 
 ---
 
-## 金句全集 (Complete Quote Collection)
+## 金句全集
 
 ### [Topic Name]
 1. *(HH:MM:SS)* "[Quote text]" — Context: [1-sentence setup]
@@ -231,40 +243,32 @@ specific examples from different segments.]
 
 ---
 
-## 阅读指南 (Reading Guide)
+### 章节排序规则
 
-| Reader Profile | Recommended Sections | Estimated Time |
-|---------------|---------------------|----------------|
-| Executive / Decision-maker | Executive Summary, Predictions Summary | 5 min |
-| Practitioner / Engineer | Topic Deep Dive (technical topics), Cross-Cutting Themes | 20 min |
-| Researcher / Analyst | Full report | 45 min |
-| Casual listener | TL;DR Quick Summary | 3 min |
-```
-
-### Section Ordering Rules
-
-- Topics in the Deep Dive must appear in **chronological order** as they occur
+- Topics in the 话题深度分析 must appear in **chronological order** as they occur
   in the interview, with segment timestamps.
-- Cross-Cutting Themes are sorted by **significance** (most important first).
-- Quotes in the Complete Quote Collection are grouped **by topic**, not
+- 跨领域主题 are sorted by **significance** (most important first).
+- Quotes in the 金句全集 are grouped **by topic**, not
   chronologically, so readers can find quotes by subject.
 - Predictions are numbered within the table; sort by **time horizon**
   (nearest first).
+- **阅读指南** appears early (after 执行摘要) so
+  readers can decide how to approach the report before diving in.
 
-### Data Point Callout Badge Types
+### 数据点徽章类型
 
-When inserting a data point callout, classify it:
+When inserting a 数据点, classify it:
 
 | Badge | Use When |
 |-------|----------|
-| **statistic** | A numerical finding or percentage |
-| **entity** | A named organization, company, or person referenced |
-| **benchmark** | A comparative performance or ranking figure |
-| **paper** | A cited academic paper with title/author/year |
-| **event** | A referenced historical event or milestone |
-| **forecast** | A projection or model output |
+| **统计数据** | A numerical finding or percentage |
+| **实体** | A named organization, company, or person referenced |
+| **基准** | A comparative performance or ranking figure |
+| **论文** | A cited academic paper with title/author/year |
+| **事件** | A referenced historical event or milestone |
+| **预测** | A projection or model output |
 
-### Quote Formatting Rules
+### 引述格式规则
 
 - All quotes must be **verbatim** from the transcript — never paraphrase
   inside quotation marks.
@@ -276,7 +280,7 @@ When inserting a data point callout, classify it:
 
 ---
 
-## 3. Learning Cards Specification
+## 3. 学习卡片规格说明
 
 **Purpose:** A mobile-first card deck that presents interview knowledge as a
 card-based tap/scroll experience — exactly 9 cards, each building on the last
@@ -341,7 +345,7 @@ claim. Italic, with a left border accent and timestamp in `HH:MM:SS` format.
 
 **Expandable Evidence**: Hidden by default, revealed on tap/click. Contains
 supporting data points, statistics, and cross-references to other cards, the
-Knowledge Map, or the full Deep-Dive Report.
+知识图谱, or the full 深度报告.
 
 ### Navigation
 
@@ -408,7 +412,7 @@ Navigation is card-based: the user moves through the deck one card at a time.
 
 ---
 
-## 4. Knowledge Map Specification
+## 4. 知识图谱规格说明
 
 **Purpose:** An interactive mind-map visualization of the interview's knowledge
 structure. The map shows how topics, insights, and evidence connect — enabling
@@ -427,7 +431,7 @@ and cross-links between leaf nodes:
 Central Thesis (Level 0):
   └─ The interview's single overarching argument — placed at the center
 
-Themes (Level 1 — Cross-Cutting Themes, 5–8 nodes):
+Themes (Level 1 — 跨领域主题, 5–8 nodes):
   └─ Theme A ─── Theme B ─── Theme C ─── ...
      │              │              │
 Arguments (Level 2 — Supporting Arguments, 2–5 per theme):
@@ -556,7 +560,7 @@ parts, where N is the number of topics (clamped to 8–12). Use:
 
 ---
 
-## 5. Social Media Post (Markdown)
+## 5. 社交媒体推文 (Markdown)
 
 **Purpose:** A long-form social media post (e.g., LinkedIn article, Substack,
 X long-form, or newsletter-ready) that transforms the interview's deepest
@@ -695,7 +699,7 @@ hype."]
 
 ---
 
-## 6. Short Podcast Script (Markdown + MP3)
+## 6. 短播客脚本 (Markdown + MP3)
 
 **Purpose:** A script optimized for text-to-speech (TTS) synthesis that
 distills the interview into a compact, listenable audio piece. Produces both
@@ -836,19 +840,61 @@ Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
 
 ---
 
+## 7. 精美 PDF (Styled PDF)
+
+**Purpose:** Generate professionally styled, print-optimized PDFs from the Markdown output files. Designed for offline reading, sharing, and archival.
+
+**File:** `report-[guest-lastname]-[YYYYMMDD].pdf`, `tldr-[guest-lastname]-[YYYYMMDD].pdf`, `social-[guest-lastname]-[YYYYMMDD].pdf`
+
+**Generation:** Run `scripts/generate_pdf.py` with `--type` flag:
+
+```bash
+# 深度报告 PDF（含封面 + 页眉）
+python scripts/generate_pdf.py output/[dir]/reports/report-[guest]-[YYYYMMDD].md --type report
+
+# 速览摘要 PDF（紧凑版）
+python scripts/generate_pdf.py output/[dir]/reports/tldr-[guest]-[YYYYMMDD].md --type tldr
+
+# 社交媒体 PDF（叙事版）
+python scripts/generate_pdf.py output/[dir]/reports/social-[guest]-[YYYYMMDD].md --type social
+```
+
+### Design Specification
+
+- **Page size**: A4 (210mm × 297mm), configurable via `--page-size`
+- **Color scheme**: Cream (#fdfbf7) + burgundy (#722f37), matching the Learning Cards design system
+- **Typography**: Chinese-optimized font stacks (Songti SC / PingFang SC), fixed `pt` sizes
+- **Cover page** (report type only): Full-bleed hero layout with guest name, show, host, date, duration
+- **Running headers**: Guest name on left pages, report title on right pages
+- **Body pages**: White margins with cream content area, page numbers in footer
+- **Tables**: Burgundy header row, alternating cream/white row stripes
+- **Blockquotes**: 3px burgundy left border, cream background
+- **Page breaks**: New page for each h2 section; keep h3/h4 with content; avoid splitting blockquotes and tables
+
+### Template Variants
+
+| `--type` | Template | Features |
+|----------|----------|----------|
+| `report` | `report-wrapper.html.j2` | Cover page, running headers, full section hierarchy |
+| `tldr` | `tldr-wrapper.html.j2` | Compact layout, larger type, no cover |
+| `social` | `social-wrapper.html.j2` | Narrative layout, narrower content column |
+
+**Requirements:** `markdown-it-py`, `Jinja2`, `playwright` (Chromium).
+
+---
+
 ## Cross-Format Consistency Rules
 
-1. **Timestamps**: All timestamps across all six formats use the same
+1. **Timestamps**: All timestamps across all seven formats use the same
    `HH:MM:SS` or `[HH:MM:SS]` format. No variation.
 2. **Guest naming**: Use the guest's full name on first mention in every
    format, then last name only. Consistent across all outputs.
-3. **Topic naming**: Topic titles must be identical across the Deep-Dive
-   Report, Learning Cards, Knowledge Map, Social Media Post, and Podcast
+3. **Topic naming**: Topic titles must be identical across the 深度报告, 学习卡片, 知识图谱, 社交媒体推文, and Podcast
    Script.
 4. **Quote attribution**: Every quote in every format must include a
    timestamp. Quotes must be verbatim — if a quote appears in multiple
    formats, it must be identical in each.
-5. **Color-coding**: When the same topic appears in the Knowledge Map and
+5. **Color-coding**: When the same topic appears in the 知识图谱 and
    the HTML report (e.g., as section accent colors), use the same hue.
 
 ---
@@ -857,10 +903,13 @@ Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
 
 | Format | Filename Pattern |
 |--------|-----------------|
-| TL;DR | `tldr-[guest-lastname]-[YYYYMMDD].md` |
-| Deep-Dive | `report-[guest-lastname]-[YYYYMMDD].md` |
-| Learning Cards | `cards-[guest-lastname]-[YYYYMMDD].html` |
-| Knowledge Map | `map-[guest-lastname]-[YYYYMMDD].html` |
-| Social Media Post | `social-[guest-lastname]-[YYYYMMDD].md` |
-| Short Podcast Script | `podcast-script-[guest-lastname]-[YYYYMMDD].md` |
-| Short Podcast Audio | `podcast-[guest-lastname]-[YYYYMMDD].mp3` |
+| 速览摘要 | `tldr-[guest-lastname]-[YYYYMMDD].md` |
+| 深度报告 | `report-[guest-lastname]-[YYYYMMDD].md` |
+| 学习卡片 | `cards-[guest-lastname]-[YYYYMMDD].html` |
+| 知识图谱 | `map-[guest-lastname]-[YYYYMMDD].html` |
+| 社交媒体推文 | `social-[guest-lastname]-[YYYYMMDD].md` |
+| 短播客脚本 | `podcast-script-[guest-lastname]-[YYYYMMDD].md` |
+| 短播客音频 | `podcast-[guest-lastname]-[YYYYMMDD].mp3` |
+| 深度报告 PDF | `report-[guest-lastname]-[YYYYMMDD].pdf` |
+| 速览摘要 PDF | `tldr-[guest-lastname]-[YYYYMMDD].pdf` |
+| 社交媒体 PDF | `social-[guest-lastname]-[YYYYMMDD].pdf` |

@@ -65,7 +65,7 @@ def estimate_duration(text: str, chars_per_sec: float = 4.0) -> str:
     seconds = char_count / chars_per_sec
     minutes = int(seconds // 60)
     secs = int(seconds % 60)
-    return f"{minutes}m {secs}s ({char_count} chars @ {chars_per_sec} chars/sec)"
+    return f"{minutes}分{secs}秒（{char_count} 字符 @ {chars_per_sec} 字符/秒）"
 
 
 async def text_to_speech(text: str, voice: str, output_path: str) -> None:
@@ -78,38 +78,38 @@ async def text_to_speech(text: str, voice: str, output_path: str) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert a podcast script markdown file to MP3 audio via edge-tts.",
+        description="将播客脚本 Markdown 文件通过 edge-tts 转换为 MP3 音频。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
-Examples:
+示例：
   python generate_audio.py podcast-script.md
   python generate_audio.py podcast-script.md --output podcast.mp3
   python generate_audio.py podcast-script.md --voice zh-CN-YunxiNeural
 
-Voice options (Chinese):
-  zh-CN-XiaoxiaoNeural  Female, natural (default)
-  zh-CN-YunxiNeural     Male, natural
-  zh-CN-YunyangNeural   Male, news-anchor style
-  zh-CN-XiaoyiNeural    Female, lively
-  zh-CN-YunjianNeural   Male, older, warm
-  zh-CN-XiaochenNeural  Female, lively
-  zh-CN-XiaohanNeural   Female, soft
+中文语音选项：
+  zh-CN-XiaoxiaoNeural  女声，自然（默认）
+  zh-CN-YunxiNeural     男声，自然
+  zh-CN-YunyangNeural   男声，新闻播报风格
+  zh-CN-XiaoyiNeural    女声，活泼
+  zh-CN-YunjianNeural   男声，温暖年长
+  zh-CN-XiaochenNeural  女声，活泼
+  zh-CN-XiaohanNeural   女声，柔和
 
-Full voice list: edge-tts --list-voices | grep zh-CN
+完整语音列表：edge-tts --list-voices | grep zh-CN
 """,
     )
-    parser.add_argument("input", type=str, nargs="?", help="Path to podcast script markdown file")
+    parser.add_argument("input", type=str, nargs="?", help="播客脚本 Markdown 文件路径")
     parser.add_argument(
         "--output", "-o",
         type=str,
         default=None,
-        help="Output MP3 file path (default: <input-stem>.mp3)",
+        help="输出 MP3 文件路径（默认：<输入文件名>.mp3）",
     )
     parser.add_argument(
         "--voice", "-v",
         type=str,
         default="zh-CN-XiaoxiaoNeural",
-        help="TTS voice name (default: zh-CN-XiaoxiaoNeural)",
+        help="TTS 语音名称（默认：zh-CN-XiaoxiaoNeural）",
     )
     args = parser.parse_args()
 
@@ -119,10 +119,10 @@ Full voice list: edge-tts --list-voices | grep zh-CN
 
     input_path = Path(args.input)
     if not input_path.exists():
-        print(f"Error: input file not found: {input_path}")
+        print(f"错误：未找到输入文件：{input_path}", file=sys.stderr)
         sys.exit(1)
     if not input_path.is_file():
-        print(f"Error: not a file: {input_path}")
+        print(f"错误：不是有效文件：{input_path}", file=sys.stderr)
         sys.exit(1)
 
     # Determine output path
@@ -136,49 +136,49 @@ Full voice list: edge-tts --list-voices | grep zh-CN
     plain_text = parse_markdown(raw_text)
 
     if not plain_text:
-        print("Error: no text content found after parsing markdown.")
+        print("解析后无可合成文本", file=sys.stderr)
         sys.exit(1)
 
     # Report stats
-    print(f"Input:      {input_path}")
-    print(f"Voice:      {args.voice}")
-    print(f"Output:     {output_path}")
-    print(f"Duration:   {estimate_duration(plain_text)}")
+    print(f"输入: {input_path}")
+    print(f"语音: {args.voice}")
+    print(f"输出: {output_path}")
+    print(f"时长: {estimate_duration(plain_text)}")
     print()
 
     # Check edge-tts availability
     try:
         import edge_tts  # noqa: F811
     except ImportError:
-        print("Error: edge-tts is not installed.")
-        print("Install it with:  pip install edge-tts")
+        print("错误：edge-tts 未安装。", file=sys.stderr)
+        print("安装命令：pip install edge-tts", file=sys.stderr)
         print()
-        print("edge-tts is a free Python library that uses Microsoft Edge's")
-        print("TTS engine to convert text to speech without API keys.")
+        print("edge-tts 是一个免费 Python 库，使用微软 Edge 的 TTS 引擎，")
+        print("无需 API Key 即可将文本转为语音。")
         sys.exit(1)
 
     # Convert
-    print("Generating audio...")
+    print("正在生成音频...")
     try:
         import asyncio
 
         asyncio.run(text_to_speech(plain_text, args.voice, output_path))
     except Exception as e:
-        print(f"Error during TTS conversion: {e}")
+        print(f"TTS 转换出错：{e}", file=sys.stderr)
         print()
-        print("Troubleshooting:")
-        print("  1. Check your internet connection (edge-tts requires network access)")
-        print("  2. Verify the voice name: edge-tts --list-voices | grep zh-CN")
-        print("  3. If the text is very long, try splitting it into smaller chunks")
+        print("排查建议：")
+        print("  1. 检查网络连接（edge-tts 需要联网访问微软 TTS 服务）")
+        print("  2. 验证语音名称：edge-tts --list-voices | grep zh-CN")
+        print("  3. 如果文本过长，请尝试分段合成")
         sys.exit(1)
 
     # Confirm
     out_file = Path(output_path)
     if out_file.exists():
         size_mb = out_file.stat().st_size / (1024 * 1024)
-        print(f"Done: {output_path} ({size_mb:.1f} MB)")
+        print(f"完成: {output_path}（{size_mb:.1f} MB）")
     else:
-        print(f"Error: output file was not created: {output_path}")
+        print(f"错误：输出文件未生成：{output_path}", file=sys.stderr)
         sys.exit(1)
 
 

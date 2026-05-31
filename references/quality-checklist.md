@@ -288,8 +288,8 @@ print('Stage 1 — Parse: OK')
 # 4. Verify turns-corrected.json exists and has corrections
 python -c "
 import json
-with open('output/yaoshunyu-20260530/turns_raw.json') as f: raw = json.load(f)
-with open('output/yaoshunyu-20260530/turns-corrected.json') as f: corr = json.load(f)
+with open('output/yaoshunyu-20260530/data/turns.json') as f: raw = json.load(f)
+with open('output/yaoshunyu-20260530/data/turns-corrected.json') as f: corr = json.load(f)
 assert raw != corr, 'Corrected file is identical to raw — no corrections applied'
 # Verify known entity fix: C-Dance should be corrected
 raw_text = json.dumps(raw)
@@ -301,7 +301,7 @@ print('Stage 1.5 — Correction: OK')
 # 5. Verify glossary loads
 python -c "
 import json
-with open('output/yaoshunyu-20260530/glossary.json') as f: g = json.load(f)
+with open('output/yaoshunyu-20260530/data/glossary.json') as f: g = json.load(f)
 assert len(g) >= 5, f'Glossary has only {len(g)} entries, expected >= 5'
 for entry in g:
     assert 'term' in entry, f'Missing term in glossary entry'
@@ -314,7 +314,7 @@ print('Stage 1.5 — Glossary: OK')
 # 6. Verify visual_content.json structure
 python -c "
 import json
-with open('output/yaoshunyu-20260530/visual_content.json') as f: vc = json.load(f)
+with open('output/yaoshunyu-20260530/data/visual_content.json') as f: vc = json.load(f)
 assert 'cards' in vc, 'Missing cards key'
 assert len(vc['cards']) == 9, f'Expected 9 cards, got {len(vc[\"cards\"])}'
 card_types = [c.get('type') for c in vc['cards']]
@@ -330,7 +330,7 @@ print('Stage 4 — visual_content.json: OK')
 python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 
 # 8. Generate cards HTML
-python scripts/generate_cards.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_cards.html
+python scripts/generate_cards.py output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_cards.html
 
 # 9. Verify cards HTML structure
 python -c "
@@ -353,7 +353,7 @@ print('Stage 5 — Cards HTML: OK')
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
 
 # 11. Generate mind map HTML
-python scripts/generate_mindmap.py output/yaoshunyu-20260530/visual_content.json --output /tmp/test_map.html
+python scripts/generate_mindmap.py output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_map.html
 
 # 12. Verify mind map structure
 python -c "
@@ -373,7 +373,7 @@ print('Stage 6 — Mind Map: OK')
 # 13. Verify social media post
 python -c "
 import os, glob
-posts = glob.glob('output/yaoshunyu-20260530/social_media_post*')
+posts = glob.glob('output/yaoshunyu-20260530/reports/social*')
 assert posts, 'No social media post found'
 with open(posts[0], encoding='utf-8') as f: text = f.read()
 length = len(text)
@@ -387,7 +387,7 @@ print(f'Stage 7 — Social Media Post: OK ({length} chars)')
 # 14. Verify podcast script
 python -c "
 import os, glob
-scripts = glob.glob('output/yaoshunyu-20260530/podcast_script*')
+scripts = glob.glob('output/yaoshunyu-20260530/audio/podcast-script*')
 assert scripts, 'No podcast script found'
 with open(scripts[0], encoding='utf-8') as f: text = f.read()
 length = len(text)
@@ -404,7 +404,7 @@ print(f'Stage 7 — Podcast Script: OK ({length} chars)')
 # 15. Verify deep-dive report
 python -c "
 import os, glob
-reports = glob.glob('output/yaoshunyu-20260530/deep_dive_report*')
+reports = glob.glob('output/yaoshunyu-20260530/reports/report*')
 assert reports, 'No deep-dive report found'
 with open(reports[0], encoding='utf-8') as f: text = f.read()
 assert 'Executive Summary' in text or '执行摘要' in text, 'Missing executive summary'
@@ -416,7 +416,7 @@ print('Stage 3 — Deep-Dive Report: OK')
 # 16. Verify TL;DR report
 python -c "
 import os, glob
-reports = glob.glob('output/yaoshunyu-20260530/tldr_report*')
+reports = glob.glob('output/yaoshunyu-20260530/reports/tldr*')
 assert reports, 'No TL;DR report found'
 with open(reports[0], encoding='utf-8') as f: text = f.read()
 assert 'Key Takeaways' in text or '关键要点' in text, 'Missing key takeaways'
@@ -425,5 +425,5 @@ print('Stage 3 — TL;DR Report: OK')
 "
 
 echo ""
-echo "=== All regression tests passed (7 stages, 6 outputs) ==="
+echo "=== All regression tests passed (7 stages, 7 outputs) ==="
 ```

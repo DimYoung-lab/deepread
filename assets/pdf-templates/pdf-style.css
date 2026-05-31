@@ -1,0 +1,745 @@
+/* ========================================================================
+   Interview-Based Learning — PDF Print Design System
+   Print-optimized design for Markdown→PDF report generation.
+   Editorial book aesthetic. Premium literary feel.
+   Reuses design tokens from cards-template/style.css.
+
+   Light theme only: cream (#fdfbf7) + burgundy (#722f37)
+   Target: A4 (210mm × 297mm), Chinese-language content
+   ======================================================================== */
+
+/* ========================================================================
+   1. DESIGN TOKENS — Light Theme (cream + burgundy)
+   Adapted from cards-template for print media.
+   Fixed pt sizes (no viewport-relative clamp()).
+   ======================================================================== */
+
+:root {
+  /* ---- Semantic Color Palette ---- */
+  --color-surface:        #fdfbf7;
+  --color-surface-raised: #ffffff;
+  --color-surface-subtle: #f7f3eb;
+  --color-surface-hover:  #f3efe6;
+
+  --color-text-primary:   #1a1614;
+  --color-text-secondary: #4a4540;
+  --color-text-tertiary:  #8a8278;
+  --color-text-disabled:  #bfb8ad;
+  --color-text-inverse:   #fdfbf7;
+
+  --color-accent:         #722f37;
+  --color-accent-hover:   #5c262d;
+  --color-accent-soft:    rgba(114, 47, 55, 0.06);
+  --color-accent-medium:  rgba(114, 47, 55, 0.12);
+
+  --color-border:         #e0dad0;
+  --color-border-light:   #ede7de;
+  --color-border-focus:   #722f37;
+
+  --color-divider:        #d9d2c7;
+  --color-rule:           #c4bbb0;
+
+  --color-table-header:   #722f37;
+  --color-table-stripe:   #f7f3eb;
+  --color-blockquote-bg:  #f9f6ef;
+  --color-code-bg:        #f3efe6;
+
+  /* ---- Typography: Chinese-Optimized Font Stacks ---- */
+  --font-body:       "Songti SC", "Noto Serif SC", "Source Han Serif SC",
+                     "STSong", "FangSong", "SimSun",
+                     "Georgia", "Times New Roman", ui-serif, serif;
+  --font-heading:    "PingFang SC", "Noto Sans SC", "Source Han Sans SC",
+                     "Hiragino Sans GB", "Microsoft YaHei", "STHeiti",
+                     "Helvetica Neue", "Arial", ui-sans-serif, sans-serif;
+  --font-mono:       "SF Mono", "Fira Code", "Cascadia Code",
+                     "Consolas", "Courier New", monospace;
+  --font-display:    "Songti SC", "Noto Serif SC", "STSong",
+                     "Georgia", ui-serif, serif;
+
+  /* ---- Type Scale (fixed pt for print) ---- */
+  --fs-h1:        26pt;
+  --fs-h2:        15pt;
+  --fs-h3:        12pt;
+  --fs-h4:        11pt;
+  --fs-body:      10pt;
+  --fs-small:     8.5pt;
+  --fs-tiny:      7.5pt;
+  --fs-blockquote: 9.5pt;
+  --fs-cover-name: 28pt;
+  --fs-cover-label: 9pt;
+
+  /* ---- Line Heights ---- */
+  --leading-body:    1.75;
+  --leading-heading: 1.2;
+  --leading-display: 1.1;
+  --leading-compact: 1.4;
+
+  /* ---- Letter Spacing ---- */
+  --tracking-tight:   -0.015em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.03em;
+  --tracking-wider:   0.06em;
+
+  /* ---- Spacing ---- */
+  --sp-xs:  4pt;
+  --sp-sm:  8pt;
+  --sp-md:  12pt;
+  --sp-lg:  16pt;
+  --sp-xl:  24pt;
+  --sp-2xl: 32pt;
+  --sp-3xl: 48pt;
+
+  /* ---- Border Radius ---- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
+/* ========================================================================
+   2. @PAGE RULES — Running headers, page numbers, margins
+   Page size is controlled by Playwright's `format` parameter.
+   Margins are defined HERE (not in Playwright) so @page :first can
+   use zero margins for a full-bleed cover page.
+   NOTE: Chromium does not support CSS custom properties (var()) in
+   @page margin boxes. All font/color values must be literal.
+   ======================================================================== */
+
+@page {
+  margin: 25mm 20mm 28mm 20mm;
+
+  @bottom-center {
+    content: counter(page);
+    font-family: "PingFang SC", "Noto Sans SC", "Source Han Sans SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 7.5pt;
+    color: #8a8278;
+  }
+}
+
+@page :first {
+  /* Full-bleed cover — zero margins so .cover-page fills the entire page */
+  margin: 0;
+
+  @top-left     { content: none; }
+  @top-right    { content: none; }
+  @bottom-center { content: none; }
+}
+
+@page :left {
+  @top-left {
+    content: string(guest-name, first);
+    font-family: "PingFang SC", "Noto Sans SC", "Source Han Sans SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 7.5pt;
+    color: #8a8278;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
+@page :right {
+  @top-right {
+    content: string(report-title, first);
+    font-family: "PingFang SC", "Noto Sans SC", "Source Han Sans SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 7.5pt;
+    color: #8a8278;
+    letter-spacing: 0.03em;
+  }
+}
+
+@page :blank {
+  @top-left     { content: none; }
+  @top-right    { content: none; }
+  @bottom-center { content: none; }
+}
+
+/* ========================================================================
+   3. RESET & BASE
+   ======================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--fs-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-primary);
+  /* White background for the @page margin area — prevents cream bleed to
+     page edges. The content area (body) has the cream background. */
+  background: #ffffff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: var(--leading-body);
+  color: var(--color-text-primary);
+  /* Cream background constrained to @page content area */
+  background: var(--color-surface);
+  max-width: 100%;
+  counter-reset: footnote;
+}
+
+/* ========================================================================
+   4. COVER PAGE
+   Normal-flow block that fills the first page. @page :first { margin: 0 }
+   allows it to extend to page edges. page-break-after: always pushes
+   body content to page 2.
+   Dimensions: 210×297mm (A4). For other page sizes, override with
+   a format-specific CSS rule or inject via template variable.
+   ======================================================================== */
+
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 4cm 3cm;
+  margin: 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-surface) 0%,
+    var(--color-surface-subtle) 60%,
+    var(--color-surface) 100%
+  );
+  text-align: center;
+  page-break-after: always;
+}
+
+/* Prevent cover page h1 from overriding running-header string-set
+   (the body h1 CSS rule sets string-set: report-title self) */
+.cover-page h1 {
+  string-set: none;
+}
+
+.cover-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-cover-label);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--sp-3xl);
+}
+
+.cover-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-cover-name);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--sp-md);
+  max-width: 80%;
+}
+
+.cover-subtitle {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin-bottom: var(--sp-2xl);
+}
+
+.cover-rule {
+  width: 80px;
+  height: 2px;
+  background: var(--color-accent);
+  margin: 0 auto var(--sp-2xl) auto;
+}
+
+.cover-meta {
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-compact);
+}
+
+.cover-meta span {
+  display: inline-block;
+}
+
+.cover-meta .meta-sep {
+  margin: 0 var(--sp-sm);
+  color: var(--color-border);
+}
+
+.cover-footer {
+  position: absolute;
+  bottom: 2.5cm;
+  font-family: var(--font-heading);
+  font-size: var(--fs-tiny);
+  color: var(--color-text-disabled);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ========================================================================
+   5. HEADINGS
+   ======================================================================== */
+
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  color: var(--color-accent);
+  text-align: center;
+  letter-spacing: var(--tracking-tight);
+  margin-top: var(--sp-3xl);
+  margin-bottom: var(--sp-lg);
+  padding-bottom: var(--sp-lg);
+  border-bottom: 1px solid var(--color-accent);
+  string-set: report-title self;
+}
+
+h1:first-of-type {
+  margin-top: var(--sp-2xl);
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  color: var(--color-accent);
+  margin-top: var(--sp-2xl);
+  margin-bottom: var(--sp-md);
+  padding-top: var(--sp-md);
+  border-top: 1.5px solid var(--color-accent);
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  color: var(--color-text-primary);
+  margin-top: var(--sp-xl);
+  margin-bottom: var(--sp-sm);
+  padding-left: var(--sp-sm);
+  border-left: 3px solid var(--color-accent);
+}
+
+h4 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h4);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  color: var(--color-text-secondary);
+  margin-top: var(--sp-lg);
+  margin-bottom: var(--sp-xs);
+}
+
+h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-top: var(--sp-md);
+  margin-bottom: var(--sp-xs);
+}
+
+/* ========================================================================
+   6. PARAGRAPHS & INLINE
+   ======================================================================== */
+
+p {
+  margin-bottom: var(--sp-sm);
+  text-align: justify;
+  hyphens: auto;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--color-accent-medium);
+}
+
+strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+em {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+/* Timestamp styling — italic in parentheses */
+em:has(+ :not(em)) {
+  /* Let standard italic pass through for timestamps */
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-code-bg);
+  padding: 1pt 4pt;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-md);
+  margin: var(--sp-md) 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  line-height: var(--leading-compact);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* ========================================================================
+   7. BLOCKQUOTES
+   ======================================================================== */
+
+blockquote {
+  margin: var(--sp-lg) 0;
+  padding: var(--sp-md) var(--sp-lg);
+  background: var(--color-blockquote-bg);
+  border-left: 3px solid var(--color-accent);
+  font-size: var(--fs-blockquote);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  page-break-inside: avoid;
+}
+
+blockquote p {
+  margin-bottom: var(--sp-xs);
+  text-align: left;
+  font-style: italic;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote strong {
+  color: var(--color-accent);
+  font-style: normal;
+  font-family: var(--font-heading);
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+blockquote em {
+  color: var(--color-text-tertiary);
+  font-style: normal;
+  font-size: 0.9em;
+}
+
+/* Nested blockquote — additional evidence context */
+blockquote blockquote {
+  margin: var(--sp-sm) 0 0 0;
+  padding: var(--sp-sm) var(--sp-md);
+  background: var(--color-surface-subtle);
+  border-left-color: var(--color-border);
+  font-size: 0.95em;
+}
+
+/* ========================================================================
+   8. HORIZONTAL RULES
+   ======================================================================== */
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.25;
+  margin: var(--sp-2xl) 0;
+  page-break-after: avoid;
+}
+
+/* Decorative rule (used in cover only) is handled by .cover-rule */
+
+/* ========================================================================
+   9. TABLES
+   ======================================================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--sp-lg) 0;
+  font-size: var(--fs-small);
+  line-height: var(--leading-compact);
+  page-break-inside: avoid;
+}
+
+thead {
+  background: var(--color-table-header);
+}
+
+th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--color-text-inverse);
+  padding: var(--sp-sm) var(--sp-md);
+  text-align: left;
+  letter-spacing: var(--tracking-wide);
+}
+
+td {
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+tr:nth-child(even) td {
+  background: var(--color-table-stripe);
+}
+
+tr:last-child td {
+  border-bottom: 1.5px solid var(--color-border);
+}
+
+/* ========================================================================
+   10. LISTS
+   ======================================================================== */
+
+ul, ol {
+  margin: var(--sp-sm) 0 var(--sp-md) 0;
+  padding-left: 1.5em;
+}
+
+li {
+  margin-bottom: var(--sp-xs);
+  line-height: var(--leading-body);
+}
+
+li:last-child {
+  margin-bottom: 0;
+}
+
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--sp-xs);
+  margin-bottom: 0;
+}
+
+/* Unordered list bullet color */
+ul {
+  list-style-type: none;
+}
+
+ul li::before {
+  content: "—";
+  color: var(--color-accent);
+  display: inline-block;
+  width: 1.2em;
+  margin-left: -1.2em;
+}
+
+ul ul li::before {
+  content: "·";
+  font-weight: 700;
+}
+
+/* Ordered list number color */
+ol {
+  list-style-type: none;
+  counter-reset: item;
+}
+
+ol li {
+  counter-increment: item;
+}
+
+ol li::before {
+  content: counter(item) ".";
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9em;
+  display: inline-block;
+  width: 1.5em;
+  margin-left: -1.5em;
+}
+
+/* ========================================================================
+   11. IMAGES
+   ======================================================================== */
+
+img {
+  max-width: 100%;
+  height: auto;
+  page-break-inside: avoid;
+}
+
+/* ========================================================================
+   12. METADATA LINE (first paragraph after h1)
+   ======================================================================== */
+
+h1 + p {
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin-top: -0.5em;
+  margin-bottom: var(--sp-2xl);
+  letter-spacing: var(--tracking-wide);
+}
+
+h1 + p em {
+  color: var(--color-text-tertiary);
+  font-style: normal;
+}
+
+/* ========================================================================
+   13. PAGE BREAK RULES
+   Prevent awkward breaks: keep headings with content, avoid splitting
+   blockquotes/tables/code blocks, and ensure at least 2 lines of a
+   paragraph appear at top/bottom of each page.
+   ======================================================================== */
+
+h2 {
+  page-break-before: always;
+}
+
+h2:first-of-type {
+  page-break-before: avoid;
+}
+
+h3, h4, h5, h6 {
+  page-break-after: avoid;
+}
+
+/* Keep heading with at least 3 lines of following content */
+h2 + p, h3 + p, h4 + p {
+  page-break-before: avoid;
+}
+
+h2 + p {
+  orphans: 3;
+}
+
+blockquote {
+  page-break-inside: avoid;
+}
+
+table {
+  page-break-inside: avoid;
+}
+
+tr {
+  page-break-inside: avoid;
+}
+
+pre {
+  page-break-inside: avoid;
+}
+
+figure {
+  page-break-inside: avoid;
+}
+
+/* Prevent single orphan/widow lines */
+p, li {
+  widows: 2;
+  orphans: 2;
+}
+
+/* Keep list items together when they form a cohesive group */
+li {
+  page-break-inside: avoid;
+}
+
+/* Don't split a heading from the content immediately after */
+h2 + *, h3 + * {
+  page-break-before: avoid;
+}
+
+/* ========================================================================
+   14. PRINT-SPECIFIC OVERRIDES
+   ======================================================================== */
+
+@media print {
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Avoid widow/orphan lines */
+  p, li {
+    widows: 2;
+    orphans: 2;
+  }
+
+  /* Remove link underlines in print */
+  a {
+    text-decoration: none;
+    border-bottom: none;
+    color: var(--color-text-primary);
+  }
+}
+
+/* ========================================================================
+   15. FORMAT-SPECIFIC ADJUSTMENTS
+   ======================================================================== */
+
+/* ---- TL;DR: larger type, more breathing room ---- */
+.format-tldr {
+  --fs-body: 11pt;
+}
+
+.format-tldr h1 {
+  --fs-h1: 22pt;
+  margin-top: var(--sp-3xl);
+}
+
+/* ---- Social: narrower column, narrative feel ---- */
+.format-social {
+  --fs-body: 10.5pt;
+}
+
+.format-social h1 {
+  --fs-h1: 22pt;
+}
+
+.format-social h2 {
+  page-break-before: avoid;
+  border-top: none;
+  padding-top: 0;
+  margin-top: var(--sp-2xl);
+}
+
+.format-social p:first-of-type {
+  font-size: 1.15em;
+  line-height: var(--leading-compact);
+  color: var(--color-text-secondary);
+}
+
+/* ========================================================================
+   16. UTILITY CLASSES
+   ======================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.text-center { text-align: center; }
+.text-accent { color: var(--color-accent); }
+.font-heading { font-family: var(--font-heading); }
