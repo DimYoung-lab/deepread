@@ -269,7 +269,7 @@ Ask these questions when merging:
 2. Follow the guide in [references/visual-synthesis-guide.md](references/visual-synthesis-guide.md) to produce `visual_content.json`
 3. The output uses a **three-layer information architecture**:
    - Layer 1 "At a Glance": Core thesis + key takeaways + surprising insight (3-min scan)
-   - Layer 2 "The Argument": Theme-organized narrative + curated evidence (10-15 min read)
+   - Layer 2 "The Argument": Theme-organized narrative + curated evidence (medium-depth read)
    - Layer 3 "The Evidence": Complete timeline + predictions + quote collection (on-demand)
 4. Content is **theme-driven** (not chronology-driven) — the 7 cross-cutting themes become the primary navigation framework
 5. Content is **curated** (not exhaustive) — top ~30% of insights/quotes by importance, with full data available on demand
@@ -341,13 +341,27 @@ Save as `reports/social-[guest-lastname]-[YYYYMMDD].md`.
 
 ### Output 6: Short Podcast
 
-Generate using the script with `visual_content.json`:
+Prepare an editorial brief, write the podcast script with the language model, review it, then render it to MP3:
 
 ```bash
+python scripts/prepare_podcast_brief.py output/[dir]/data/knowledge.json --turns output/[dir]/data/turns-corrected.json --visual output/[dir]/data/visual_content.json --output output/[dir]/audio/podcast-brief-[guest]-[YYYYMMDD].md
+
+# Claude writes output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md from the brief.
+
+python scripts/review_podcast_script.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --knowledge output/[dir]/data/knowledge.json
+
 python scripts/generate_audio.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --output output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3
 ```
 
-Uses MiniMax Token Plan (speech-2.8 series via `mmx-cli`) to render a synthesized short podcast (10–15 minutes) covering the interview's core thesis, key takeaways, and selected golden quotes. Supports 30+ Chinese voices and speed control. Requires `mmx-cli` installed and authenticated. Output: MP3 file.
+`prepare_podcast_brief.py` applies the adaptive duration policy: `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)` and `target_chars = target_minutes * 320` with tolerance. It produces a source brief, not the final script.
+
+The final script MUST be written by the language model from the brief. It should sound like a polished solo podcast for listeners who do not have time to watch the full interview: explain what the guest believes, why, what is at stake, and what listeners should remember. Do not mechanically stitch bullets, quotes, or themes.
+
+Before TTS, run a podcast review pass:
+- Ask a reviewer agent/model to use [references/podcast-review-guide.md](references/podcast-review-guide.md) and reject the script if it sounds like a report index, has awkward repeated phrasing, includes internal prompt language, makes claims that do not follow, or fails to explain the guest's views.
+- Run `review_podcast_script.py` for hard-rule checks. If either review fails, revise the script and rerun the review.
+
+`generate_audio.py` uses MiniMax Token Plan (speech-2.8 series via `mmx-cli`) to render the script as MP3. Voice and speed controls are for natural listening preference only; do not slow speech down to force a fixed duration. Requires `mmx-cli` installed and authenticated.
 
 ### Output 7: Styled PDF（新增）
 
@@ -396,14 +410,14 @@ Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest
 | 只需 Markdown 报告（深度/速览/社交推文） | 阶段 1→2→3→4，然后直接写 Output 1/2/5 |
 | 只需交互卡片或知识图谱 | 阶段 1→2→3→4→4.5，然后运行对应脚本 |
 | 从已有 Markdown 生成 PDF | 仅 Output 7（运行 generate_pdf.py）— 无需流水线 |
-| 播客音频 | 阶段 1→2→3→4（+4.5 可获得更丰富内容），写脚本，Output 6 |
+| 播客音频 | 阶段 1→2→3→4（+4.5 可获得更丰富内容），准备 brief → 模型写稿 → 审稿 → Output 6 |
 | 完整输出（全部 8 种） | 全部阶段，全部输出 |
 
 ### 独立输出指南
 
 - **Output 1/2/5**（Markdown 报告）：仅需 knowledge.json，Claude 直接撰写
 - **Output 3/4**（HTML 交互）：需 visual_content.json + 对应 Python 脚本
-- **Output 6**（播客音频）：需播客脚本 .md 文件 + generate_audio.py
+- **Output 6**（播客音频）：需 knowledge.json + prepare_podcast_brief.py + 模型写稿 + review_podcast_script.py + generate_audio.py
 - **Output 7**（PDF）：需对应 Markdown 文件 + generate_pdf.py
 - **Output 8**（播客BGM）：需播客 MP3 + knowledge.json + generate_bgm_podcast.py
 
@@ -436,6 +450,7 @@ output/
     │   ├── cards-[guest]-[YYYYMMDD].html        (Output 3)
     │   └── map-[guest]-[YYYYMMDD].html          (Output 4)
     └── audio/                                   (Output 6, 8)
+        ├── podcast-brief-[guest]-[YYYYMMDD].md
         ├── podcast-script-[guest]-[YYYYMMDD].md
         ├── podcast-[guest]-[YYYYMMDD].mp3
         ├── podcast-[guest]-[YYYYMMDD]-bgm.mp3
@@ -451,7 +466,7 @@ output/
 3. **Spot-check the TL;DR** (Output 1): verify all 6 sections present, 5-7 takeaways, quotes have timestamps.
 4. **Spot-check the Deep-Dive** (Output 2): verify all 8 sections present, all segments covered, 3+ quotes spot-checked against knowledge.json for verbatim accuracy.
 5. **Spot-check the Social Media Post** (Output 5): verify 3-5 takeaways, 1-2 quote-card-ready quotes, hashtags present, platform variants present.
-6. **Play the Short Podcast** (Output 6): verify audio plays, duration 10–15 minutes, voice quality acceptable, core thesis and takeaways audibly clear.
+6. **Review and play the Short Podcast** (Output 6): verify reviewer pass, audio plays, duration matches the adaptive target from source length, voice quality is natural, and the episode clearly explains the guest's views rather than reading a report outline.
 7. **Open the PDFs** (Output 7): verify cover page renders for report type, all sections present, tables have striped rows and burgundy headers, blockquotes have burgundy left border, page numbers appear in footer, colors and fonts match the editorial design intent.
 8. **Run the regression test** from the quality checklist if any template files were modified.
 
@@ -507,6 +522,7 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | [references/analysis-framework.md](references/analysis-framework.md) | Stage 3 | Six-dimension extraction taxonomy with JSON schemas |
 | [references/visual-synthesis-guide.md](references/visual-synthesis-guide.md) | Stage 4.5 | How to synthesize content for visual HTML presentation |
 | [references/output-templates.md](references/output-templates.md) | Stage 5 | Templates for all eight output formats |
+| [references/podcast-review-guide.md](references/podcast-review-guide.md) | Stage 5b (Output 6) | Reviewer-agent criteria for podcast scripts before TTS |
 | [references/quality-checklist.md](references/quality-checklist.md) | Stage 5b (post-generation) | Mandatory QA checks, common pitfalls, regression test script |
 
 ## Scripts
@@ -517,6 +533,8 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | `scripts/validate_transcript.py` | 1.5 | Correct ASR errors using glossary |
 | `scripts/generate_cards.py` | 5 | Render learning cards from visual_content.json |
 | `scripts/generate_mindmap.py` | 5 | Render mind map from visual_content.json |
+| `scripts/prepare_podcast_brief.py` | 5 | Prepare source material and duration constraints for model-written podcast script |
+| `scripts/review_podcast_script.py` | 5b | Hard-rule review for podcast scripts before TTS |
 | `scripts/generate_audio.py` | 5 | Render podcast audio via MiniMax Token Plan (mmx CLI) |
 | `scripts/generate_pdf.py` | 5 | Render styled PDFs from Markdown reports |
 | `scripts/generate_bgm_podcast.py` | 5 | Generate BGM + mix with podcast via MiniMax music-2.6 |

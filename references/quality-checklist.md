@@ -80,13 +80,14 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 | # | Check | Method | Expected |
 |---|-------|--------|----------|
-| 1 | **Character count** | `wc -c` or character counter | 2500-3500 characters |
-| 2 | **TTS-friendly plain text** | grep for markdown syntax | No `**`, `##`, `*`, backticks — clean plain text suitable for TTS |
-| 3 | **Opening present** | Read first 5 lines | Host introduction, guest name, episode context clearly stated |
+| 1 | **Adaptive character count** | Compute source duration and character counter | `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)`, `target_chars = target_minutes * 320`, within ±12% |
+| 2 | **TTS-friendly plain text** | grep for markdown syntax, labels, and spoken timestamps | No `**`, `##`, `*`, backticks, `HOST:`, `GUEST:`, metadata headers, or spoken `HH:MM` timestamps |
+| 3 | **Listener-centered opening** | Read first 5 lines | Says who this is for, gives the core conclusion, then moves into the guest's views |
 | 4 | **Closing present** | Read last 5 lines | Outro, call-to-action, or next-episode teaser |
-| 5 | **Theme transitions** | grep for transition phrases | Segue phrases between themes ("moving on to", "let's shift to", "another topic we discussed", etc.) |
-| 6 | **Estimated duration** | Check metadata header or footer | Duration estimate present (e.g., "~15 min read" or "approx. 20 min audio") |
-| 7 | **Speaker labels clear** | Scan for HOST:/GUEST: patterns | Consistent HOST: and GUEST: labels, no orphaned dialogue |
+| 5 | **Explains the guest's views** | Reviewer agent/model reads body | Focuses on what the guest believes, why, stakes, tensions, and takeaways, not source navigation |
+| 6 | **Duration policy visible in tooling** | Run `prepare_podcast_brief.py` and inspect stdout | CLI prints source duration, target minutes, and expected script range |
+| 7 | **No spoken timestamps** | grep for `XX:XX` or `HH:MM:SS` | No source timestamps in the podcast script body |
+| 8 | **Reviewer pass required** | Run `review_podcast_script.py` and a model/editor review | Both reviews pass before TTS |
 
 ---
 
@@ -384,20 +385,24 @@ print(f'Stage 7 — Social Media Post: OK ({length} chars)')
 
 # === Stage 7: Verify Podcast Script ===
 
-# 14. Verify podcast script
+# 14. Prepare and verify podcast brief + script review tools
+python -c "import py_compile; py_compile.compile('scripts/prepare_podcast_brief.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/review_podcast_script.py', doraise=True)"
+
+python scripts/prepare_podcast_brief.py output/yaoshunyu-20260530/data/knowledge.json --turns output/yaoshunyu-20260530/data/turns-corrected.json --visual output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_podcast_brief.md
+
 python -c "
-import os, glob
-scripts = glob.glob('output/yaoshunyu-20260530/audio/podcast-script*')
-assert scripts, 'No podcast script found'
-with open(scripts[0], encoding='utf-8') as f: text = f.read()
-length = len(text)
-assert 2500 <= length <= 3500, f'Podcast script length {length} outside 2500-3500 range'
-assert 'HOST:' in text or 'Host:' in text, 'Missing host labels'
-assert 'GUEST:' in text or 'Guest:' in text, 'Missing guest labels'
-# Must not contain markdown formatting (TTS-friendly)
-assert '**' not in text, 'Markdown bold in podcast script — not TTS-friendly'
-print(f'Stage 7 — Podcast Script: OK ({length} chars)')
+from pathlib import Path
+text = Path('/tmp/test_podcast_brief.md').read_text(encoding='utf-8')
+assert 'Podcast Editorial Brief' in text
+assert 'Listener Job' in text
+assert 'Forbidden phrases' in text
+assert 'Source Material' in text
+print('Stage 7 — Podcast Brief: OK')
 "
+
+# After the model writes podcast-script-*.md, run:
+# python scripts/review_podcast_script.py output/yaoshunyu-20260530/audio/podcast-script-*.md --knowledge output/yaoshunyu-20260530/data/knowledge.json
 
 # === Stage 3: Verify Markdown Reports ===
 

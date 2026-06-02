@@ -26,7 +26,7 @@
 | 🌐 **学习卡片** | 卡片滑动/主题切换/移动优先 | 通勤学习 |
 | 🗺️ **知识图谱** | D3.js 径向思维导图 | 可视化探索 |
 | 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
-| 🎧 **短播客脚本** | 双人对话式播客脚本，可 TTS 转音频 | 10-15 分钟 |
+| 🎧 **短播客脚本** | 大模型撰写 + 审稿的自然口播播客，可 TTS 转音频 | 按原视频长度自适应，约 3-15 分钟 |
 | 📕 **精美 PDF** | 深度报告/TL;DR/社交推文的可打印 PDF 版 | 离线阅读/分享 |
 | 🎵 **BGM 增强播客** | 播客 + 氛围背景音乐 | 沉浸式收听 |
 
@@ -139,19 +139,24 @@ interview-based-learning/
 ├── .gitignore
 ├── transcripts/                 ← 原始笔录（Word/txt/md）
 │   └── yaoshunyu.docx
-├── scripts/                     ← Python 脚本（9 个）
+├── scripts/                     ← Python 脚本（10 个）
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
 │   ├── validate_transcript.py   ← 术语校验 + 转录纠错
 │   ├── generate_cards.py        ← visual_content.json → 学习卡片
 │   ├── generate_mindmap.py      ← visual_content.json → 知识图谱
+│   ├── prepare_podcast_brief.py   ← knowledge.json → 播客编导 brief
+│   ├── review_podcast_script.py   ← 播客逐字稿 → 审稿硬规则检查
 │   ├── generate_audio.py        ← 播客脚本 → TTS 音频
+│   ├── generate_bgm_podcast.py  ← 播客音频 → BGM 增强版
 │   ├── generate_pdf.py          ← Markdown 报告 → 精美 PDF
-│   └── estimate.py              ← 成本与 token 估算
-├── references/                  ← 按需加载的参考文档（6 个）
+│   ├── estimate.py              ← 成本与 token 估算
+│   └── _mmx_utils.py            ← MiniMax CLI 共享辅助函数
+├── references/                  ← 按需加载的参考文档（7 个）
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
 │   ├── segmentation-guide.md    ← 话题边界检测启发式
 │   ├── visual-synthesis-guide.md← 视觉内容综合指南
 │   ├── output-templates.md      ← 8 种输出格式模板
+│   ├── podcast-review-guide.md  ← 播客审稿 Agent 标准
 │   ├── quality-checklist.md     ← QA 检查清单 + 常见坑位
 │   └── transcript-glossary.md   ← 术语表 + 专有名词纠错
 ├── assets/                      ← 模板与静态资源
@@ -263,7 +268,10 @@ python -c "import py_compile; py_compile.compile('scripts/parse_docx.py', dorais
 python -c "import py_compile; py_compile.compile('scripts/validate_transcript.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/prepare_podcast_brief.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/review_podcast_script.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_audio.py', doraise=True)"
+python -c "import py_compile; py_compile.compile('scripts/generate_bgm_podcast.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/generate_pdf.py', doraise=True)"
 ```
 

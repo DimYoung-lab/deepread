@@ -16,7 +16,7 @@ requirements, and formatting conventions.
 | 3 | 学习卡片 | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
 | 4 | 知识图谱 | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
 | 5 | 社交媒体推文 | Markdown | 2000–4000 words | Social media followers, general public |
-| 6 | 短播客 | Markdown + MP3 | 10–15 min audio | Commuters, multitaskers, auditory learners |
+| 6 | 短播客 | Markdown + MP3 | Adaptive 3–15 min audio | Commuters, multitaskers, auditory learners |
 | 7 | 精美 PDF | PDF (via HTML→Playwright) | Print-optimized A4 | Offline readers, report distribution |
 | 8 | BGM增强播客 | MP3 (MiniMax music-2.6 + ffmpeg) | Podcast + ambient BGM | Immersive listening |
 
@@ -707,124 +707,71 @@ distills the interview into a compact, listenable audio piece. Produces both
 the plain-text script and, when TTS tooling is available, an MP3 audio file.
 Designed for consumption during commutes, workouts, or household tasks.
 
-**Duration:** 10–15 minutes of audio (approximately 2500–3500 characters of
-spoken script at ~250 characters per minute).
+**Duration:** Adaptive to the source length. Default target:
+`target_minutes = clamp(round(source_minutes * 0.10), 3, 15)`.
+Character budget: `target_chars = target_minutes * 320`, with ±12% tolerance.
 
 **Files:**
 - Script: `podcast-script-[guest-lastname]-[YYYYMMDD].md`
 - Audio: `podcast-[guest-lastname]-[YYYYMMDD].mp3`
 
-### Template Structure
+### Editorial Workflow
 
+Use `scripts/prepare_podcast_brief.py` to prepare a source brief. The final
+podcast script is written by the language model from the brief, then reviewed
+before TTS.
+
+```bash
+python scripts/prepare_podcast_brief.py output/[dir]/data/knowledge.json --turns output/[dir]/data/turns-corrected.json --visual output/[dir]/data/visual_content.json --output output/[dir]/audio/podcast-brief-[guest]-[YYYYMMDD].md
+
+# Claude writes output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md from the brief.
+
+python scripts/review_podcast_script.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --knowledge output/[dir]/data/knowledge.json
 ```
-=== SHORT PODCAST SCRIPT ===
-Guest: [Full Name]
-Show: [Show Name]
-Date: [YYYY-MM-DD]
-Estimated duration: [10–15] min
-Target character count: 2500–3500 characters (spoken text only)
-================================
 
-=== OPENING (30 seconds) ===
+The final script file must contain only spoken text. Do not include metadata
+headers, section delimiters, stage directions, fixed labels such as
+`HOST:`/`GUEST:`, or character-budget notes inside the script, because TTS
+will read them aloud.
 
-[1 paragraph, ~125 characters. Hook the listener immediately with the
-most compelling idea from the conversation. Identify the guest, the show,
-and the central thesis. Avoid "Welcome to..." cliches. Start with the
-insight, then attribute it.
+### Spoken Structure
 
-Example pattern: "[Guest] believes [surprising claim]. I sat down with
-her on [Show] to understand why. Here's what I learned in our
-[XX]-minute conversation."]
-
-=== TRANSITION: Opening → Theme 1 ===
-
-[A single sentence, ~50 characters, bridging from the opening to the
-first theme. Smooth, spoken-word cadence. Example: "Let's start with
-the biggest idea she shared — [theme summary]."]
-
-=== THEME 1: [Subheading — conversational, not academic] (1–2 min) ===
-
-[2 paragraphs, ~300–500 characters. Tell the story of this theme as if
-explaining it to a friend. Include the guest's key claim, the reasoning,
-and why it matters. Use concrete examples. End with a verbatim quote
-from the transcript, introduced naturally.
-
-Intro to quote: "Here's how [guest first name] put it..."
-Quote: "[verbatim quote]"
-
-Closing line for this theme: a single sentence that crystallizes the
-insight and transitions to the next theme.]
-
-=== TRANSITION: Theme 1 → Theme 2 ===
-
-[A bridging sentence (~50 chars). Pattern: "That connects directly to
-something else [guest first name] talked about — [next theme hook]."]
-
-=== THEME 2: [Subheading] (1–2 min) ===
-
-[Same structure as Theme 1. ~300–500 characters.]
-
-=== TRANSITION: Theme 2 → Theme 3 ===
-
-=== THEME 3: [Subheading] (1–2 min) ===
-
-=== TRANSITION: Theme 3 → Theme 4 ===
-
-=== THEME 4: [Subheading] (1–2 min) ===
-
-=== TRANSITION: Theme 4 → Theme 5 ===
-
-=== THEME 5: [Subheading] (1–2 min) ===
-
-=== TRANSITION: Theme 5 → Theme 6 ===
-
-=== THEME 6: [Subheading] (1–2 min) ===
-
-=== TRANSITION: Theme 6 → Theme 7 ===
-
-=== THEME 7: [Subheading] (1–2 min) ===
-
-=== TRANSITION: Theme 7 → Closing ===
-
-[A sentence that signals the summary is coming. Pattern: "So after
-[X minutes] with [guest first name], here's what I'm taking away."]
-
-=== CLOSING (1 minute) ===
-
-[1 paragraph, ~250 characters. Synthesize the 3 most important takeaways
-into a cohesive closing statement. No new ideas — only synthesis. End
-with a call to action: where to find the full report, learning cards,
-and original interview.
-
-Final line pattern: "For the full deep-dive, learning cards, and
-knowledge map, visit [link]. The original conversation with [guest
-name] is at [URL]."]
-
-=== END OF SCRIPT ===
-
-Character count: [XXXX]
-Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
-```
+1. Simple opening: one or two short paragraphs that introduce the interview
+   and then move directly into the first theme.
+2. Topic body: explain what the guest believes, why they believe it, and why
+   a busy listener should care. Use 3–7 themes only as source material, not
+   as a mechanical table of contents.
+3. Closing: synthesize what the listener should take away. Point to the full
+   report/cards/map for details, but do not make the podcast sound like an
+   index to the report.
 
 ### Script Writing Rules
 
-- **Plain text only.** No markdown in the spoken sections (stage directions
-  and section markers use `===` delimiters). The script is fed directly to
-  a TTS engine; formatting artifacts would be read aloud.
+- **Model-written, not mechanically stitched.** Use the brief as source
+  material, then write natural spoken prose that connects points with clear
+  reasoning. Do not concatenate theme bullets, quotes, or canned transitions.
+- **Pure spoken text only.** No markdown, metadata headers, section markers,
+  `HOST:`/`GUEST:` labels, code fences, or fixed budget notes in the file.
 - **Write for the ear, not the eye.** Use short sentences. Prefer concrete
   nouns and active verbs. Avoid parentheticals, footnotes, and nested
   clauses. Read every line aloud (or mentally) before finalizing.
 - **Natural transitions.** Every theme section must begin with a transition
   sentence that connects it to the previous theme. The listener should feel
   guided, not jolted.
-- **Quotes must be verbatim** from the transcript. Introduce them naturally
-  so the shift to the guest's voice is clear in TTS ("Here's how she put
-  it..." or "In his words...").
+- **Quotes must be verbatim** from the transcript when used, but do not speak
+  timestamps aloud. The podcast is for understanding the guest's views, not
+  locating evidence in the source file.
+- **Think from the listener's point of view.** A listener who skips the full
+  interview wants the core argument, reasoning, stakes, tensions, and useful
+  takeaways. Do not read out source-navigation details.
+- **Review before TTS.** A reviewer agent/model must reject scripts that sound
+  like a report outline, repeat canned phrases, leak internal prompt wording,
+  or fail to explain the guest's actual opinions.
 - **Closing must synthesize**, not summarize. Don't list all 7 themes again.
   Distill into 3 integrated takeaways.
-- **Character budget**: aim for 2500–3500 characters of spoken text. At
-  ~250 characters per minute, this yields 10–14 minutes of audio. Stay
-  within budget — longer scripts produce audio over the 15-minute target.
+- **Character budget**: calculate from source duration. Use
+  `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)` and
+  `target_chars = target_minutes * 320`, with ±12% tolerance.
 
 ### TTS 制作说明
 
@@ -832,11 +779,10 @@ Estimated duration: [XX] min ([XXXX] / 250 chars-per-min)
 - 使用 MiniMax Token Plan（speech-2.8 系列，通过 `mmx-cli`）进行语音合成。
   - 需安装 `npm install -g mmx-cli` 并认证 `mmx auth login --api-key sk-cp-...`。
   - Token Plan Plus：4,000 字符/天，28,000 字符/周。
-  - 支持 30+ 中文语音，语速调节（0.5–2.0）。
+  - 支持 30+ 中文语音，语速调节（0.5–2.0）。语速用于自然听感，不用于强行凑固定时长。
 - 如 mmx CLI 不可用，仅输出 Markdown 脚本文件，并注明：
   "MP3 未生成 — 需要 MiniMax Token Plan（mmx-cli）"
-- 合成前去除所有 `===` 分隔符、转场标记和舞台指示，
-  仅将口播文本（含引述的自然引入语）送入 TTS 引擎。
+- 合成时直接读取纯口播文本。时长估计和字符预算保留在 CLI 输出和 QA 检查中，不写入脚本正文。
 
 ---
 
