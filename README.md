@@ -138,7 +138,7 @@ interview-based-learning/
 ├── .gitignore
 ├── transcripts/                 ← 原始笔录（Word/txt/md）
 │   └── yaoshunyu.docx
-├── scripts/                     ← Python 脚本（10 个）
+├── scripts/                     ← Python 脚本（11 个）
 │   ├── parse_docx.py            ← .docx → 结构化 JSON
 │   ├── validate_transcript.py   ← 术语校验 + 转录纠错
 │   ├── generate_cards.py        ← visual_content.json → 学习卡片
