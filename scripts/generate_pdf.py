@@ -5,16 +5,14 @@ Converts Markdown to HTML via markdown-it-py, wraps in a Jinja2 HTML
 template with premium print CSS, and renders to PDF via Playwright
 headless Chromium.
 
-Designed for the interview-based-learning skill's three Markdown outputs:
-  - Deep-dive report (--type report)      — cover page + full report
-  - TL;DR summary     (--type tldr)       — compact layout
-  - Social media post (--type social)     — narrative article layout
+Designed for the interview-based-learning skill's PDF outputs:
+  - Deep-dive report (--type report)      — compact report layout
+  - TL;DR summary     (--type tldr)       — compact quick-read layout
 
 Usage:
     python generate_pdf.py report-guestname-YYYYMMDD.md
     python generate_pdf.py report-guestname-YYYYMMDD.md --type report -o report.pdf
     python generate_pdf.py tldr-guestname-YYYYMMDD.md --type tldr -o tldr.pdf
-    python generate_pdf.py social-guestname-YYYYMMDD.md --type social
 """
 
 from __future__ import annotations
@@ -54,9 +52,10 @@ def extract_metadata(md_text: str) -> dict[str, str]:
     """Extract guest name, show name, host, date, duration from markdown.
 
     Handles three formats:
-      - Deep report:  # GUEST on SHOW: 深度报告  /  *Guest: ..., Host: ..., Duration: ..., Date: ..., Show: ...*
-      - TL;DR:        # GUEST × HOST: TL;DR       /  *Guest: ..., Duration: ..., Date: ...*
-      - Social post:  # TITLE                      /  > author attribution line
+      - Deep report:  # GUEST × SHOW：深度报告  /  *嘉宾：...｜主持：...｜时长：...｜日期：...｜来源：...*
+      - TL;DR:        # GUEST × SHOW：速览       /  *嘉宾：...｜时长：...｜日期：...*
+    English metadata labels are still accepted for backwards compatibility
+    with older generated reports.
     """
     meta: dict[str, str] = {
         "title": "",
@@ -66,6 +65,7 @@ def extract_metadata(md_text: str) -> dict[str, str]:
         "host": "",
         "date": "",
         "duration": "",
+        "source": "",
     }
 
     lines = md_text.strip().split("\n")
@@ -78,7 +78,9 @@ def extract_metadata(md_text: str) -> dict[str, str]:
             break
 
     # --- Metadata line (italic line with pipe-separated fields) ---
-    # Pattern: *Guest: ... | Host: ... | Duration: ... | Date: ... | Show: ...*
+    # Preferred pattern:
+    # *嘉宾：...｜主持：...｜时长：...｜日期：...｜来源：...*
+    # Legacy pattern: English metadata labels separated by pipes.
     for line in lines[:10]:
         stripped = line.strip()
         if not stripped.startswith("*") and not stripped.startswith(">"):
@@ -87,14 +89,20 @@ def extract_metadata(md_text: str) -> dict[str, str]:
         # Remove leading/trailing asterisks and blockquote markers
         cleaned = re.sub(r"^[>\s]*\*?\s*", "", stripped)
         cleaned = re.sub(r"\s*\*?\s*$", "", cleaned)
+        cleaned = cleaned.replace("｜", "|")
+
+        def field(*labels: str) -> Optional[re.Match[str]]:
+            label_pattern = "|".join(re.escape(label) for label in labels)
+            return re.search(rf"(?:{label_pattern})\s*[：:]\s*(.+?)(?:\s*\||$)", cleaned)
 
         # Extract fields
-        guest_match = re.search(r"Guest:\s*(.+?)(?:\s*\||$)", cleaned)
-        host_match = re.search(r"Host:\s*(.+?)(?:\s*\||$)", cleaned)
-        duration_match = re.search(r"Duration:\s*(.+?)(?:\s*\||$)", cleaned)
-        date_match = re.search(r"Date:\s*(.+?)(?:\s*\||$)", cleaned)
-        show_match = re.search(r"Show:\s*(.+?)(?:\s*\||$)", cleaned)
-        episode_match = re.search(r"Episode:\s*(.+?)(?:\s*\||$)", cleaned)
+        guest_match = field("嘉宾", "Guest")
+        host_match = field("主持", "Host")
+        duration_match = field("时长", "Duration")
+        date_match = field("日期", "Date")
+        show_match = field("节目", "Show")
+        source_match = field("来源", "Source")
+        episode_match = field("单集", "Episode")
 
         if guest_match:
             guest_raw = guest_match.group(1).strip()
@@ -117,18 +125,23 @@ def extract_metadata(md_text: str) -> dict[str, str]:
         elif episode_match:
             meta["show_name"] = episode_match.group(1).strip()
 
+        if source_match:
+            meta["source"] = source_match.group(1).strip()
+
         # If we found at least one field, this was the metadata line
         if any([guest_match, host_match, duration_match, date_match]):
             break
 
     # --- Fallback: derive guest/show from title ---
-    if not meta["guest_name"] and meta["title"]:
-        # Pattern: "GUEST on SHOW: ..." or "GUEST × HOST: ..."
-        title_match = re.match(r"^(.+?)\s+(?:on|×)\s+(.+?)\s*[:：]", meta["title"])
+    if meta["title"]:
+        # Pattern: "GUEST × SHOW：..." or legacy "GUEST on SHOW: ..."
+        title_match = re.match(r"^(.+?)\s*(?:×|x|X|\bon\b)\s*(.+?)\s*[:：]", meta["title"])
         if title_match:
-            meta["guest_name"] = title_match.group(1).strip()
-            meta["show_name"] = title_match.group(2).strip()
-        else:
+            if not meta["guest_name"]:
+                meta["guest_name"] = title_match.group(1).strip()
+            if not meta["show_name"]:
+                meta["show_name"] = title_match.group(2).strip()
+        elif not meta["guest_name"]:
             # Use full title as guest_name fallback
             meta["guest_name"] = meta["title"]
 
@@ -136,7 +149,7 @@ def extract_metadata(md_text: str) -> dict[str, str]:
     if meta["guest_name"]:
         meta["title_short"] = meta["guest_name"]
     else:
-        meta["title_short"] = meta["title"][:30] if meta["title"] else "Report"
+        meta["title_short"] = meta["title"][:30] if meta["title"] else "报告"
 
     return meta
 
@@ -156,8 +169,8 @@ def build_html_document(
 
     template = Template(template_str)
     return template.render(
-        title=metadata.get("title", "Report"),
-        title_short=metadata.get("title_short", "Report"),
+        title=metadata.get("title", "报告"),
+        title_short=metadata.get("title_short", "报告"),
         guest_name=metadata.get("guest_name", ""),
         show_name=metadata.get("show_name", ""),
         host=metadata.get("host", ""),
@@ -208,9 +221,8 @@ def html_to_pdf(html: str, output_path: str, page_size: str = "A4") -> None:
             # Wait for any fonts/images to settle
             page.wait_for_timeout(500)
 
-            # Render PDF — Playwright's `format` controls page size.
-            # Margins are set in CSS @page rules (not here) so that
-            # @page :first can use margin:0 for full-bleed cover.
+            # Render PDF. Playwright's `format` controls page size; margins
+            # are set in CSS @page rules.
             page.pdf(
                 path=output_path,
                 format=page_size,
@@ -252,7 +264,6 @@ def load_template_and_css(template_dir: str, format_type: str) -> tuple[str, str
     template_map = {
         "report": "report-wrapper.html.j2",
         "tldr": "tldr-wrapper.html.j2",
-        "social": "social-wrapper.html.j2",
     }
     template_name = template_map.get(format_type, "report-wrapper.html.j2")
     template_path = base / template_name
@@ -321,8 +332,8 @@ def build_argparser() -> argparse.ArgumentParser:
         "--type", "-t",
         metavar="TYPE",
         default="report",
-        choices=["report", "tldr", "social"],
-        help="输出格式类型：report（含封面和页眉）、tldr（紧凑版）、social（叙事版），默认 report。",
+        choices=["report", "tldr"],
+        help="输出格式类型：report（深度报告）、tldr（速览摘要），默认 report。",
     )
     parser.add_argument(
         "--page-size",

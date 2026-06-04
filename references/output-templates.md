@@ -5,20 +5,22 @@ interview-based-learning pipeline. Every generated artifact must conform to its
 template below — use these as the source of truth for structure, content
 requirements, and formatting conventions.
 
+**语言规则：** 面向中文母语读者的报告、PDF 和社交媒体输出，新增标题、栏目名、表格标签、解释性文字必须使用中文。只在两类情况下保留英文：一是访谈原话本身包含英文，二是必要术语、平台名、品牌名或行业缩写（如 AI、CEO、L4、VIA、SUV、Token、X/Twitter、LinkedIn）。
+
 ---
 
 ## 输出格式概览
 
-| # | Format | Medium | Length Target | Primary Audience |
+| # | 格式 | 载体 | 长度目标 | 主要读者 |
 |---|--------|--------|---------------|------------------|
-| 1 | 速览摘要 | Markdown | 500–800 words | Time-pressed readers scanning for signal |
-| 2 | 深度报告 | Markdown | Comprehensive (full transcript coverage) | Researchers, analysts, domain specialists |
-| 3 | 学习卡片 | HTML/CSS/JS | Mobile-first card deck | Busy professionals learning in short bursts |
-| 4 | 知识图谱 | SVG/Canvas + JS | Interactive visualization | Visual thinkers, knowledge explorers |
-| 5 | 社交媒体推文 | Markdown | 2000–4000 words | Social media followers, general public |
-| 6 | 短播客 | Markdown + MP3 | Adaptive 3–15 min audio | Commuters, multitaskers, auditory learners |
-| 7 | 精美 PDF | PDF (via HTML→Playwright) | Print-optimized A4 | Offline readers, report distribution |
-| 8 | BGM增强播客 | MP3 (MiniMax music-2.6 + ffmpeg) | Podcast + ambient BGM | Immersive listening |
+| 1 | 速览摘要 | Markdown | 约 500–800 个中文词 | 时间有限、需要快速抓重点的读者 |
+| 2 | 深度报告 | Markdown | 覆盖完整访谈 | 研究者、分析师、领域从业者 |
+| 3 | 学习卡片 | HTML/CSS/JS | 移动优先卡片组 | 碎片时间学习的专业读者 |
+| 4 | 知识图谱 | SVG/Canvas + JS | 交互式可视化 | 偏好结构化探索的读者 |
+| 5 | 社交媒体推文 | Markdown | 约 2000–4000 个中文字符 | 社交媒体读者、泛行业读者 |
+| 6 | 短播客 | Markdown + MP3 | 按原视频长度自适应，约 3–15 分钟 | 通勤、运动或多任务收听者 |
+| 7 | 精美 PDF | PDF（HTML→Playwright） | A4 打印优化 | 离线阅读、转发和归档 |
+| 8 | BGM增强播客 | MP3（MiniMax music-2.6 + ffmpeg） | 播客 + 氛围 BGM | 沉浸式收听者 |
 
 ---
 
@@ -33,26 +35,24 @@ insights that matter.
 ### Template Structure
 
 ```
-# [Guest Name] x [Show Name]: TL;DR
+# [嘉宾名] × [节目名]：速览
 
-*Guest: [Name], [Affiliation] | Duration: [Xh Ym] | Date: [YYYY-MM-DD]*
+*嘉宾：[姓名]，[身份/机构]｜时长：[X小时Y分钟]｜日期：[YYYY-MM-DD]*
 
 ## 核心观点
 
-1. **[Bold claim one sentence].** Context or elaboration, 1–2 sentences. Why this matters or what it implies.
-2. **[Bold claim one sentence].** Context or elaboration, 1–2 sentences.
+1. **[一句话加粗核心判断]。** 用 1–2 句说明语境、原因和含义。
+2. **[一句话加粗核心判断]。** 用 1–2 句补充解释。
 3. ...
    *(5–7 total, numbered)*
 
 ## 最令人意外的洞察
 
-[One paragraph, 3–5 sentences. Highlight the single most counterintuitive,
-novel, or paradigm-shifting revelation. Explain why it challenges
-conventional wisdom and what the reader should reconsider.]
+[一段，3–5 句。指出最反直觉、最新鲜或最能改变读者判断的洞察，并说明它挑战了哪种常见看法。]
 
 ## 值得引用的金句
 
-> "[Verbatim quote]" — *[HH:MM:SS]*
+> "[原文金句]" — *[HH:MM:SS]*
 
 > "[Verbatim quote]" — *[HH:MM:SS]*
 
@@ -63,15 +63,11 @@ revealing lines. Timestamps must be exact.)*
 
 ## 适合谁读
 
-[1–2 sentences defining the ideal reader. Be specific: role, domain,
-seniority level, or problem context. Example: "AI researchers building
-production RAG systems who struggle with chunking strategies."]
+[1–2 句说明最适合阅读的人群。要具体到角色、领域、资历或正在面对的问题。]
 
 ## 阅读指南
 
-[2–4 sentences prioritizing which sections or topics to read if time
-is limited. Guide the reader to the highest-signal content. Reference
-specific Deep-Dive Report sections by name when they exist.]
+[2–4 句说明时间有限时应该优先读哪些章节或主题。引用深度报告章节名时使用中文标题。]
 ```
 
 ### 核心观点规则
@@ -82,7 +78,7 @@ specific Deep-Dive Report sections by name when they exist.]
 - Takeaways should be **self-contained** — readable without having heard the
   interview.
 - Order by **importance**, not chronological order.
-- Avoid takeaways that merely state the guest's background or biography.
+- 避免只复述嘉宾背景或履历的“观点”。
 
 ### 值得引用的金句规则
 
@@ -115,72 +111,61 @@ length). No hard cap — completeness is the priority.
 ### 完整章节模板
 
 ```markdown
-# [Guest Name] on [Show Name]: Full Report
+# [嘉宾名] × [节目名]：深度报告
 
-*Guest: [Name], [Affiliation/Title] | Host: [Name] | Duration: [Xh Ym] | Date: [YYYY-MM-DD] | Episode: [# or URL]*
+*嘉宾：[姓名]，[身份/机构]｜主持：[姓名]｜时长：[X小时Y分钟]｜日期：[YYYY-MM-DD]｜来源：[文件名或链接]*
 
 ---
 
 ## 访谈概览
 
 ### 嘉宾简介
-[Concise background: current role, notable prior roles, key publications
-or achievements, and why they are an authority on the topic. 3–5 sentences.]
+[简洁说明嘉宾当前角色、重要经历或成就，以及为什么他/她有资格讨论本期主题。3–5 句。]
 
 ### 访谈背景
-[What prompted this conversation — book launch, research publication,
-industry event, or ongoing debate. 1–2 sentences.]
+[说明这场访谈发生的背景：新书、研究发布、行业事件、长期争论或当前业务节点。1–2 句。]
 
 ### 关键数据
-| Metric | Value |
+| 指标 | 数值 |
 |--------|-------|
-| Total topics covered | [N] |
-| Total quotes extracted | [N] |
-| Notable predictions made | [N] |
-| Word count | [N] |
+| 覆盖话题数 | [N] |
+| 提取金句数 | [N] |
+| 重要预测数 | [N] |
+| 对话轮次 | [N] |
 
 ---
 
 ## 执行摘要
 
-[Paragraph 1: The overarching argument or thesis of the interview. What is
-the single most important story the guest is telling?]
+[第 1 段：概括整场访谈的总论点。嘉宾真正想表达的核心故事是什么？]
 
-[Paragraph 2: The 3–5 most important supporting insights, connected in a
-coherent narrative arc. Show how they relate to each other, not just
-a list.]
+[第 2 段：串联 3–5 个最重要的支撑洞察，形成连贯叙事，而不是简单列表。]
 
-[Paragraph 3: Implications, stakes, or calls to action. What should the
-reader do differently after understanding this interview?]
+[第 3 段：说明影响、风险或行动启发。读者理解这场访谈后应该如何调整判断？]
 
 ---
 
 ## 阅读指南
 
-| Reader Profile | Recommended Sections | Estimated Time |
+| 读者类型 | 推荐阅读 | 预计时间 |
 |---------------|---------------------|----------------|
-| Executive / Decision-maker | 执行摘要, 预测总结 | 5 min |
-| Practitioner / Engineer | 话题深度分析 (technical topics), 跨领域主题 | 20 min |
-| Researcher / Analyst | Full report | 45 min |
-| Casual listener | 速览摘要 | 3 min |
+| 管理者 / 决策者 | 执行摘要、预测总结 | 5 分钟 |
+| 实践者 / 工程师 | 话题深度分析、跨领域主题 | 20 分钟 |
+| 研究者 / 分析师 | 完整深度报告 | 45 分钟 |
+| 快速了解者 | 速览摘要 | 3 分钟 |
 
 ---
 
 ## 话题深度分析
 
-### [Topic 1 Title] *(HH:MM:SS – HH:MM:SS)*
+### [话题 1 标题] *(HH:MM:SS – HH:MM:SS)*
 
 #### 背景
-[1 paragraph: why this topic matters, how it fits into the broader
-conversation, and what the guest brings to it.]
+[1 段：说明该话题为什么重要、它在整场访谈中的位置，以及嘉宾在这里提供了什么判断。]
 
 #### 核心论点
 
-[2–4 paragraphs of narrative analysis. Cover:
-- The guest's position or claim
-- The reasoning or evidence they offer
-- Counterpoints or nuance they acknowledge
-- How this relates to other topics in the interview]
+[2–4 段叙事分析。必须覆盖：嘉宾的立场或判断、他/她给出的理由或证据、承认的反例或限制、它和其他话题的关系。]
 
 > **核心引述** *(HH:MM:SS)*:
 > "[Verbatim quote]"
@@ -188,13 +173,13 @@ conversation, and what the guest brings to it.]
 > **核心引述** *(HH:MM:SS)*:
 > "[Verbatim quote]"
 
-> **数据点:**
-> - **[Label]**: [Value and source context]
-> - **[Label]**: [Value and source context]
+> **数据点：**
+> - **[中文标签]**：[数值与来源语境]
+> - **[中文标签]**：[数值与来源语境]
 
 ---
 
-### [Topic 2 Title] *(HH:MM:SS – HH:MM:SS)*
+### [话题 2 标题] *(HH:MM:SS – HH:MM:SS)*
 
 [Same structure as above. Repeat for all topics, typically 6–12.]
 
@@ -202,44 +187,43 @@ conversation, and what the guest brings to it.]
 
 ## 跨领域主题
 
-### [Theme Name]
+### [主题名]
 
-[1 paragraph: the pattern observed across multiple topics, with
-specific examples from different segments.]
+[1 段：说明这个主题如何跨越多个话题，并给出来自不同段落的具体例子。]
 
 **跨话题例证:**
-- From **[Topic A]**: [quote or paraphrase with timestamp]
-- From **[Topic B]**: [quote or paraphrase with timestamp]
-- From **[Topic C]**: [quote or paraphrase with timestamp]
+- 从 **[话题 A]**：[带时间戳的引述或转述]
+- 从 **[话题 B]**：[带时间戳的引述或转述]
+- 从 **[话题 C]**：[带时间戳的引述或转述]
 
 ---
 
 ## 矛盾与未解问题
 
-| # | Tension / Question | Context | Resolution Status |
+| # | 张力 / 问题 | 出现场景 | 处理状态 |
 |---|-------------------|---------|-------------------|
-| 1 | [Describe the contradiction] | [Where it appears, with timestamps] | Resolved / Unresolved / Guest deferred |
+| 1 | [描述矛盾或未解问题] | [出现位置和时间戳] | 已解决 / 未解决 / 嘉宾暂未展开 |
 | 2 | ... | ... | ... |
 
 ---
 
 ## 预测总结
 
-| # | Prediction | Time Horizon | Confidence | Conditions / Caveats |
+| # | 预测 | 时间窗口 | 置信度 | 条件 / 限制 |
 |---|-----------|--------------|------------|----------------------|
-| 1 | [What is predicted] | [e.g., 12–18 months, by 2027] | High / Medium / Low | [What would change the prediction] |
+| 1 | [预测内容] | [例如 12–18 个月、到 2027 年] | 高 / 中 / 低 | [什么条件会改变该判断] |
 | 2 | ... | ... | ... | ... |
 
 ---
 
 ## 金句全集
 
-### [Topic Name]
-1. *(HH:MM:SS)* "[Quote text]" — Context: [1-sentence setup]
-2. *(HH:MM:SS)* "[Quote text]" — Context: [1-sentence setup]
+### [话题名]
+1. *(HH:MM:SS)* "[原文金句]" — 语境：[1 句中文说明]
+2. *(HH:MM:SS)* "[原文金句]" — 语境：[1 句中文说明]
 
-### [Topic Name]
-1. *(HH:MM:SS)* "[Quote text]" — Context: [1-sentence setup]
+### [话题名]
+1. *(HH:MM:SS)* "[原文金句]" — 语境：[1 句中文说明]
 ...
 
 ---
@@ -262,12 +246,12 @@ When inserting a 数据点, classify it:
 
 | Badge | Use When |
 |-------|----------|
-| **统计数据** | A numerical finding or percentage |
-| **实体** | A named organization, company, or person referenced |
-| **基准** | A comparative performance or ranking figure |
-| **论文** | A cited academic paper with title/author/year |
-| **事件** | A referenced historical event or milestone |
-| **预测** | A projection or model output |
+| **统计数据** | 数字、比例、规模或成本信息 |
+| **实体** | 被提到的组织、公司或人物 |
+| **基准** | 对比性表现、排名或量级判断 |
+| **论文** | 被引用的论文、作者或年份 |
+| **事件** | 历史事件、发布时间点或业务节点 |
+| **预测** | 对未来时间、趋势或结果的判断 |
 
 ### 引述格式规则
 
@@ -302,7 +286,7 @@ insights in short bursts on a phone.
 | 6 | Theme Card 5 | Fifth cross-cutting theme |
 | 7 | Theme Card 6 | Sixth cross-cutting theme |
 | 8 | Theme Card 7 | Seventh cross-cutting theme |
-| 9 | Closing Card | Key takeaways summary, reading guide links, share actions |
+| 9 | Closing Card | 核心观点总结、阅读指南链接、分享操作 |
 
 Each Theme Card (2–8) distills one cross-cutting theme from the interview into
 a self-contained, card-sized insight. The cards are ordered by significance,
@@ -567,7 +551,7 @@ parts, where N is the number of topics (clamped to 8–12). Use:
 X long-form, or newsletter-ready) that transforms the interview's deepest
 insights into a narrative-driven, shareable piece. Written with a hook-driven
 structure optimized for social platform reading behavior — short paragraphs,
-strong lead, memorable quotes, and clear takeaways.
+strong lead, memorable quotes, and clear points.
 
 **Length:** 2000–4000 words.
 
@@ -576,102 +560,91 @@ strong lead, memorable quotes, and clear takeaways.
 ### Template Structure
 
 ```markdown
-# [Attention-Grabbing Title]
+# [有记忆点的中文标题]
 
-*By [Author Name] | [YYYY-MM-DD] | Based on my conversation with [Guest Name] on [Show Name]*
+*基于：[嘉宾名]在[节目名]中的访谈｜日期：[YYYY-MM-DD]*
 
-## Lead
+## 开场
 
-[1–2 paragraphs. Open with a hook — a provocative question, a startling
-statistic, a counterintuitive claim, or a vivid scene. Then state what the
-conversation revealed and why it matters. The lead must make the reader
-want to continue. Avoid generic openings like "Recently I had the pleasure
-of speaking with..."]
+[1–2 段。用一个强钩子开头：尖锐问题、反直觉判断、关键数字或具体场景。随后说明这场访谈揭示了什么，以及为什么值得继续读。避免“最近我有幸采访了……”这类套话。]
 
 ---
 
-## [Theme 1: Subheading — A compelling, specific statement]
+## [主题 1：具体、有判断力的小标题]
 
-[2–3 paragraphs of narrative. Tell the story of this theme as the guest
-unfolded it — context, insight, implication. Use concrete details, not
-abstractions. Show the reader why this theme matters in their world.]
+[2–3 段叙事。按照嘉宾展开观点的方式讲清楚语境、洞察和影响。使用具体细节，不堆抽象词。]
 
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
 
 ---
 
-## [Theme 2: Subheading]
+## [主题 2：小标题]
 
-[2–3 paragraphs. Same structure. Each theme section should feel like a
-mini-essay that could stand alone but builds toward the larger argument.]
+[2–3 段。每个主题都应像一篇能独立成立的小短文，同时服务于全文主线。]
 
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
-
----
-
-## [Theme 3: Subheading]
-
-[2–3 paragraphs.]
-
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
 
 ---
 
-## [Theme 4: Subheading]
+## [主题 3：小标题]
 
-[2–3 paragraphs.]
+[2–3 段。]
 
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
-
----
-
-## [Theme 5: Subheading]
-
-[2–3 paragraphs.]
-
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
 
 ---
 
-## [Theme 6: Subheading]
+## [主题 4：小标题]
 
-[2–3 paragraphs.]
+[2–3 段。]
 
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
-
----
-
-## [Theme 7: Subheading]
-
-[2–3 paragraphs.]
-
-> "[Verbatim quote from guest]" — *[HH:MM:SS]*
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
 
 ---
 
-## If You Only Remember 3 Things
+## [主题 5：小标题]
 
-1. **[Single-sentence insight].** One line of context or implication.
-2. **[Single-sentence insight].** One line of context or implication.
-3. **[Single-sentence insight].** One line of context or implication.
+[2–3 段。]
 
----
-
-## Who This Is For
-
-[1–2 sentences. Define the audience with specificity: role, domain,
-seniority, or problem context. Example: "Product leaders navigating the
-shift from SaaS to AI-native experiences who need mental models, not
-hype."]
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
 
 ---
 
-## Go Deeper
+## [主题 6：小标题]
 
-[Link to the full Deep-Dive Report, Learning Cards, and Knowledge Map.
-1–2 sentences inviting the reader to explore the complete analysis.]
+[2–3 段。]
 
-*Full conversation: [URL to original interview/podcast episode]*
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
+
+---
+
+## [主题 7：小标题]
+
+[2–3 段。]
+
+> "[嘉宾原文金句]" — *[HH:MM:SS]*
+
+---
+
+## 只记住三件事
+
+1. **[一句话洞察]。** 一句中文语境或影响说明。
+2. **[一句话洞察]。** 一句中文语境或影响说明。
+3. **[一句话洞察]。** 一句中文语境或影响说明。
+
+---
+
+## 适合谁读
+
+[1–2 句。具体说明读者角色、领域、资历或正在面对的问题。]
+
+---
+
+## 继续深入
+
+[链接到深度报告、学习卡片和知识图谱。用 1–2 句邀请读者继续阅读完整分析。]
+
+*完整访谈：[原始访谈或播客链接]*
 ```
 
 ### Structure Rules
@@ -685,18 +658,14 @@ hype."]
 - **Lead** must be hook-driven. Do not open with biographical pleasantries
   or an "I sat down with..." cliche. Start with the most arresting insight
   or question.
-- **"If You Only Remember 3 Things"** is the distillation section. These
-  three takeaways must be self-contained, memorable, and actionable.
+- **“只记住三件事”** 是浓缩部分。这三条必须自洽、有记忆点，并能给读者行动或判断启发。
 - All quotes must be verbatim and timestamped.
 
 ### Voice
 
-- Conversational but authoritative. Write as if explaining to a smart,
-  curious peer over coffee.
-- Avoid academic tone. Avoid marketing hype. Avoid bullet-point lists
-  (except the "3 Things" section).
-- Use short paragraphs (3–5 sentences max). Social readers scan; dense
-  blocks lose them.
+- 语气自然但有判断力，像在给聪明、好奇的同行解释。
+- 避免学术腔和营销腔。除“只记住三件事”外，尽量少用项目符号。
+- 段落要短，每段最多 3–5 句，适合社交媒体快速扫读。
 
 ---
 
@@ -707,7 +676,7 @@ distills the interview into a compact, listenable audio piece. Produces both
 the plain-text script and, when TTS tooling is available, an MP3 audio file.
 Designed for consumption during commutes, workouts, or household tasks.
 
-**Duration:** Adaptive to the source length. Default target:
+**时长：** 按原始材料长度自适应。默认目标：
 `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)`.
 Character budget: `target_chars = target_minutes * 320`, with ±12% tolerance.
 
@@ -763,12 +732,12 @@ will read them aloud.
   locating evidence in the source file.
 - **Think from the listener's point of view.** A listener who skips the full
   interview wants the core argument, reasoning, stakes, tensions, and useful
-  takeaways. Do not read out source-navigation details.
+  useful points. Do not read out source-navigation details.
 - **Review before TTS.** A reviewer agent/model must reject scripts that sound
   like a report outline, repeat canned phrases, leak internal prompt wording,
   or fail to explain the guest's actual opinions.
 - **Closing must synthesize**, not summarize. Don't list all 7 themes again.
-  Distill into 3 integrated takeaways.
+  Distill into 3 integrated listener-facing points.
 - **Character budget**: calculate from source duration. Use
   `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)` and
   `target_chars = target_minutes * 320`, with ±12% tolerance.
@@ -788,42 +757,40 @@ will read them aloud.
 
 ## 7. 精美 PDF (Styled PDF)
 
-**Purpose:** Generate professionally styled, print-optimized PDFs from the Markdown output files. Designed for offline reading, sharing, and archival.
+**Purpose:** Generate clean, print-optimized PDFs from the Markdown output files. Designed for offline reading, sharing, and archival by Chinese readers.
 
-**File:** `report-[guest-lastname]-[YYYYMMDD].pdf`, `tldr-[guest-lastname]-[YYYYMMDD].pdf`, `social-[guest-lastname]-[YYYYMMDD].pdf`
+**File:** `report-[guest-lastname]-[YYYYMMDD].pdf`, `tldr-[guest-lastname]-[YYYYMMDD].pdf`
 
 **Generation:** Run `scripts/generate_pdf.py` with `--type` flag:
 
 ```bash
-# 深度报告 PDF（含封面 + 页眉）
+# 深度报告 PDF（含报告头 + 页眉）
 python scripts/generate_pdf.py output/[dir]/reports/report-[guest]-[YYYYMMDD].md --type report
 
 # 速览摘要 PDF（紧凑版）
 python scripts/generate_pdf.py output/[dir]/reports/tldr-[guest]-[YYYYMMDD].md --type tldr
-
-# 社交媒体 PDF（叙事版）
-python scripts/generate_pdf.py output/[dir]/reports/social-[guest]-[YYYYMMDD].md --type social
 ```
 
-### Design Specification
+### 设计规格
 
-- **Page size**: A4 (210mm × 297mm), configurable via `--page-size`
-- **Color scheme**: Cream (#fdfbf7) + burgundy (#722f37), matching the Learning Cards design system
-- **Typography**: Chinese-optimized font stacks (Songti SC / PingFang SC), fixed `pt` sizes
-- **Cover page** (report type only): Full-bleed hero layout with guest name, show, host, date, duration
-- **Running headers**: Guest name on left pages, report title on right pages
-- **Body pages**: White margins with cream content area, page numbers in footer
-- **Tables**: Burgundy header row, alternating cream/white row stripes
-- **Blockquotes**: 3px burgundy left border, cream background
-- **Page breaks**: New page for each h2 section; keep h3/h4 with content; avoid splitting blockquotes and tables
+- **页面尺寸**：A4（210mm × 297mm），可通过 `--page-size` 调整。
+- **配色**：米白底色（#fdfbf7）+ 酒红强调色（#722f37），与学习卡片设计系统一致。
+- **字体**：中文优化字体栈（Songti SC / PingFang SC），使用固定 `pt` 尺寸。
+- **报告头**：深度报告使用紧凑报告头，展示标题、嘉宾、节目、主持、日期和时长，不使用独立空白封面。
+- **页眉页脚**：左页显示嘉宾，右页显示报告标题，页脚显示页码。
+- **正文页面**：白色页边距 + 米白内容区，避免复杂分割线。
+- **表格**：酒红表头 + 浅色隔行底色，减少逐行边框。
+- **引用块**：保留细左侧强调线和浅色背景，用于提示原文引用。
+- **分页**：深度报告采用自然分页；执行摘要和阅读指南应合并在一页或连续呈现，不产生大面积空白。
+- **数据点**：数据点标题和数据列表必须处于同一个 callout 背景块内，避免视觉脱节。
+- **TL;DR 密度**：速览 PDF 应控制在 1–2 页，优先通过版式密度、页边距和标题间距优化，而不是删掉关键信息。
 
 ### Template Variants
 
 | `--type` | Template | Features |
 |----------|----------|----------|
-| `report` | `report-wrapper.html.j2` | Cover page, running headers, full section hierarchy |
-| `tldr` | `tldr-wrapper.html.j2` | Compact layout, larger type, no cover |
-| `social` | `social-wrapper.html.j2` | Narrative layout, narrower content column |
+| `report` | `report-wrapper.html.j2` | 紧凑报告头、页眉页码、自然分页、完整章节层级 |
+| `tldr` | `tldr-wrapper.html.j2` | 紧凑版式，无封面，不强制章节分页 |
 
 **Requirements:** `markdown-it-py`, `Jinja2`, `playwright` (Chromium).
 
@@ -884,4 +851,3 @@ python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYM
 | 短播客音频 | `podcast-[guest-lastname]-[YYYYMMDD].mp3` |
 | 深度报告 PDF | `report-[guest-lastname]-[YYYYMMDD].pdf` |
 | 速览摘要 PDF | `tldr-[guest-lastname]-[YYYYMMDD].pdf` |
-| 社交媒体 PDF | `social-[guest-lastname]-[YYYYMMDD].pdf` |

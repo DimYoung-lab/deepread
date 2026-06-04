@@ -15,7 +15,7 @@ Visual content must support **three reading depths**, each building on the previ
 | Layer | Name | Time | Content |
 |-------|------|------|---------|
 | 1 | At a Glance | ~3 min | Core thesis + key takeaways + most surprising insight. A reader should grasp the interview's essence from this layer alone. |
-| 2 | The Argument | ~10-15 min | Theme-organized narrative sections. Each theme has synthesized prose (not extracted bullet points) + curated supporting evidence. |
+| 2 | The Argument | 中等深度阅读 | Theme-organized narrative sections. Each theme has synthesized prose (not extracted bullet points) + curated supporting evidence. |
 | 3 | The Evidence | On demand | Complete data: all quotes, data points, predictions. Available for deep reference but not pushed to the reader. |
 
 ### Theme-Driven, Not Chronology-Driven

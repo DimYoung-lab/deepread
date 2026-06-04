@@ -27,7 +27,7 @@
 | 🗺️ **知识图谱** | D3.js 径向思维导图 | 可视化探索 |
 | 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
 | 🎧 **短播客脚本** | 大模型撰写 + 审稿的自然口播播客，可 TTS 转音频 | 按原视频长度自适应，约 3-15 分钟 |
-| 📕 **精美 PDF** | 深度报告/TL;DR/社交推文的可打印 PDF 版 | 离线阅读/分享 |
+| 📕 **精美 PDF** | 中文化、低干扰、紧凑排版的可打印 PDF 版 | 离线阅读/分享 |
 | 🎵 **BGM 增强播客** | 播客 + 氛围背景音乐 | 沉浸式收听 |
 
 ---
@@ -79,8 +79,7 @@ output/yaoshunyu-20260530/
 │   └── social-yaoshunyu-20260530.md     ← 社交媒体推文
 ├── pdf/                                 ← 精美 PDF
 │   ├── report-yaoshunyu-20260530.pdf
-│   ├── tldr-yaoshunyu-20260530.pdf
-│   └── social-yaoshunyu-20260530.pdf
+│   └── tldr-yaoshunyu-20260530.pdf
 ├── html/                                ← 交互式网页
 │   ├── cards-yaoshunyu-20260530.html    ← 学习卡片
 │   └── map-yaoshunyu-20260530.html      ← 知识图谱
@@ -148,7 +147,7 @@ interview-based-learning/
 │   ├── review_podcast_script.py   ← 播客逐字稿 → 审稿硬规则检查
 │   ├── generate_audio.py        ← 播客脚本 → TTS 音频
 │   ├── generate_bgm_podcast.py  ← 播客音频 → BGM 增强版
-│   ├── generate_pdf.py          ← Markdown 报告 → 精美 PDF
+│   ├── generate_pdf.py          ← Markdown 报告 → 中文化精美 PDF
 │   ├── estimate.py              ← 成本与 token 估算
 │   └── _mmx_utils.py            ← MiniMax CLI 共享辅助函数
 ├── references/                  ← 按需加载的参考文档（7 个）
@@ -165,15 +164,14 @@ interview-based-learning/
 │   │   ├── index.html           ← 学习卡片支架
 │   │   ├── style.css            ← 卡片设计系统（亮/暗主题）
 │   │   └── script.js            ← 滑动/导航/主题/键盘快捷键
-│   └── pdf-templates/           ← PDF 生成模板（4 个）
+│   └── pdf-templates/           ← PDF 生成模板（中文排版、低干扰线条、紧凑 TL;DR）
 │       ├── pdf-style.css        ← 打印设计系统 CSS
 │       ├── report-wrapper.html.j2
-│       ├── tldr-wrapper.html.j2
-│       └── social-wrapper.html.j2
+│       └── tldr-wrapper.html.j2
 └── output/                      ← 运行时输出（中间产物 gitignored）
     └── yaoshunyu-20260530/      ← 姚顺宇访谈示例输出
         ├── reports/             ← Markdown 报告（tldr-*.md, report-*.md, social-*.md）
-        ├── pdf/                 ← 精美 PDF（report-*.pdf, tldr-*.pdf, social-*.pdf）
+        ├── pdf/                 ← 精美 PDF（report-*.pdf, tldr-*.pdf）
         ├── html/                ← 交互网页（cards-*.html, map-*.html）
         ├── audio/               ← 音频（podcast-script-*.md, podcast-*.mp3）
         ├── data/                ← 中间数据（turns.json, knowledge.json 等）
@@ -275,7 +273,7 @@ python -c "import py_compile; py_compile.compile('scripts/generate_bgm_podcast.p
 python -c "import py_compile; py_compile.compile('scripts/generate_pdf.py', doraise=True)"
 ```
 
-并在浏览器中验证学习卡片和知识图谱的交互功能，以及生成的 PDF 文件的格式和排版。
+并在浏览器中验证学习卡片和知识图谱的交互功能，以及生成的 PDF 文件的中文标签、页数、信息密度和排版整洁度。
 
 ---
 

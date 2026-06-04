@@ -55,14 +55,15 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 | # | Check | Method | Expected |
 |---|-------|--------|----------|
-| 1 | **TL;DR has all 6 sections** | grep for section headers | Title+Metadata, Key Takeaways, Surprising Insight, Notable Quotes, Who Should Read, Reading Guide |
-| 2 | **TL;DR has 5-7 takeaways** | Count `1. **` through `7. **` | 5-7 numbered bold items |
+| 1 | **TL;DR has all 6 sections** | grep for section headers | 标题+元数据、核心观点、最令人意外的洞察、值得引用的金句、适合谁读、阅读指南 |
+| 2 | **TL;DR has 5-7 core points** | Count `1. **` through `7. **` | 5-7 numbered bold items |
 | 3 | **TL;DR quotes have timestamps** | grep for `>* *XX:XX* ` | Each blockquote has a timestamp in `*HH:MM:SS*` format |
-| 4 | **Deep-Dive has all 8 sections** | grep for section headers | Overview, Executive Summary, Topic Deep Dive, Cross-Cutting Themes, Contradictions, Predictions, Quote Collection, Reading Guide |
+| 4 | **Deep-Dive has all 8 sections** | grep for section headers | 访谈概览、执行摘要、阅读指南、话题深度分析、跨领域主题、矛盾与未解问题、预测总结、金句全集 |
 | 5 | **Deep-Dive references all segments** | grep for segment titles | All 12 Chinese segment titles appear in the deep-dive section |
 | 6 | **Quotes are verbatim** | Spot-check 3-5 quotes against knowledge.json | Exact match, no paraphrasing |
 | 7 | **Timestamps are in `HH:MM:SS` or `MM:SS`** | Regex scan | No malformed timestamps |
 | 8 | **No placeholder text** | grep for "TODO", "FIXME", "placeholder", "TBD" | None found |
+| 9 | **Generated labels are Chinese** | grep for legacy English metadata, table, title, reading-guide, and quote-context labels | No legacy English structural labels in report Markdown |
 
 ### Social Media Post Checks
 
@@ -72,9 +73,20 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 2 | **Engaging title** | Read opening line | Title is present, provocative or curiosity-driven, not generic |
 | 3 | **7 themes covered** | Count distinct theme references | All 7 interview themes mentioned or alluded to |
 | 4 | **Quotes with timestamps** | grep for `XX:XX` or `HH:MM:SS` | At least 2 direct quotes with timestamp attribution |
-| 5 | **Audience section** | Scroll to end of post | "Who should read" or audience targeting present |
+| 5 | **Audience section** | Scroll to end of post | “适合谁读” or audience targeting present |
 | 6 | **CTA present** | Read last 2-3 lines | Call-to-action (link to full report, cards, or discussion prompt) |
 | 7 | **No markdown artifacts** | Read raw text | Clean plain text or platform-native formatting; no `**` or `##` remnants |
+| 8 | **Chinese generated prose** | grep/read platform sections | Added headings, explanations, and platform notes are Chinese; platform names such as LinkedIn and X/Twitter may remain |
+
+### PDF Report Checks
+
+| # | Check | Method | Expected |
+|---|-------|--------|----------|
+| 1 | **Only report and TL;DR PDFs generated** | List `output/[dir]/pdf/` | Only report and TL;DR PDF files are present |
+| 2 | **Report starts with content** | Open first page | Compact title/meta header and report body appear on page 1; no standalone blank cover |
+| 3 | **摘要与指南连续** | Extract text or inspect first pages | 执行摘要 and 阅读指南 appear on the same page or consecutive area without large blank space |
+| 4 | **数据点 callout unified** | Inspect a topic page | `数据点：` and its bullet items share one background/callout block |
+| 5 | **TL;DR dense enough** | Count pages | TL;DR is 1-2 pages |
 
 ### Podcast Script Checks
 
@@ -84,7 +96,7 @@ This reference documents the mandatory testing procedures and common pitfalls di
 | 2 | **TTS-friendly plain text** | grep for markdown syntax, labels, and spoken timestamps | No `**`, `##`, `*`, backticks, `HOST:`, `GUEST:`, metadata headers, or spoken `HH:MM` timestamps |
 | 3 | **Listener-centered opening** | Read first 5 lines | Says who this is for, gives the core conclusion, then moves into the guest's views |
 | 4 | **Closing present** | Read last 5 lines | Outro, call-to-action, or next-episode teaser |
-| 5 | **Explains the guest's views** | Reviewer agent/model reads body | Focuses on what the guest believes, why, stakes, tensions, and takeaways, not source navigation |
+| 5 | **Explains the guest's views** | Reviewer agent/model reads body | Focuses on what the guest believes, why, stakes, tensions, and listener-facing points, not source navigation |
 | 6 | **Duration policy visible in tooling** | Run `prepare_podcast_brief.py` and inspect stdout | CLI prints source duration, target minutes, and expected script range |
 | 7 | **No spoken timestamps** | grep for `XX:XX` or `HH:MM:SS` | No source timestamps in the podcast script body |
 | 8 | **Reviewer pass required** | Run `review_podcast_script.py` and a model/editor review | Both reviews pass before TTS |
@@ -424,7 +436,7 @@ import os, glob
 reports = glob.glob('output/yaoshunyu-20260530/reports/tldr*')
 assert reports, 'No TL;DR report found'
 with open(reports[0], encoding='utf-8') as f: text = f.read()
-assert 'Key Takeaways' in text or '关键要点' in text, 'Missing key takeaways'
+assert '核心观点' in text, 'Missing core points'
 assert 'Who Should Read' in text or '适合人群' in text, 'Missing audience section'
 print('Stage 3 — TL;DR Report: OK')
 "

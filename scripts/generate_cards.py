@@ -318,7 +318,7 @@ def build_closing_card(data: JSON, lang: str = "zh", knowledge_data: JSON | None
     """Build the closing card with 'if you only remember 3 things', role advice, and external links."""
     meta: dict[str, Any] = data.get("meta", {})  # type: ignore[assignment]
     tx: dict[str, str] = UI_TEXT.get(lang, UI_TEXT["zh"])
-    takeaways = meta.get("key_takeaways", [])
+    core_points = meta.get("key_takeaways", [])
 
     lines: list[str] = []
     lines.append('<article class="card card-closing" id="card-closing">')
@@ -326,9 +326,9 @@ def build_closing_card(data: JSON, lang: str = "zh", knowledge_data: JSON | None
     # Heading
     lines.append(f'  <h2>{tx["closing_heading"]}</h2>')
 
-    # Top 3 takeaways
+    # Top 3 core points
     lines.append('  <ol class="remember-list">')
-    for i, t in enumerate(takeaways[:3], start=1):
+    for i, t in enumerate(core_points[:3], start=1):
         claim = esc(t.get("claim", ""))
         lines.append(f'    <li class="remember-item">')
         lines.append(f'      <span class="remember-num">{i}</span>')
@@ -362,7 +362,7 @@ def build_closing_card(data: JSON, lang: str = "zh", knowledge_data: JSON | None
     filenames = _build_output_filenames(data, knowledge_data)
     lines.append('  <div class="closing-links">')
     lines.append('    <span class="closing-links-label">Continue Exploring</span>')
-    lines.append(f'    <a href="{esc(filenames["report"])}" class="btn btn-secondary">Full Report →</a>')
+    lines.append(f'    <a href="{esc(filenames["report"])}" class="btn btn-secondary">深度报告 →</a>')
     lines.append(f'    <a href="{esc(filenames["map"])}" class="btn btn-secondary">Knowledge Map →</a>')
     lines.append(f'    <a href="{esc(filenames["tldr"])}" class="btn btn-secondary">TL;DR →</a>')
     lines.append('  </div>')

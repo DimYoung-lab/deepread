@@ -4,11 +4,14 @@
   <meta charset="utf-8">
   <title>{{ title }}</title>
   <style>{{ css }}</style>
+  <style>
+    @page { margin: 14mm 14mm 16mm 14mm; }
+  </style>
 </head>
 <body class="format-tldr">
 
   <!-- ==================================================================
-       TL;DR BODY — compact layout, no cover page, larger type
+       TL;DR BODY — compact layout, no cover page
        ================================================================== -->
   {{ body_html }}
 

@@ -16,6 +16,9 @@ output/*/data/*
 # Ignore per-segment extraction files
 output/*/segments/
 
+# Social-platform copy stays as Markdown; do not track generated social PDFs.
+output/*/pdf/social-*.pdf
+
 # OS
 .DS_Store
 Thumbs.db

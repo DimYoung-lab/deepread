@@ -245,7 +245,7 @@ Spot-check at least 2 extractions against the source transcript. Verify:
 }
 ```
 
-3. **Identify cross-cutting themes**: Patterns that appear across 3+ segments. These are the highest-level takeaways. Examples: "the scaling paradigm is necessary but not sufficient", "practical engineering trumps theoretical elegance"
+3. **Identify cross-cutting themes**: Patterns that appear across 3+ segments. These are the highest-level synthesized points. Examples: "the scaling paradigm is necessary but not sufficient", "practical engineering trumps theoretical elegance"
 4. **Resolve contradictions**: Where the same topic is discussed in different segments with apparently conflicting views, determine if it's a real contradiction, a time-horizon difference, or an evolution of thought
 5. **Enrich metadata**: Add a 2–3 sentence guest bio based on content from the transcript
 
@@ -268,7 +268,7 @@ Ask these questions when merging:
 1. Read `knowledge.json`（必需）+ 深度报告（`reports/report-*.md`，可选，用于增强学习卡片的叙事深度）。如深度报告不可用，Stage 4.5 仍可从 knowledge.json 单独生成 visual_content.json，但学习卡片叙事可能较简略
 2. Follow the guide in [references/visual-synthesis-guide.md](references/visual-synthesis-guide.md) to produce `visual_content.json`
 3. The output uses a **three-layer information architecture**:
-   - Layer 1 "At a Glance": Core thesis + key takeaways + surprising insight (3-min scan)
+   - Layer 1 "At a Glance": Core thesis + core points + surprising insight (3-min scan)
    - Layer 2 "The Argument": Theme-organized narrative + curated evidence (medium-depth read)
    - Layer 3 "The Evidence": Complete timeline + predictions + quote collection (on-demand)
 4. Content is **theme-driven** (not chronology-driven) — the 7 cross-cutting themes become the primary navigation framework
@@ -287,11 +287,12 @@ Write `visual_content.json` to the `data/` subdirectory of the interview output.
 
 Write directly (no script needed). Use the template in [references/output-templates.md](references/output-templates.md).
 
-- 500–800 words
-- 5–7 key takeaways (ordered by importance, not chronology)
-- 3–5 golden quotes with timestamps
-- Most surprising insight section
-- Target audience and reading guide
+- 面向中文读者，标题、元数据、栏目名和解释性文字使用中文
+- 500–800 个中文词
+- 5–7 个核心观点（按重要性排序，不按时间顺序）
+- 3–5 条带时间戳的原文金句
+- 最令人意外的洞察
+- 适合谁读和阅读指南
 
 Save as `reports/tldr-[guest-lastname]-[YYYYMMDD].md`.
 
@@ -299,6 +300,8 @@ Save as `reports/tldr-[guest-lastname]-[YYYYMMDD].md`.
 
 Write directly. Use the full report template in [references/output-templates.md](references/output-templates.md).
 
+- 面向中文读者，所有模板标签、表格字段、阅读指引和解释性文字使用中文
+- 只保留访谈原话中的英文，或必要术语/平台名/品牌名/缩写（如 AI、CEO、L4、VIA、SUV、Token、X/Twitter、LinkedIn）
 - 执行摘要
 - 阅读指南（紧跟执行摘要之后，帮助读者决定如何阅读）
 - 话题深度分析（按时间顺序）
@@ -332,10 +335,11 @@ Produces a self-contained interactive radial mind map (D3.js via CDN). **Hierarc
 
 Write directly (no script needed). Use the social post template in [references/output-templates.md](references/output-templates.md).
 
-- 3–5 key takeaways distilled to social-media length
-- 1–2 golden quotes suitable for quote-card graphics
-- Hashtag recommendations (domain + audience)
-- Platform-specific variants (LinkedIn long-form, X/Twitter thread, WeChat public account)
+- 面向中文读者，正文、栏目名、平台版本说明和行动提示使用中文
+- 3–5 个适合社交媒体传播的核心观点
+- 1–2 条适合做金句卡片的原文引用
+- 话题标签建议（领域 + 受众）
+- 平台适配版本（LinkedIn 长文、X/Twitter 串文、微信公众号）
 
 Save as `reports/social-[guest-lastname]-[YYYYMMDD].md`.
 
@@ -368,22 +372,20 @@ Before TTS, run a podcast review pass:
 Generate professionally styled PDFs from the Markdown outputs using the script:
 
 ```bash
-# Deep-dive report PDF (primary — cover page + full report):
+# Deep-dive report PDF (primary):
 python scripts/generate_pdf.py output/[dir]/reports/report-[guest]-[YYYYMMDD].md --type report
 
 # TL;DR PDF (compact layout):
 python scripts/generate_pdf.py output/[dir]/reports/tldr-[guest]-[YYYYMMDD].md --type tldr
-
-# Social post PDF (narrative article layout):
-python scripts/generate_pdf.py output/[dir]/reports/social-[guest]-[YYYYMMDD].md --type social
 ```
 
-The script converts Markdown to HTML via markdown-it-py, wraps it in a styled HTML document using Jinja2 templates and print-optimized CSS, then renders to PDF via Playwright headless Chromium.
+The script converts Markdown to HTML via markdown-it-py, wraps it in a styled HTML document using Jinja2 templates and print-optimized CSS, then renders to PDF via Playwright headless Chromium. It supports Chinese metadata labels such as `嘉宾`、`主持`、`时长`、`日期`、`来源`, while remaining compatible with older English metadata.
 
 **Design:** Premium editorial book aesthetic using the same design tokens as the Learning Cards — cream (#fdfbf7) + burgundy (#722f37) color scheme, Chinese-optimized typography (Songti SC / PingFang SC font stacks), and A4 page size. The `--type` flag selects the appropriate template:
-- `report` — Cover page with guest name and metadata, running headers with guest name/page numbers, table striping, styled blockquotes with burgundy left border, page-break control for major sections
-- `tldr` — Compact single-page layout with larger type for quick reading
-- `social` — Narrative article layout with narrower content column
+- `report` — 紧凑报告头、嘉宾和元数据、页眉页码、低干扰表格、语义化引用块、自然分页
+- `tldr` — 紧凑速览版式，不强制二级标题分页，目标控制在 1–2 页
+
+Social Markdown remains an output for copying into social platforms, but the PDF workflow intentionally covers only 深度报告 and 速览摘要.
 
 **Requirements:** `markdown-it-py`, `Jinja2`, and `playwright` (all pre-installed in the skill environment).
 
@@ -444,8 +446,7 @@ output/
     │   └── social-[guest]-[YYYYMMDD].md         (Output 5)
     ├── pdf/                                     (Output 7)
     │   ├── report-[guest]-[YYYYMMDD].pdf
-    │   ├── tldr-[guest]-[YYYYMMDD].pdf
-    │   └── social-[guest]-[YYYYMMDD].pdf
+    │   └── tldr-[guest]-[YYYYMMDD].pdf
     ├── html/                                    (Outputs 3, 4)
     │   ├── cards-[guest]-[YYYYMMDD].html        (Output 3)
     │   └── map-[guest]-[YYYYMMDD].html          (Output 4)
@@ -463,11 +464,11 @@ output/
 
 1. **Open the Learning Cards** (Output 3) in a browser. Check: card navigation (arrows/swipe), theme toggle, expandable sections, role tabs, zero JS errors in console.
 2. **Open the mind map** (Output 4) in a browser. Check: central thesis node renders, theme ring with 7 nodes, click to expand works, "全部展开" renders all evidence nodes, cross-theme connection lines visible, zero JS errors.
-3. **Spot-check the TL;DR** (Output 1): verify all 6 sections present, 5-7 takeaways, quotes have timestamps.
-4. **Spot-check the Deep-Dive** (Output 2): verify all 8 sections present, all segments covered, 3+ quotes spot-checked against knowledge.json for verbatim accuracy.
-5. **Spot-check the Social Media Post** (Output 5): verify 3-5 takeaways, 1-2 quote-card-ready quotes, hashtags present, platform variants present.
+3. **Spot-check the TL;DR** (Output 1): verify all 6 sections present, 5-7 core points, quotes have timestamps, and template labels are Chinese.
+4. **Spot-check the Deep-Dive** (Output 2): verify all 8 sections present, all segments covered, 3+ quotes spot-checked against knowledge.json for verbatim accuracy, and tables/reading guides use Chinese labels.
+5. **Spot-check the Social Media Post** (Output 5): verify 3-5 core points, 1-2 quote-card-ready quotes, hashtags present, platform variants present, and added explanatory prose is Chinese.
 6. **Review and play the Short Podcast** (Output 6): verify reviewer pass, audio plays, duration matches the adaptive target from source length, voice quality is natural, and the episode clearly explains the guest's views rather than reading a report outline.
-7. **Open the PDFs** (Output 7): verify cover page renders for report type, all sections present, tables have striped rows and burgundy headers, blockquotes have burgundy left border, page numbers appear in footer, colors and fonts match the editorial design intent.
+7. **Open the PDFs** (Output 7): verify report starts with a compact heading rather than a standalone cover, 执行摘要 and 阅读指南 appear together or consecutively without large blank space, TL;DR is 2 pages or fewer, labels are Chinese, decorative rules are not visually noisy, data-point callouts are visually unified, and page numbers appear in footer.
 8. **Run the regression test** from the quality checklist if any template files were modified.
 
 Never deliver outputs without running these checks. See [references/quality-checklist.md](references/quality-checklist.md) for the complete checklist and common pitfall documentation.
@@ -480,7 +481,7 @@ Never deliver outputs without running these checks. See [references/quality-chec
 2. **Quotes must be verbatim.** Never paraphrase, clean up, or translate a quote. Use `[...]` for omissions.
 3. **No fabricated content.** Never invent claims, data, or quotes. If the guest implies something, mark it as inference.
 4. **Flag uncertainty.** If extraction confidence is low, say so. Better to under-claim than over-claim.
-5. **Preserve language mixing.** Chinese-English code-switching is common in technical interviews — preserve it in quotes. Summarize in the transcript's primary language.
+5. **Preserve source language, localize generated structure.** Chinese-English code-switching is common in technical interviews — preserve it in quotes and necessary terms, but write generated report labels, table headers, reading guidance, and explanatory prose in the transcript's primary language.
 
 ### Anti-Patterns (Content)
 
@@ -547,4 +548,4 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 |-------|---------|---------|
 | `assets/cards-template/` (3 files: index.html, style.css, script.js) | generate_cards.py | Learning cards HTML scaffold with template variables, mobile-first card design system (light + dark themes), swipe/keyboard/touch navigation, expandable sections |
 | `assets/mindmap-template.html` | generate_mindmap.py | D3.js radial mind map with starfield background |
-| `assets/pdf-templates/` (4 files: pdf-style.css, report-wrapper.html.j2, tldr-wrapper.html.j2, social-wrapper.html.j2) | generate_pdf.py | PDF HTML wrappers and print design system CSS (cream + burgundy editorial aesthetic, A4 page rules, book-style running headers) |
+| `assets/pdf-templates/` (3 files: pdf-style.css, report-wrapper.html.j2, tldr-wrapper.html.j2) | generate_pdf.py | PDF HTML wrappers and print design system CSS (cream + burgundy editorial aesthetic, A4 page rules, compact report headers) |

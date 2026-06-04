@@ -4,33 +4,11 @@
   <meta charset="utf-8">
   <title>{{ title }}</title>
   <style>{{ css }}</style>
-  <style>
-    /* Full-bleed first page for cover — report type only */
-    @page :first { margin: 0; }
-  </style>
 </head>
-<body>
+<body class="format-report" style="string-set: guest-name '{{ guest_name }}', report-title '{{ title_short }}';">
 
   <!-- ==================================================================
-       COVER PAGE — full-bleed hero layout with guest name and metadata
-       ================================================================== -->
-  <div class="cover-page" style="string-set: guest-name '{{ guest_name }}', report-title '{{ title_short }}';">
-    <p class="cover-label">深度访谈报告</p>
-    <h1 class="cover-title">{{ guest_name }}</h1>
-    <p class="cover-subtitle">{{ show_name }}</p>
-    <div class="cover-rule"></div>
-    <p class="cover-meta">
-      <span>{{ host }}</span>
-      <span class="meta-sep">/</span>
-      <span>{{ date }}</span>
-      <span class="meta-sep">/</span>
-      <span>{{ duration }}</span>
-    </p>
-    <p class="cover-footer">Interview-Based Learning &nbsp;·&nbsp; 深度报告</p>
-  </div>
-
-  <!-- ==================================================================
-       REPORT BODY — Markdown-rendered HTML content
+       REPORT BODY — compact reading-first layout, no standalone cover page
        ================================================================== -->
   {{ body_html }}
 

@@ -184,102 +184,7 @@ body {
 }
 
 /* ========================================================================
-   4. COVER PAGE
-   Normal-flow block that fills the first page. @page :first { margin: 0 }
-   allows it to extend to page edges. page-break-after: always pushes
-   body content to page 2.
-   Dimensions: 210×297mm (A4). For other page sizes, override with
-   a format-specific CSS rule or inject via template variable.
-   ======================================================================== */
-
-.cover-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 210mm;
-  min-height: 297mm;
-  padding: 4cm 3cm;
-  margin: 0;
-  background: linear-gradient(
-    180deg,
-    var(--color-surface) 0%,
-    var(--color-surface-subtle) 60%,
-    var(--color-surface) 100%
-  );
-  text-align: center;
-  page-break-after: always;
-}
-
-/* Prevent cover page h1 from overriding running-header string-set
-   (the body h1 CSS rule sets string-set: report-title self) */
-.cover-page h1 {
-  string-set: none;
-}
-
-.cover-label {
-  font-family: var(--font-heading);
-  font-size: var(--fs-cover-label);
-  color: var(--color-accent);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
-  margin-bottom: var(--sp-3xl);
-}
-
-.cover-title {
-  font-family: var(--font-display);
-  font-size: var(--fs-cover-name);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
-  margin-bottom: var(--sp-md);
-  max-width: 80%;
-}
-
-.cover-subtitle {
-  font-family: var(--font-heading);
-  font-size: var(--fs-h3);
-  color: var(--color-text-secondary);
-  font-weight: 400;
-  margin-bottom: var(--sp-2xl);
-}
-
-.cover-rule {
-  width: 80px;
-  height: 2px;
-  background: var(--color-accent);
-  margin: 0 auto var(--sp-2xl) auto;
-}
-
-.cover-meta {
-  font-family: var(--font-heading);
-  font-size: var(--fs-small);
-  color: var(--color-text-tertiary);
-  letter-spacing: var(--tracking-wide);
-  line-height: var(--leading-compact);
-}
-
-.cover-meta span {
-  display: inline-block;
-}
-
-.cover-meta .meta-sep {
-  margin: 0 var(--sp-sm);
-  color: var(--color-border);
-}
-
-.cover-footer {
-  position: absolute;
-  bottom: 2.5cm;
-  font-family: var(--font-heading);
-  font-size: var(--fs-tiny);
-  color: var(--color-text-disabled);
-  letter-spacing: var(--tracking-wide);
-}
-
-/* ========================================================================
-   5. HEADINGS
+   4. HEADINGS
    ======================================================================== */
 
 h1 {
@@ -290,10 +195,9 @@ h1 {
   color: var(--color-accent);
   text-align: center;
   letter-spacing: var(--tracking-tight);
-  margin-top: var(--sp-3xl);
-  margin-bottom: var(--sp-lg);
-  padding-bottom: var(--sp-lg);
-  border-bottom: 1px solid var(--color-accent);
+  margin-top: var(--sp-2xl);
+  margin-bottom: var(--sp-md);
+  padding-bottom: 0;
   string-set: report-title self;
 }
 
@@ -307,10 +211,9 @@ h2 {
   font-weight: 600;
   line-height: var(--leading-heading);
   color: var(--color-accent);
-  margin-top: var(--sp-2xl);
+  margin-top: var(--sp-xl);
   margin-bottom: var(--sp-md);
-  padding-top: var(--sp-md);
-  border-top: 1.5px solid var(--color-accent);
+  padding-top: 0;
 }
 
 h3 {
@@ -321,8 +224,8 @@ h3 {
   color: var(--color-text-primary);
   margin-top: var(--sp-xl);
   margin-bottom: var(--sp-sm);
-  padding-left: var(--sp-sm);
-  border-left: 3px solid var(--color-accent);
+  padding-left: var(--sp-xs);
+  border-left: 2px solid var(--color-accent);
 }
 
 h4 {
@@ -344,7 +247,7 @@ h5, h6 {
 }
 
 /* ========================================================================
-   6. PARAGRAPHS & INLINE
+   5. PARAGRAPHS & INLINE
    ======================================================================== */
 
 p {
@@ -403,14 +306,14 @@ pre code {
 }
 
 /* ========================================================================
-   7. BLOCKQUOTES
+   6. BLOCKQUOTES
    ======================================================================== */
 
 blockquote {
   margin: var(--sp-lg) 0;
   padding: var(--sp-md) var(--sp-lg);
   background: var(--color-blockquote-bg);
-  border-left: 3px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
   font-size: var(--fs-blockquote);
   line-height: var(--leading-body);
   color: var(--color-text-secondary);
@@ -452,22 +355,15 @@ blockquote blockquote {
 }
 
 /* ========================================================================
-   8. HORIZONTAL RULES
+   7. HORIZONTAL RULES
    ======================================================================== */
 
 hr {
-  border: none;
-  height: 1px;
-  background: var(--color-accent);
-  opacity: 0.25;
-  margin: var(--sp-2xl) 0;
-  page-break-after: avoid;
+  display: none;
 }
 
-/* Decorative rule (used in cover only) is handled by .cover-rule */
-
 /* ========================================================================
-   9. TABLES
+   8. TABLES
    ======================================================================== */
 
 table {
@@ -495,7 +391,7 @@ th {
 
 td {
   padding: var(--sp-sm) var(--sp-md);
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: none;
   color: var(--color-text-primary);
 }
 
@@ -504,11 +400,11 @@ tr:nth-child(even) td {
 }
 
 tr:last-child td {
-  border-bottom: 1.5px solid var(--color-border);
+  border-bottom: none;
 }
 
 /* ========================================================================
-   10. LISTS
+   9. LISTS
    ======================================================================== */
 
 ul, ol {
@@ -570,7 +466,7 @@ ol li::before {
 }
 
 /* ========================================================================
-   11. IMAGES
+   10. IMAGES
    ======================================================================== */
 
 img {
@@ -580,7 +476,7 @@ img {
 }
 
 /* ========================================================================
-   12. METADATA LINE (first paragraph after h1)
+   11. METADATA LINE (first paragraph after h1)
    ======================================================================== */
 
 h1 + p {
@@ -599,17 +495,17 @@ h1 + p em {
 }
 
 /* ========================================================================
-   13. PAGE BREAK RULES
+   12. PAGE BREAK RULES
    Prevent awkward breaks: keep headings with content, avoid splitting
    blockquotes/tables/code blocks, and ensure at least 2 lines of a
    paragraph appear at top/bottom of each page.
    ======================================================================== */
 
-h2 {
+body:not(.format-report):not(.format-tldr) h2 {
   page-break-before: always;
 }
 
-h2:first-of-type {
+body:not(.format-report):not(.format-tldr) h2:first-of-type {
   page-break-before: avoid;
 }
 
@@ -663,7 +559,7 @@ h2 + *, h3 + * {
 }
 
 /* ========================================================================
-   14. PRINT-SPECIFIC OVERRIDES
+   13. PRINT-SPECIFIC OVERRIDES
    ======================================================================== */
 
 @media print {
@@ -687,43 +583,132 @@ h2 + *, h3 + * {
 }
 
 /* ========================================================================
-   15. FORMAT-SPECIFIC ADJUSTMENTS
+   14. FORMAT-SPECIFIC ADJUSTMENTS
    ======================================================================== */
 
-/* ---- TL;DR: larger type, more breathing room ---- */
+/* ---- Report: reading-first layout, no standalone cover ---- */
+.format-report {
+  font-size: 9.2pt;
+  line-height: 1.48;
+}
+
+.format-report h1 {
+  --fs-h1: 20pt;
+  margin-top: var(--sp-md);
+  margin-bottom: var(--sp-xs);
+  text-align: center;
+}
+
+.format-report h1 + p {
+  margin-bottom: var(--sp-md);
+}
+
+.format-report h2 {
+  page-break-before: avoid;
+  margin-top: var(--sp-lg);
+  margin-bottom: var(--sp-xs);
+}
+
+.format-report h2:first-of-type {
+  margin-top: var(--sp-md);
+}
+
+.format-report h3 {
+  margin-top: var(--sp-md);
+  margin-bottom: var(--sp-xs);
+}
+
+.format-report h4 {
+  margin-top: var(--sp-md);
+}
+
+.format-report p,
+.format-report li {
+  line-height: 1.44;
+}
+
+.format-report table {
+  margin: var(--sp-xs) 0 var(--sp-sm) 0;
+}
+
+.format-report th,
+.format-report td {
+  padding: 4pt 7pt;
+}
+
+.format-report blockquote {
+  margin: var(--sp-sm) 0;
+  padding: var(--sp-sm) var(--sp-md);
+  line-height: 1.5;
+}
+
+.format-report blockquote p {
+  font-style: normal;
+}
+
+.format-report blockquote ul,
+.format-report blockquote ol {
+  margin-top: var(--sp-xs);
+  margin-bottom: 0;
+  padding-left: 1.2em;
+}
+
+.format-report blockquote li {
+  margin-bottom: 2pt;
+  page-break-inside: avoid;
+}
+
+/* ---- TL;DR: dense quick-read layout ---- */
 .format-tldr {
-  --fs-body: 11pt;
+  font-size: 9.6pt;
+  line-height: 1.46;
 }
 
 .format-tldr h1 {
-  --fs-h1: 22pt;
-  margin-top: var(--sp-3xl);
+  --fs-h1: 20pt;
+  margin-top: var(--sp-lg);
+  margin-bottom: var(--sp-sm);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
-/* ---- Social: narrower column, narrative feel ---- */
-.format-social {
-  --fs-body: 10.5pt;
+.format-tldr h1 + p {
+  margin-bottom: var(--sp-lg);
 }
 
-.format-social h1 {
-  --fs-h1: 22pt;
-}
-
-.format-social h2 {
+.format-tldr h2 {
   page-break-before: avoid;
   border-top: none;
   padding-top: 0;
-  margin-top: var(--sp-2xl);
+  margin-top: var(--sp-lg);
+  margin-bottom: var(--sp-sm);
 }
 
-.format-social p:first-of-type {
-  font-size: 1.15em;
-  line-height: var(--leading-compact);
-  color: var(--color-text-secondary);
+.format-tldr h3 {
+  margin-top: var(--sp-md);
+}
+
+.format-tldr p,
+.format-tldr li {
+  line-height: 1.44;
+}
+
+.format-tldr blockquote {
+  margin: 5pt 0;
+  padding: 5pt 8pt;
+}
+
+.format-tldr table {
+  margin: var(--sp-sm) 0;
+}
+
+.format-tldr th,
+.format-tldr td {
+  padding: 5pt 8pt;
 }
 
 /* ========================================================================
-   16. UTILITY CLASSES
+   15. UTILITY CLASSES
    ======================================================================== */
 
 .sr-only {
