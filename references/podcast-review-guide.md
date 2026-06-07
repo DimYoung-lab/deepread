@@ -13,6 +13,9 @@ whether it merely covers source material.
 ## Pass Criteria
 
 - The opening sounds like a podcast opening, not task instructions.
+- The opening follows the standard listener hook: it starts with
+  `今天我们用[目标时长]拆解[嘉宾]在[节目/访谈]里的核心判断。`, then states
+  `这场访谈表面聊...但真正的主线是...`.
 - The episode quickly makes clear why this interview matters.
 - The script explains what the guest believes, why they believe it, what is
   at stake, and what listeners should remember.
@@ -33,6 +36,7 @@ whether it merely covers source material.
 - It repeats the same quote, transition, or explanation.
 - It makes a point that does not follow from the source material.
 - The opening is generic, flat, or only says "we will summarize this".
+- The opening starts with generic greetings such as "欢迎收听" or "本期播客将总结".
 - The listener would finish the episode without knowing the guest's core
   opinion.
 

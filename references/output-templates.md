@@ -20,7 +20,6 @@ requirements, and formatting conventions.
 | 5 | 社交媒体推文 | Markdown | 约 2000–4000 个中文字符 | 社交媒体读者、泛行业读者 |
 | 6 | 短播客 | Markdown + MP3 | 按原视频长度自适应，约 3–15 分钟 | 通勤、运动或多任务收听者 |
 | 7 | 精美 PDF | PDF（HTML→Playwright） | A4 打印优化 | 离线阅读、转发和归档 |
-| 8 | BGM增强播客 | MP3（MiniMax music-2.6 + ffmpeg） | 播客 + 氛围 BGM | 沉浸式收听者 |
 
 ---
 
@@ -672,8 +671,8 @@ strong lead, memorable quotes, and clear points.
 ## 6. 短播客脚本 (Markdown + MP3)
 
 **Purpose:** A script optimized for text-to-speech (TTS) synthesis that
-distills the interview into a compact, listenable audio piece. Produces both
-the plain-text script and, when TTS tooling is available, an MP3 audio file.
+distills the interview into a compact, listenable audio piece. Produces the
+plain-text script and one final BGM-mixed MP3 audio file.
 Designed for consumption during commutes, workouts, or household tasks.
 
 **时长：** 按原始材料长度自适应。默认目标：
@@ -705,8 +704,10 @@ will read them aloud.
 
 ### Spoken Structure
 
-1. Simple opening: one or two short paragraphs that introduce the interview
-   and then move directly into the first theme.
+1. Fixed strong opening: two short paragraphs, no labels:
+   - `今天我们用[目标时长]拆解[嘉宾]在[节目/访谈]里的核心判断。`
+   - `这场访谈表面聊[A、B、C]，但真正的主线是：[一句话核心问题/判断]。`
+   Then move directly into the first theme.
 2. Topic body: explain what the guest believes, why they believe it, and why
    a busy listener should care. Use 3–7 themes only as source material, not
    as a mechanical table of contents.
@@ -719,6 +720,9 @@ will read them aloud.
 - **Model-written, not mechanically stitched.** Use the brief as source
   material, then write natural spoken prose that connects points with clear
   reasoning. Do not concatenate theme bullets, quotes, or canned transitions.
+- **Opening must have a hook.** Follow the fixed opening pattern above. Avoid
+  flat openings such as "本期播客将总结..." or generic greetings. The listener
+  should know the episode's central question within the first 20 seconds.
 - **Pure spoken text only.** No markdown, metadata headers, section markers,
   `HOST:`/`GUEST:` labels, code fences, or fixed budget notes in the file.
 - **Write for the ear, not the eye.** Use short sentences. Prefer concrete
@@ -752,6 +756,9 @@ will read them aloud.
 - 如 mmx CLI 不可用，仅输出 Markdown 脚本文件，并注明：
   "MP3 未生成 — 需要 MiniMax Token Plan（mmx-cli）"
 - 合成时直接读取纯口播文本。时长估计和字符预算保留在 CLI 输出和 QA 检查中，不写入脚本正文。
+- 生成原声 MP3 后，立即运行 `generate_bgm_podcast.py` 将 BGM 混入同名
+  `podcast-[guest]-[YYYYMMDD].mp3`。最终 audio 目录只保留这一个用户可见
+  MP3；不要保留原声 MP3、`*-bgm.mp3` 或 `bgm-podcast-*.mp3`。
 
 ---
 
@@ -796,32 +803,6 @@ python scripts/generate_pdf.py output/[dir]/reports/tldr-[guest]-[YYYYMMDD].md -
 
 ---
 
-## 8. BGM增强播客 (BGM-Enhanced Podcast)
-
-**Purpose:** Podcast voiceover mixed with ambient instrumental background music, creating a more immersive listening experience for commuters and multitaskers.
-
-**Files:**
-- `podcast-[guest-lastname]-[YYYYMMDD]-bgm.mp3` (mixed version)
-- `bgm-podcast-[guest-lastname]-[YYYYMMDD].mp3` (instrumental only)
-
-**Generation:**
-```bash
-python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
-```
-
-**Design spec:**
-- BGM: Instrumental only, warm + contemplative mood, ~80 BPM
-- Mixing: BGM at 25% volume (-12 dB), looped to match voiceover length
-- Output: 192 kbps MP3, mono-compatible
-- Model: MiniMax `music-2.6`, 1 track per interview
-
-**Integration with other outputs:**
-- Podcast (Output 6): Direct enhancement — the BGM version replaces/augments the raw voiceover
-- Learning Cards (Output 3): Closing card can link to BGM version for "immersive mode"
-- Knowledge Map (Output 4): Optional background ambience toggle
-
----
-
 ## Cross-Format Consistency Rules
 
 1. **Timestamps**: All timestamps across all eight formats use the same
@@ -839,6 +820,8 @@ python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYM
 ---
 
 ## File Naming Convention
+
+`[YYYYMMDD]` is the interview date when provided or detectable from metadata. If no interview date is available, use today's date as the fallback. The output directory and every generated file must use the same date token; do not derive filenames from the folder creation date.
 
 | Format | Filename Pattern |
 |--------|-----------------|

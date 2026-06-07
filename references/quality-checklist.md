@@ -8,6 +8,13 @@ This reference documents the mandatory testing procedures and common pitfalls di
 
 ## Pre-Delivery Verification (MANDATORY)
 
+### Output Naming Checks
+
+| # | Check | Method | Expected |
+|---|-------|--------|----------|
+| 1 | **Date token source** | Inspect `output/[guest]-[YYYYMMDD]/` and metadata | `YYYYMMDD` uses the provided/detected interview date, or today's date only when no interview date was provided |
+| 2 | **Date token consistency** | List generated filenames under reports/pdf/html/audio | Directory and generated files use the same `YYYYMMDD`; no folder creation date is mixed in |
+
 ### Stage 1.5 — Extraction & Correction Checks
 
 | # | Check | Method | Expected |
@@ -94,12 +101,13 @@ This reference documents the mandatory testing procedures and common pitfalls di
 |---|-------|--------|----------|
 | 1 | **Adaptive character count** | Compute source duration and character counter | `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)`, `target_chars = target_minutes * 320`, within ±12% |
 | 2 | **TTS-friendly plain text** | grep for markdown syntax, labels, and spoken timestamps | No `**`, `##`, `*`, backticks, `HOST:`, `GUEST:`, metadata headers, or spoken `HH:MM` timestamps |
-| 3 | **Listener-centered opening** | Read first 5 lines | Says who this is for, gives the core conclusion, then moves into the guest's views |
+| 3 | **Standardized listener opening** | Read first 5 lines | Starts with `今天我们用[目标时长]拆解...核心判断`, states the real `主线`, then moves directly into the guest's views |
 | 4 | **Closing present** | Read last 5 lines | Outro, call-to-action, or next-episode teaser |
 | 5 | **Explains the guest's views** | Reviewer agent/model reads body | Focuses on what the guest believes, why, stakes, tensions, and listener-facing points, not source navigation |
 | 6 | **Duration policy visible in tooling** | Run `prepare_podcast_brief.py` and inspect stdout | CLI prints source duration, target minutes, and expected script range |
 | 7 | **No spoken timestamps** | grep for `XX:XX` or `HH:MM:SS` | No source timestamps in the podcast script body |
 | 8 | **Reviewer pass required** | Run `review_podcast_script.py` and a model/editor review | Both reviews pass before TTS |
+| 9 | **Single final MP3** | List `output/[dir]/audio/*.mp3` | Exactly one user-facing MP3 remains: `podcast-[guest]-[YYYYMMDD].mp3`; no raw duplicate, `*-bgm.mp3`, or `bgm-podcast-*.mp3` |
 
 ---
 
@@ -242,7 +250,7 @@ document.querySelectorAll('details[open]').length             // → count of op
 
 **Fix:** Always serve files through a local HTTP server:
 ```bash
-cd output/yaoshunyu-20260530
+cd output/yaoshunyu-20260511
 python -m http.server 8765 &
 playwright-cli open "http://localhost:8765/cards.html"
 ```
@@ -301,8 +309,8 @@ print('Stage 1 — Parse: OK')
 # 4. Verify turns-corrected.json exists and has corrections
 python -c "
 import json
-with open('output/yaoshunyu-20260530/data/turns.json') as f: raw = json.load(f)
-with open('output/yaoshunyu-20260530/data/turns-corrected.json') as f: corr = json.load(f)
+with open('output/yaoshunyu-20260511/data/turns.json') as f: raw = json.load(f)
+with open('output/yaoshunyu-20260511/data/turns-corrected.json') as f: corr = json.load(f)
 assert raw != corr, 'Corrected file is identical to raw — no corrections applied'
 # Verify known entity fix: C-Dance should be corrected
 raw_text = json.dumps(raw)
@@ -314,7 +322,7 @@ print('Stage 1.5 — Correction: OK')
 # 5. Verify glossary loads
 python -c "
 import json
-with open('output/yaoshunyu-20260530/data/glossary.json') as f: g = json.load(f)
+with open('output/yaoshunyu-20260511/data/glossary.json') as f: g = json.load(f)
 assert len(g) >= 5, f'Glossary has only {len(g)} entries, expected >= 5'
 for entry in g:
     assert 'term' in entry, f'Missing term in glossary entry'
@@ -327,7 +335,7 @@ print('Stage 1.5 — Glossary: OK')
 # 6. Verify visual_content.json structure
 python -c "
 import json
-with open('output/yaoshunyu-20260530/data/visual_content.json') as f: vc = json.load(f)
+with open('output/yaoshunyu-20260511/data/visual_content.json') as f: vc = json.load(f)
 assert 'cards' in vc, 'Missing cards key'
 assert len(vc['cards']) == 9, f'Expected 9 cards, got {len(vc[\"cards\"])}'
 card_types = [c.get('type') for c in vc['cards']]
@@ -343,7 +351,7 @@ print('Stage 4 — visual_content.json: OK')
 python -c "import py_compile; py_compile.compile('scripts/generate_cards.py', doraise=True)"
 
 # 8. Generate cards HTML
-python scripts/generate_cards.py output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_cards.html
+python scripts/generate_cards.py output/yaoshunyu-20260511/data/visual_content.json --output /tmp/test_cards.html
 
 # 9. Verify cards HTML structure
 python -c "
@@ -366,7 +374,7 @@ print('Stage 5 — Cards HTML: OK')
 python -c "import py_compile; py_compile.compile('scripts/generate_mindmap.py', doraise=True)"
 
 # 11. Generate mind map HTML
-python scripts/generate_mindmap.py output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_map.html
+python scripts/generate_mindmap.py output/yaoshunyu-20260511/data/visual_content.json --output /tmp/test_map.html
 
 # 12. Verify mind map structure
 python -c "
@@ -386,7 +394,7 @@ print('Stage 6 — Mind Map: OK')
 # 13. Verify social media post
 python -c "
 import os, glob
-posts = glob.glob('output/yaoshunyu-20260530/reports/social*')
+posts = glob.glob('output/yaoshunyu-20260511/reports/social*')
 assert posts, 'No social media post found'
 with open(posts[0], encoding='utf-8') as f: text = f.read()
 length = len(text)
@@ -401,7 +409,7 @@ print(f'Stage 7 — Social Media Post: OK ({length} chars)')
 python -c "import py_compile; py_compile.compile('scripts/prepare_podcast_brief.py', doraise=True)"
 python -c "import py_compile; py_compile.compile('scripts/review_podcast_script.py', doraise=True)"
 
-python scripts/prepare_podcast_brief.py output/yaoshunyu-20260530/data/knowledge.json --turns output/yaoshunyu-20260530/data/turns-corrected.json --visual output/yaoshunyu-20260530/data/visual_content.json --output /tmp/test_podcast_brief.md
+python scripts/prepare_podcast_brief.py output/yaoshunyu-20260511/data/knowledge.json --turns output/yaoshunyu-20260511/data/turns-corrected.json --visual output/yaoshunyu-20260511/data/visual_content.json --output /tmp/test_podcast_brief.md
 
 python -c "
 from pathlib import Path
@@ -414,14 +422,19 @@ print('Stage 7 — Podcast Brief: OK')
 "
 
 # After the model writes podcast-script-*.md, run:
-# python scripts/review_podcast_script.py output/yaoshunyu-20260530/audio/podcast-script-*.md --knowledge output/yaoshunyu-20260530/data/knowledge.json
+# python scripts/review_podcast_script.py output/yaoshunyu-20260511/audio/podcast-script-*.md --knowledge output/yaoshunyu-20260511/data/knowledge.json
+#
+# After TTS, run BGM mixing in place. The final directory should contain only
+# one user-facing MP3:
+# python scripts/generate_bgm_podcast.py output/yaoshunyu-20260511/audio/podcast-yaoshunyu-20260511.mp3 --knowledge output/yaoshunyu-20260511/data/knowledge.json
+# python -c "from pathlib import Path; files=sorted(p.name for p in Path('output/yaoshunyu-20260511/audio').glob('*.mp3')); assert files == ['podcast-yaoshunyu-20260511.mp3'], files"
 
 # === Stage 3: Verify Markdown Reports ===
 
 # 15. Verify deep-dive report
 python -c "
 import os, glob
-reports = glob.glob('output/yaoshunyu-20260530/reports/report*')
+reports = glob.glob('output/yaoshunyu-20260511/reports/report*')
 assert reports, 'No deep-dive report found'
 with open(reports[0], encoding='utf-8') as f: text = f.read()
 assert 'Executive Summary' in text or '执行摘要' in text, 'Missing executive summary'
@@ -433,7 +446,7 @@ print('Stage 3 — Deep-Dive Report: OK')
 # 16. Verify TL;DR report
 python -c "
 import os, glob
-reports = glob.glob('output/yaoshunyu-20260530/reports/tldr*')
+reports = glob.glob('output/yaoshunyu-20260511/reports/tldr*')
 assert reports, 'No TL;DR report found'
 with open(reports[0], encoding='utf-8') as f: text = f.read()
 assert '核心观点' in text, 'Missing core points'
@@ -442,5 +455,5 @@ print('Stage 3 — TL;DR Report: OK')
 "
 
 echo ""
-echo "=== All regression tests passed (7 stages, 8 outputs) ==="
+echo "=== All regression tests passed (7 stages, 7 user-facing outputs) ==="
 ```

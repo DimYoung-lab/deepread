@@ -79,33 +79,23 @@ OUTPUTS = [
     },
     {
         "id": 6,
-        "name": "播客脚本+音频",
+        "name": "播客脚本+BGM音频",
         "tokens": 10000,
         "token_display": "~10K",
-        "time_min": 5,
-        "time_max": 10,
-        "time_display": "5-10 min",
+        "time_min": 7,
+        "time_max": 14,
+        "time_display": "7-14 min",
         "dependency": "knowledge.json + mmx CLI",
     },
     {
         "id": 7,
-        "name": "PDF 报告 (x3)",
+        "name": "PDF 报告 (x2)",
         "tokens": 0,
         "token_display": "~0K",
         "time_min": 1,
         "time_max": 2,
         "time_display": "1-2 min",
         "dependency": "Markdown 文件",
-    },
-    {
-        "id": 8,
-        "name": "BGM 增强播客",
-        "tokens": 2000,
-        "token_display": "~2K",
-        "time_min": 2,
-        "time_max": 4,
-        "time_display": "2-4 min",
-        "dependency": "播客 MP3 + mmx CLI",
     },
 ]
 
@@ -315,12 +305,12 @@ def interactive_select(
 ) -> list[int]:
     """Prompt the user to select which outputs to generate.
 
-    In non-interactive mode, returns the preselected set (or all 8 if none).
+    In non-interactive mode, returns the preselected set (or all outputs if none).
     In interactive mode, displays a numbered checklist and accepts input
     like '1,2,3,7', '1-4,7', or 'all'.
     """
     if non_interactive:
-        selected = _parse_selection(preselected) if preselected else list(range(1, 9))
+        selected = _parse_selection(preselected) if preselected else [o["id"] for o in OUTPUTS]
         print(f"\n  [非交互模式] 已选择输出: {selected}")
         return selected
 
@@ -342,7 +332,7 @@ def interactive_select(
             continue
 
         if raw.lower() == "all":
-            return list(range(1, 9))
+            return [o["id"] for o in OUTPUTS]
 
         selected = _parse_selection(raw)
         if selected:
@@ -354,7 +344,7 @@ def interactive_select(
 def _parse_selection(raw: str) -> list[int]:
     """Parse selection string into a sorted, deduplicated list of ints.
 
-    Supports comma-separated values and ranges: '1,2,3,7' or '1-4,7,8'.
+    Supports comma-separated values and ranges: '1,2,3,7' or '1-4,7'.
     Returns an empty list when parsing fails entirely.
     """
     try:
@@ -366,7 +356,8 @@ def _parse_selection(raw: str) -> list[int]:
                 ids.extend(range(int(lo.strip()), int(hi.strip()) + 1))
             else:
                 ids.append(int(part))
-        valid = sorted(set(i for i in ids if 1 <= i <= 8))
+        valid_ids = {o["id"] for o in OUTPUTS}
+        valid = sorted(set(i for i in ids if i in valid_ids))
         return valid
     except (ValueError, IndexError):
         return []
@@ -388,7 +379,7 @@ def main() -> None:
     parser.add_argument(
         "--non-interactive",
         action="store_true",
-        help="跳过交互式选择, 默认选中全部 8 个输出",
+        help="跳过交互式选择, 默认选中全部 7 个用户输出",
     )
     parser.add_argument(
         "--select",

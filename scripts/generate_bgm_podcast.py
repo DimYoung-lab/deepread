@@ -3,11 +3,13 @@
 
 生成与访谈主题匹配的 instrumental 背景音乐，然后用 ffmpeg 将其
 与播客人声混合（BGM 音量 25%，loop 至与人声等长）。
+默认会把混音结果写回输入播客路径，并删除纯 BGM 临时文件，让最终
+audio 目录只保留一个用户可见的 podcast-*.mp3。
 
 用法：
     python generate_bgm_podcast.py podcast.mp3
     python generate_bgm_podcast.py podcast.mp3 --knowledge knowledge.json
-    python generate_bgm_podcast.py podcast.mp3 --output podcast-bgm.mp3
+    python generate_bgm_podcast.py podcast.mp3 --output podcast.mp3
 """
 
 from __future__ import annotations
@@ -16,7 +18,6 @@ import argparse
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -29,7 +30,7 @@ def build_music_prompt(data: dict | None) -> str:
     """根据访谈主题构造背景音乐 prompt。"""
     if data:
         themes = data.get("cross_cutting_themes", [])
-        theme_names = [t.get("theme", "") for t in themes[:3]]
+        theme_names = [t.get("theme") or t.get("name") or "" for t in themes[:3]]
         mood = "、".join(theme_names) if theme_names else "科技与人文"
     else:
         mood = "深度对话与思考"
@@ -76,12 +77,17 @@ def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
     h, m, s = duration_match.groups()
     voice_dur = int(h) * 3600 + int(m) * 60 + float(s)
 
-    # Step 2: Lower BGM volume to 30% (0.25 ≈ -10dB)
-    bgm_quiet = str(Path(output_path).with_suffix(".bgm_tmp.mp3"))
+    output = Path(output_path)
+    output_tmp = output.with_name(f"{output.stem}.mix_tmp{output.suffix}")
+    bgm_quiet = output.with_name(f"{output.stem}.bgm_tmp{output.suffix}")
+    if str(output_tmp) == voice_path:
+        output_tmp = output.with_name(f"{output.stem}.mix_tmp_2{output.suffix}")
+
+    # Step 2: Lower BGM volume to 25% (about -12dB)
     subprocess.run([
         ffmpeg, "-y", "-i", bgm_path,
         "-filter:a", "volume=0.25",
-        "-b:a", "192k", bgm_quiet,
+        "-b:a", "192k", str(bgm_quiet),
     ], capture_output=True, check=True)
 
     # Step 3: Mix — loop BGM to match voice duration, then merge
@@ -90,23 +96,26 @@ def mix_audio(voice_path: str, bgm_path: str, output_path: str) -> None:
     subprocess.run([
         ffmpeg, "-y",
         "-i", voice_path,
-        "-stream_loop", str(loop_count), "-i", bgm_quiet,
+        "-stream_loop", str(loop_count), "-i", str(bgm_quiet),
         "-filter_complex", f"[1:a]atrim=0:{voice_dur}[bgm];[0:a][bgm]amix=inputs=2:duration=first:weights=1 0.25",
-        "-b:a", "192k", output_path,
+        "-b:a", "192k", str(output_tmp),
     ], capture_output=True, check=True)
 
-    # Clean up temp file
-    try:
-        os.unlink(bgm_quiet)
-    except OSError:
-        pass
+    output_tmp.replace(output)
+
+    for temp in (bgm_quiet,):
+        try:
+            temp.unlink()
+        except OSError:
+            pass
 
 
 def build_argparser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="为播客音频叠加背景音乐。")
     parser.add_argument("podcast_mp3", metavar="PODCAST_MP3", help="播客 MP3 文件路径。")
     parser.add_argument("--knowledge", "-k", metavar="JSON", default=None, help="knowledge.json 路径（用于提取主题）。")
-    parser.add_argument("--output", "-o", metavar="PATH", default=None, help="输出路径。")
+    parser.add_argument("--output", "-o", metavar="PATH", default=None, help="输出路径。默认覆盖输入播客文件。")
+    parser.add_argument("--keep-bgm", action="store_true", help="保留纯 BGM 文件（默认删除，避免最终目录出现多个 MP3）。")
     return parser
 
 
@@ -129,14 +138,10 @@ def main(argv: Optional[list[str]] = None) -> None:
     prompt = build_music_prompt(data)
 
     # 输出路径
-    if args.output:
-        out = args.output
-    else:
-        stem = voice_path.stem
-        out = str(voice_path.parent / f"{stem}-bgm.mp3")
+    out = str(Path(args.output)) if args.output else str(voice_path)
 
-    # Step 1: 生成 BGM（保存到音频目录）
-    bgm_path = str(voice_path.parent / f"bgm-{voice_path.stem}.mp3")
+    # Step 1: 生成临时 BGM。默认完成混音后删除，避免用户看到多个音频文件。
+    bgm_path = str(voice_path.parent / f"{voice_path.stem}.bgm_source_tmp.mp3")
     print(f"正在生成背景音乐...")
 
     result = run_mmx([
@@ -165,8 +170,15 @@ def main(argv: Optional[list[str]] = None) -> None:
         sys.exit(1)
 
     if Path(out).is_file():
+        if not args.keep_bgm:
+            try:
+                Path(bgm_path).unlink()
+            except OSError:
+                pass
         size_mb = Path(out).stat().st_size / (1024 * 1024)
         print(f"完成：{out}（{size_mb:.1f} MB）")
+        if not args.keep_bgm:
+            print("已清理纯 BGM 临时文件；最终只保留一个播客 MP3。")
     else:
         print(f"错误：输出文件未生成", file=sys.stderr)
         sys.exit(1)

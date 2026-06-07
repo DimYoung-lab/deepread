@@ -385,8 +385,9 @@ def _build_output_filenames(data: JSON, knowledge_data: JSON | None = None) -> d
         map-[guest-slug]-[YYYYMMDD].html
 
     Guest slug is derived from the guest name (last word of the Latin/pinyin name).
-    Date is extracted from visual_content.json meta.date or knowledge.json metadata.date,
-    falling back to today's date.
+    Date is extracted from visual_content.json meta.date or knowledge.json metadata.date.
+    It should be the actual interview date when available; otherwise it falls
+    back to today's date so output generation can continue.
     """
     # --- guest slug (prefer knowledge_data, fall back to visual_content) ---
     guest_name = _get_guest_name(knowledge_data) if knowledge_data else ""
@@ -429,7 +430,7 @@ def _extract_date(data: JSON, knowledge_data: JSON | None = None) -> str:
     Priority order:
     1. visual_content.json meta.date
     2. knowledge.json metadata.date
-    3. Today's date (fallback)
+    3. Today's date when no interview date was provided
     """
     from datetime import date as _date
 
@@ -448,7 +449,6 @@ def _extract_date(data: JSON, knowledge_data: JSON | None = None) -> str:
             if d and isinstance(d, str) and len(d) >= 8:
                 return _normalize_date(d)
 
-    # Fall back to today
     return _date.today().strftime("%Y%m%d")
 
 
@@ -458,7 +458,7 @@ def _normalize_date(raw: str) -> str:
     digits = "".join(ch for ch in raw if ch.isdigit())
     if len(digits) >= 8:
         return digits[:8]
-    return digits
+    raise ValueError(f"Invalid interview date {raw!r}: expected YYYY-MM-DD or YYYYMMDD.")
 
 
 # ---------------------------------------------------------------------------

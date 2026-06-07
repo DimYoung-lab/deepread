@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张小珺对谈姚顺宇：模型巨变、物理学与AI未来 — 学习卡片</title>
+<meta name="description" content="交互式学习卡片 — 张小珺对谈姚顺宇：模型巨变、物理学与AI未来">
+<style>
+/* ========================================================================
+   Learning Cards — Complete Design System
+   Mobile-first, typography-driven, card-based learning experience.
+   Editorial digital magazine aesthetic. Premium literary feel.
+   NOT Material Design. NOT a web app.
+   ======================================================================== */
+
+/* ========================================================================
+   1. FONT FACE DECLARATIONS
+   ======================================================================== */
+
+/* System Chinese serif + sans-serif stack — no web font downloads needed.
+   Priority: macOS (PingFang/Songti) > Windows (YaHei/FangSong) > Linux (Noto) > fallback */
+
+/* ========================================================================
+   2. DESIGN TOKENS — LIGHT THEME (cream + burgundy)
+   ======================================================================== */
+
+:root {
+  /* ---- Semantic Color Palette: Light ---- */
+  --color-surface:        #fdfbf7;
+  --color-surface-raised: #ffffff;
+  --color-surface-subtle: #f7f3eb;
+  --color-surface-hover:  #f3efe6;
+
+  --color-text-primary:   #1a1614;
+  --color-text-secondary: #4a4540;
+  --color-text-tertiary:  #8a8278;
+  --color-text-disabled:  #bfb8ad;
+  --color-text-inverse:   #fdfbf7;
+
+  --color-accent:         #722f37;
+  --color-accent-hover:   #5c262d;
+  --color-accent-soft:    rgba(114, 47, 55, 0.08);
+  --color-accent-medium:  rgba(114, 47, 55, 0.14);
+
+  --color-border:         #e0dad0;
+  --color-border-light:   #ede7de;
+  --color-border-focus:   #722f37;
+
+  --color-divider:        #d9d2c7;
+  --color-rule:           #c4bbb0;
+
+  /* ---- Theme Accent Colors (default palette — any number of themes supported;
+     cards use inline --theme-color which falls back to --color-accent) ---- */
+  --color-theme-1: #722f37;  /* burgundy */
+  --color-theme-2: #2f5272;  /* slate blue */
+  --color-theme-3: #3a6b4a;  /* forest green */
+  --color-theme-4: #8b6914;  /* bronze gold */
+  --color-theme-5: #6b3a72;  /* plum */
+  --color-theme-6: #2f7272;  /* teal */
+  --color-theme-7: #724a2f;  /* russet */
+
+  /* ---- Feedback Colors ---- */
+  --color-feedback-success: #3a6b4a;
+  --color-feedback-warning: #8b6914;
+  --color-feedback-error:   #8b1a1a;
+
+  /* ---- Typography: Chinese-Optimized Font Stack ---- */
+  --font-body:       "Hiragino Mincho ProN", "Songti SC", "Noto Serif SC",
+                     "Source Han Serif SC", "STSong", "FangSong", "SimSun",
+                     "Georgia", "Times New Roman", ui-serif, serif;
+  --font-heading:    "PingFang SC", "Noto Sans SC", "Source Han Sans SC",
+                     "Hiragino Sans GB", "Microsoft YaHei", "STHeiti",
+                     "Helvetica Neue", "Arial", ui-sans-serif, sans-serif;
+  --font-ui:         "PingFang SC", "Noto Sans SC", "Hiragino Sans GB",
+                     "Microsoft YaHei", "Segoe UI", ui-sans-serif, sans-serif;
+  --font-mono:       "JetBrains Mono", "SF Mono", "Fira Code",
+                     "Cascadia Code", "Consolas", "Courier New", monospace;
+  --font-display:    "Hiragino Mincho ProN", "Songti SC", "Noto Serif SC",
+                     "STSong", "Georgia", ui-serif, serif;
+
+  /* ---- Type Scale (modular, 1.2 ratio on mobile, 1.25 on desktop) ---- */
+  --text-3xs:    clamp(0.625rem, 0.6rem + 0.125vw, 0.6875rem);
+  --text-2xs:    clamp(0.6875rem, 0.66rem + 0.15vw, 0.75rem);
+  --text-xs:     clamp(0.75rem, 0.71rem + 0.18vw, 0.8125rem);
+  --text-sm:     clamp(0.8125rem, 0.77rem + 0.22vw, 0.875rem);
+  --text-base:   clamp(0.9375rem, 0.88rem + 0.28vw, 1.0625rem);
+  --text-md:     clamp(1.0625rem, 0.98rem + 0.4vw, 1.1875rem);
+  --text-lg:     clamp(1.1875rem, 1.06rem + 0.6vw, 1.375rem);
+  --text-xl:     clamp(1.375rem, 1.18rem + 1vw, 1.75rem);
+  --text-2xl:    clamp(1.625rem, 1.28rem + 1.6vw, 2.25rem);
+  --text-3xl:    clamp(1.875rem, 1.3rem + 2.5vw, 2.875rem);
+  --text-hero:   clamp(2.125rem, 1.5rem + 3.5vw, 3.75rem);
+
+  /* ---- Line Heights ---- */
+  --leading-body:    1.75;
+  --leading-heading: 1.15;
+  --leading-display: 1.05;
+  --leading-compact: 1.4;
+  --leading-relaxed: 1.85;
+
+  /* ---- Letter Spacing ---- */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.02em;
+  --tracking-wider:   0.05em;
+  --tracking-widest:  0.08em;
+  --tracking-heading: -0.015em;
+
+  /* ---- 4/8pt Spacing Scale ---- */
+  --space-1:  0.25rem;   /* 4px */
+  --space-2:  0.5rem;    /* 8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.5rem;    /* 24px */
+  --space-8:  2rem;      /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-14: 3.5rem;    /* 56px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+  --space-28: 7rem;      /* 112px */
+  --space-32: 8rem;      /* 128px */
+
+  /* ---- Border Radius ---- */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-3xl:  32px;
+  --radius-full: 9999px;
+
+  /* ---- Elevation (subtle, editorial — not Material) ---- */
+  --elevation-none:  none;
+  --elevation-low:   0 1px 2px rgba(26, 22, 20, 0.04),
+                     0 2px 8px rgba(26, 22, 20, 0.03);
+  --elevation-mid:   0 1px 4px rgba(26, 22, 20, 0.05),
+                     0 4px 16px rgba(26, 22, 20, 0.04);
+  --elevation-high:  0 2px 8px rgba(26, 22, 20, 0.06),
+                     0 8px 32px rgba(26, 22, 20, 0.05);
+  --elevation-raised: 0 4px 12px rgba(26, 22, 20, 0.08),
+                      0 12px 48px rgba(26, 22, 20, 0.06);
+
+  /* ---- Transitions ---- */
+  --duration-instant: 80ms;
+  --duration-fast:    180ms;
+  --duration-normal:  300ms;
+  --duration-slow:    500ms;
+  --duration-glacial: 800ms;
+
+  --ease-out-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint:cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  --ease-out-back:    cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ---- Layout ---- */
+  --deck-max-width:    680px;
+  --card-max-width:    600px;
+  --content-max-width: 560px;
+
+  /* ---- Z-Index Scale ---- */
+  --z-base:     0;
+  --z-above:    100;
+  --z-overlay:  200;
+  --z-sticky:   500;
+  --z-nav:      800;
+  --z-topbar:   900;
+  --z-progress: 1000;
+}
+
+/* ========================================================================
+   3. DARK THEME (navy + amber)
+   ======================================================================== */
+
+[data-theme="dark"] {
+  --color-surface:        #0b1120;
+  --color-surface-raised: #111827;
+  --color-surface-subtle: #0d1327;
+  --color-surface-hover:  #182032;
+
+  --color-text-primary:   #e4e1dc;
+  --color-text-secondary: #b0aca4;
+  --color-text-tertiary:  #6b6860;
+  --color-text-disabled:  #4a473f;
+  --color-text-inverse:   #0b1120;
+
+  --color-accent:         #d4a574;
+  --color-accent-hover:   #e0b98a;
+  --color-accent-soft:    rgba(212, 165, 116, 0.1);
+  --color-accent-medium:  rgba(212, 165, 116, 0.16);
+
+  --color-border:         #1e293b;
+  --color-border-light:   #162032;
+  --color-border-focus:   #d4a574;
+
+  --color-divider:        #1e2a40;
+  --color-rule:           #2a3550;
+
+  --color-theme-1: #d4a574;  /* amber */
+  --color-theme-2: #74a3d4;  /* sky blue */
+  --color-theme-3: #8cd474;  /* sage green */
+  --color-theme-4: #d4c174;  /* gold */
+  --color-theme-5: #d474a3;  /* rose */
+  --color-theme-6: #74d4c1;  /* mint */
+  --color-theme-7: #d49474;  /* copper */
+
+  --elevation-low:   0 1px 2px rgba(0, 0, 0, 0.2),
+                     0 2px 8px rgba(0, 0, 0, 0.15);
+  --elevation-mid:   0 1px 4px rgba(0, 0, 0, 0.25),
+                     0 4px 16px rgba(0, 0, 0, 0.2);
+  --elevation-high:  0 2px 8px rgba(0, 0, 0, 0.3),
+                     0 8px 32px rgba(0, 0, 0, 0.25);
+  --elevation-raised: 0 4px 12px rgba(0, 0, 0, 0.35),
+                      0 12px 48px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================================================
+   4. RESET & BASE
+   ======================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition: background var(--duration-normal) var(--ease-out-expo),
+              color var(--duration-normal) var(--ease-out-expo);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+::-moz-selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-accent-hover);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ========================================================================
+   5. TYPOGRAPHY UTILITIES
+   ======================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  color: var(--color-text-primary);
+}
+
+p {
+  margin-bottom: var(--space-4);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+strong, b {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+em, i {
+  font-style: italic;
+}
+
+small {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+blockquote {
+  margin: var(--space-6) 0;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+}
+
+/* ========================================================================
+   6. PROGRESS BAR
+   ======================================================================== */
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--color-accent);
+  z-index: var(--z-progress);
+  transition: width var(--duration-fast) linear;
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  transform-origin: left;
+}
+
+/* ========================================================================
+   7. TOP BAR
+   ======================================================================== */
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-topbar);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: linear-gradient(
+    180deg,
+    var(--color-surface) 60%,
+    transparent 100%
+  );
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  pointer-events: none;
+}
+
+.top-bar > * {
+  pointer-events: auto;
+}
+
+.top-bar-right {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  box-shadow: var(--elevation-low);
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: var(--elevation-mid);
+  transform: scale(1.05);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* ========================================================================
+   8. DECK CONTAINER
+   ======================================================================== */
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-20) var(--space-4) var(--space-24);
+  gap: var(--space-16);
+  max-width: var(--deck-max-width);
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ========================================================================
+   9. CARD BASE
+   ======================================================================== */
+
+.card {
+  width: 100%;
+  max-width: var(--card-max-width);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-3xl);
+  padding: var(--space-12) var(--space-8);
+  box-shadow: var(--elevation-low);
+  transition: box-shadow var(--duration-slow) var(--ease-out-expo),
+              transform var(--duration-slow) var(--ease-out-expo),
+              border-color var(--duration-normal) var(--ease-out-expo);
+  scroll-margin-top: var(--space-20);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    var(--color-accent-soft) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.card:hover {
+  box-shadow: var(--elevation-mid);
+  border-color: var(--color-border);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* ========================================================================
+   10. HERO CARD
+   ======================================================================== */
+
+.card-hero {
+  text-align: center;
+  padding: var(--space-16) var(--space-8) var(--space-14);
+  border: 2px solid var(--color-border);
+  background: linear-gradient(
+    180deg,
+    var(--color-surface-raised) 0%,
+    var(--color-accent-soft) 120%
+  );
+}
+
+.card-hero::before {
+  display: none;
+}
+
+.card-hero .card-badge {
+  display: inline-block;
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-radius: var(--radius-full);
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  margin-bottom: var(--space-8);
+  border: 1px solid var(--color-accent-medium);
+}
+
+.card-hero .card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-6);
+  color: var(--color-text-primary);
+}
+
+.card-hero .card-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-8);
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card-hero .card-meta {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-10);
+  letter-spacing: var(--tracking-wide);
+}
+
+.card-hero .card-meta span {
+  display: inline-block;
+  margin: 0 var(--space-3);
+  position: relative;
+}
+
+.card-hero .card-meta span:not(:last-child)::after {
+  content: "·";
+  display: inline-block;
+  margin-left: var(--space-3);
+  color: var(--color-text-disabled);
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ========================================================================
+   11. BUTTONS
+   ======================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  text-decoration: none;
+  line-height: var(--leading-compact);
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: none;
+  box-shadow: 0 2px 8px var(--color-accent-soft);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  box-shadow: 0 4px 16px rgba(114, 47, 55, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(114, 47, 55, 0.15);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1.5px solid var(--color-accent);
+}
+
+.btn-secondary:hover {
+  background: var(--color-accent-soft);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Dark mode button shadows */
+[data-theme="dark"] .btn-primary {
+  box-shadow: 0 2px 8px rgba(212, 165, 116, 0.15);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.25);
+}
+
+[data-theme="dark"] .btn-primary:active {
+  box-shadow: 0 1px 4px rgba(212, 165, 116, 0.1);
+}
+
+/* ========================================================================
+   12. THEME CARDS
+   ======================================================================== */
+
+.card-theme {
+  border-top: 3px solid var(--theme-color, var(--color-accent));
+  padding-top: var(--space-10);
+  background: var(--color-surface-raised);
+}
+
+.theme-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-6);
+  color: var(--theme-color, var(--color-accent));
+}
+
+.theme-badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  background: var(--theme-color, var(--color-accent));
+}
+
+.card-theme .card-claim {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-5);
+  color: var(--color-text-primary);
+}
+
+.card-theme .card-narrative {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-body);
+  margin-bottom: var(--space-6);
+}
+
+.card-theme .card-narrative p {
+  margin-bottom: var(--space-4);
+  text-indent: 2em;
+  /* hanging-punctuation not broadly supported; omit for now */
+}
+
+.card-theme .card-narrative p:first-child {
+  text-indent: 0;
+}
+
+/* ========================================================================
+   13. PULL QUOTE
+   ======================================================================== */
+
+.pull-quote {
+  margin: var(--space-8) 0;
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 4px 0 0 0 var(--color-accent);
+  font-style: italic;
+  font-size: var(--text-md);
+  line-height: var(--leading-compact);
+  color: var(--color-text-secondary);
+  position: relative;
+}
+
+.pull-quote::before {
+  content: "\201C";
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-3);
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.15;
+  font-family: var(--font-display);
+  pointer-events: none;
+}
+
+.pull-quote cite {
+  display: block;
+  margin-top: var(--space-4);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.pull-quote cite::before {
+  content: "\2014\00A0";
+}
+
+/* ========================================================================
+   14. EXPANDABLE SECTIONS
+   ======================================================================== */
+
+.expandable {
+  margin-top: var(--space-4);
+}
+
+.expand-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) 0;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+  letter-spacing: var(--tracking-wide);
+  text-align: left;
+}
+
+.expand-toggle:hover {
+  color: var(--color-accent);
+}
+
+.expand-toggle .arrow {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+  font-size: var(--text-2xs);
+  flex-shrink: 0;
+}
+
+.expand-toggle.open .arrow {
+  transform: rotate(90deg);
+}
+
+.expand-toggle.open {
+  color: var(--color-accent);
+}
+
+.expand-content {
+  display: none;
+  padding: var(--space-5) 0 var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-compact);
+  animation: expandReveal var(--duration-normal) var(--ease-out-expo);
+}
+
+.expand-content.visible {
+  display: block;
+}
+
+@keyframes expandReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expand-content .insight-item {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.expand-content .insight-item:last-child {
+  border-bottom: none;
+}
+
+.expand-content .insight-claim {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-family: var(--font-heading);
+}
+
+.expand-content .insight-expl {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-compact);
+}
+
+/* ========================================================================
+   15. CLOSING CARD
+   ======================================================================== */
+
+.card-closing {
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  border: 2px solid var(--color-border);
+  background: linear-gradient(
+    180deg,
+    var(--color-surface-raised) 0%,
+    var(--color-accent-soft) 120%
+  );
+}
+
+.card-closing::before {
+  display: none;
+}
+
+.card-closing h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-8);
+  letter-spacing: var(--tracking-tight);
+}
+
+.remember-list {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: var(--space-8) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.remember-item {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-5);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-lg);
+  transition: background var(--duration-fast) var(--ease-out-expo);
+}
+
+.remember-item:hover {
+  background: var(--color-accent-medium);
+}
+
+.remember-num {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 1.5em;
+  text-align: center;
+}
+
+.remember-text {
+  font-size: var(--text-base);
+  line-height: var(--leading-compact);
+  color: var(--color-text-primary);
+}
+
+/* ---- Role Tabs ---- */
+
+.role-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+  margin: var(--space-8) 0;
+}
+
+.role-tab {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.role-tab:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.role-tab.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  font-weight: 600;
+}
+
+.role-content {
+  display: none;
+  text-align: left;
+  font-size: var(--text-sm);
+  line-height: var(--leading-compact);
+  color: var(--color-text-secondary);
+  animation: expandReveal var(--duration-normal) var(--ease-out-expo);
+}
+
+.role-content.visible {
+  display: block;
+}
+
+.closing-links {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ========================================================================
+   16. NAV DOTS (SIDE NAVIGATION)
+   ======================================================================== */
+
+.nav-dots {
+  position: fixed;
+  right: var(--space-6);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-nav);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  box-shadow: var(--elevation-low);
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  background: var(--color-border);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  padding: 0;
+}
+
+.nav-dot:hover {
+  background: var(--color-text-tertiary);
+  transform: scale(1.3);
+}
+
+.nav-dot.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: scale(1.5);
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+}
+
+/* ========================================================================
+   17. MOBILE BOTTOM NAV
+   ======================================================================== */
+
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface-raised);
+  border-top: 1px solid var(--color-border-light);
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  box-shadow: 0 -1px 8px rgba(26, 22, 20, 0.04);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .bottom-nav {
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-nav button {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  letter-spacing: var(--tracking-wide);
+}
+
+.bottom-nav button:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.bottom-nav button:active {
+  transform: scale(0.96);
+}
+
+.bottom-nav .card-counter {
+  color: var(--color-text-tertiary);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ========================================================================
+   18. TIMESTAMP BADGE
+   ======================================================================== */
+
+.timestamp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-3xs);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  letter-spacing: var(--tracking-wide);
+}
+
+.timestamp-badge:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.timestamp-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ========================================================================
+   19. ANIMATIONS — CARD REVEAL
+   ======================================================================== */
+
+/* Cards appear at full opacity immediately — no scroll animation.
+   The content is already loaded; animating opacity during scroll creates
+   a visible flash that reads as broken, not designed. */
+
+/* Stagger effect: theme cards reveal one by one */
+.card-theme:nth-child(2)  { animation-delay: 0ms; }
+.card-theme:nth-child(3)  { animation-delay: 60ms; }
+.card-theme:nth-child(4)  { animation-delay: 120ms; }
+.card-theme:nth-child(5)  { animation-delay: 180ms; }
+.card-theme:nth-child(6)  { animation-delay: 240ms; }
+.card-theme:nth-child(7)  { animation-delay: 300ms; }
+.card-theme:nth-child(8)  { animation-delay: 360ms; }
+
+/* ========================================================================
+   20. COMPACT HERO OVERVIEW
+   ======================================================================== */
+
+/* Compact Hero Overview */
+.card-hero { text-align: left; padding: var(--space-10) var(--space-8); }
+.card-hero .card-badge { margin-bottom: var(--space-4); }
+.card-hero .card-title { font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-4); }
+
+.hero-guest {
+  font-family: var(--font-ui); font-size: var(--text-sm);
+  color: var(--color-text-secondary); margin-bottom: var(--space-2);
+}
+.hero-stats {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  color: var(--color-text-tertiary); margin-bottom: var(--space-6);
+}
+.hero-thesis {
+  margin: 0 0 var(--space-8) 0; padding: var(--space-5) var(--space-6);
+  background: var(--color-accent-soft); border-radius: var(--radius-lg);
+  box-shadow: inset 4px 0 0 0 var(--color-accent);
+  font-size: var(--text-base); font-style: italic;
+  line-height: var(--leading-compact); color: var(--color-text-secondary);
+}
+.theme-index-label {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  font-weight: 600; color: var(--color-text-tertiary);
+  text-transform: uppercase; letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-4);
+}
+
+/* Theme Index Grid */
+.theme-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+.theme-index-tile {
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-4); border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md); background: var(--color-surface-raised);
+  cursor: pointer; text-align: left; font-family: inherit;
+  transition: all var(--duration-fast);
+  box-shadow: inset 3px 0 0 0 var(--theme-color, var(--color-accent));
+}
+.theme-index-tile:hover {
+  border-color: var(--color-accent); box-shadow: var(--elevation-low), inset 3px 0 0 0 var(--theme-color, var(--color-accent));
+  transform: translateY(-1px);
+}
+.theme-index-tile .tile-name {
+  font-size: var(--text-sm); font-weight: 600; color: var(--color-text-primary);
+  line-height: var(--leading-compact);
+}
+.theme-index-tile .tile-summary {
+  font-size: var(--text-2xs); color: var(--color-text-tertiary);
+  line-height: var(--leading-compact);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ========================================================================
+   21. NEXT-THEME NAVIGATION
+   ======================================================================== */
+
+.next-theme {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-top: var(--space-8); padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+.next-theme-label {
+  font-family: var(--font-ui); font-size: var(--text-2xs);
+  color: var(--color-text-tertiary); text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+.next-theme-btn {
+  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 500;
+  color: var(--color-accent); background: none; border: none;
+  cursor: pointer; padding: 0; transition: color var(--duration-fast);
+}
+.next-theme-btn:hover { color: var(--color-accent-hover); text-decoration: underline; }
+
+/* ========================================================================
+   22. CLOSING LINKS SECTION
+   ======================================================================== */
+
+.closing-links {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  margin-top: var(--space-8); padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+.closing-links-label {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  color: var(--color-text-tertiary); margin-bottom: var(--space-1);
+}
+
+/* ========================================================================
+   23. RESPONSIVE — TABLET BREAKPOINT (768px and below)
+   ======================================================================== */
+
+@media (max-width: 768px) {
+  .deck {
+    padding: var(--space-14) var(--space-4) var(--space-32);
+    gap: var(--space-12);
+  }
+
+  .card {
+    padding: var(--space-10) var(--space-6);
+    border-radius: var(--radius-2xl);
+  }
+
+  .card-hero {
+    padding: var(--space-12) var(--space-6);
+    border-radius: var(--radius-3xl);
+  }
+
+  .card-hero .card-title {
+    font-size: var(--text-3xl);
+  }
+
+  .card-hero .card-subtitle {
+    font-size: var(--text-md);
+  }
+
+  .card-theme .card-claim {
+    font-size: var(--text-lg);
+  }
+
+  .card-closing {
+    padding: var(--space-12) var(--space-6);
+  }
+
+  .card-closing h2 {
+    font-size: var(--text-xl);
+  }
+
+  .pull-quote {
+    margin: var(--space-6) 0;
+    padding: var(--space-5) var(--space-6);
+    font-size: var(--text-base);
+  }
+
+  .nav-dots {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  .top-bar {
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .theme-index { grid-template-columns: repeat(2, 1fr); }
+  .card-hero { padding: var(--space-8) var(--space-6); }
+}
+
+/* ========================================================================
+   21. RESPONSIVE — MOBILE BREAKPOINT (480px and below)
+   ======================================================================== */
+
+@media (max-width: 480px) {
+  .deck {
+    padding: var(--space-12) var(--space-3) var(--space-28);
+    gap: var(--space-10);
+  }
+
+  .card {
+    padding: var(--space-8) var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .card-hero {
+    padding: var(--space-10) var(--space-5);
+    border-radius: var(--radius-2xl);
+    border-width: 1.5px;
+  }
+
+  .card-hero .card-badge {
+    font-size: var(--text-3xs);
+    padding: var(--space-1) var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .card-hero .card-title {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    margin-bottom: var(--space-4);
+  }
+
+  .card-hero .card-subtitle {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-6);
+  }
+
+  .card-hero .card-meta {
+    font-size: var(--text-2xs);
+    margin-bottom: var(--space-8);
+  }
+
+  .card-theme {
+    border-left-width: 4px;
+    padding-top: var(--space-8);
+  }
+
+  .card-theme .card-claim {
+    font-size: var(--text-md);
+  }
+
+  .card-theme .card-narrative {
+    font-size: var(--text-sm);
+  }
+
+  .card-theme .card-narrative p {
+    text-indent: 1.5em;
+  }
+
+  .card-theme .card-narrative p:first-child {
+    text-indent: 0;
+  }
+
+  .card-closing {
+    padding: var(--space-10) var(--space-5);
+    border-width: 1.5px;
+  }
+
+  .card-closing h2 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-6);
+  }
+
+  .pull-quote {
+    margin: var(--space-5) 0;
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-sm);
+    border-left-width: 3px;
+  }
+
+  .pull-quote::before {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .role-tabs {
+    gap: var(--space-1);
+  }
+
+  .role-tab {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-2xs);
+  }
+
+  .remember-list {
+    gap: var(--space-3);
+  }
+
+  .remember-item {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .remember-num {
+    font-size: var(--text-lg);
+  }
+
+  .remember-text {
+    font-size: var(--text-sm);
+  }
+
+  .closing-links {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .closing-links .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bottom-nav {
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .bottom-nav button {
+    padding: var(--space-1) var(--space-4);
+    font-size: var(--text-2xs);
+  }
+
+  .top-bar {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-3xs);
+  }
+
+  .timestamp-badge {
+    font-size: 0.625rem;
+  }
+
+  .theme-index { grid-template-columns: 1fr; }
+}
+
+/* ========================================================================
+   22. RESPONSIVE — WIDE SCREEN (1024px and above)
+   ======================================================================== */
+
+@media (min-width: 1024px) {
+  .deck {
+    max-width: 720px;
+    padding: var(--space-24) var(--space-6) var(--space-28);
+    gap: var(--space-20);
+  }
+
+  .card {
+    max-width: 660px;
+    padding: var(--space-14) var(--space-12);
+  }
+
+  .card-hero {
+    padding: var(--space-20) var(--space-12) var(--space-16);
+  }
+
+  .card-closing {
+    padding: var(--space-20) var(--space-12);
+  }
+
+  .nav-dots {
+    right: max(var(--space-8), calc((100vw - 720px) / 2 - 48px));
+  }
+
+  .card-theme .card-narrative {
+    font-size: var(--text-md);
+    max-width: 560px;
+  }
+}
+
+/* ========================================================================
+   23. PRINT STYLES
+   ======================================================================== */
+
+@media print {
+  /* Hide all interactive / fixed UI */
+  .progress-bar,
+  .top-bar,
+  .nav-dots,
+  .bottom-nav,
+  .theme-toggle,
+  .expand-toggle,
+  .role-tabs,
+  .hero-actions,
+  .closing-links {
+    display: none !important;
+  }
+
+  /* Show all expandable content */
+  .expand-content {
+    display: block !important;
+  }
+
+  .role-content {
+    display: block !important;
+  }
+
+  /* Reset body for print */
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-family: "Songti SC", "Noto Serif SC", "STSong", "SimSun", "Georgia", "Times New Roman", serif;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+
+  /* Remove backgrounds and shadows from cards */
+  .card {
+    box-shadow: none;
+    border: 1px solid #cccccc;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-radius: 0;
+    padding: 16pt 12pt;
+    margin-bottom: 12pt;
+    background: #ffffff;
+  }
+
+  .card-themed {
+    border-left: 3px solid #666666;
+  }
+
+  .card-hero,
+  .card-closing {
+    border: 2px solid #999999;
+    background: #ffffff;
+    text-align: center;
+  }
+
+  .card-hero .card-title {
+    font-size: 24pt;
+    color: #000000;
+  }
+
+  .card-hero .card-subtitle {
+    font-size: 12pt;
+  }
+
+  .card-theme .card-claim {
+    font-size: 16pt;
+    color: #000000;
+  }
+
+  .card-theme .card-narrative {
+    font-size: 11pt;
+    color: #333333;
+  }
+
+  /* Deck spacing */
+  .deck {
+    padding: 0;
+    gap: 12pt;
+    max-width: 100%;
+  }
+
+  /* Pull quotes */
+  .pull-quote {
+    border-left: 2px solid #333333;
+    background: #f5f5f5;
+    padding: 8pt 12pt;
+    font-style: italic;
+  }
+
+  .pull-quote::before {
+    display: none;
+  }
+
+  /* Remove card animations */
+  .card-in-view {
+    animation: none;
+  }
+
+  /* Show theme colors as subtle tints in print */
+  .card-theme { border-left-color: #666666; }
+
+  .theme-badge {
+    color: #333333;
+    font-size: 9pt;
+  }
+
+  .theme-badge .dot {
+    background: #666666;
+  }
+
+  /* Show URLs for links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #666666;
+  }
+
+  /* Ensure page breaks are sensible */
+  .card-hero,
+  .card-closing {
+    page-break-before: auto;
+  }
+
+  .card-theme + .card-theme {
+    page-break-before: avoid;
+  }
+
+  /* Insist on orphan/widow control */
+  p, li {
+    orphans: 2;
+    widows: 2;
+  }
+}
+
+/* ========================================================================
+   24. REDUCED MOTION
+   ======================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .card-in-view {
+    animation: none;
+  }
+
+  .expand-content {
+    animation: none;
+  }
+
+  .role-content {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ========================================================================
+   25. HIGH CONTRAST MODE (Windows)
+   ======================================================================== */
+
+@media (forced-colors: active) {
+  .card {
+    border: 2px solid CanvasText;
+  }
+
+  .card-theme {
+    border-left: 5px solid CanvasText;
+  }
+
+  .card-hero,
+  .card-closing {
+    border: 2px solid CanvasText;
+  }
+
+  .btn-primary {
+    border: 2px solid CanvasText;
+  }
+
+  .btn-secondary {
+    border: 2px solid CanvasText;
+  }
+
+  .pull-quote {
+    border-left: 4px solid CanvasText;
+  }
+
+  .progress-bar {
+    background: CanvasText;
+  }
+}
+
+/* ========================================================================
+   26. FOCUS VISIBLE (Keyboard Navigation)
+   ======================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ========================================================================
+   27. SELECTION
+   ======================================================================== */
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+::-moz-selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+/* ========================================================================
+   End of Design System
+   ======================================================================== */
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+<div class="top-bar" id="topBar">
+  <span>姚顺宇 · Learning Cards</span>
+  <div class="top-bar-right">
+    <span id="cardCounter"></span>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换亮色/暗色主题">🌓</button>
+  </div>
+</div>
+
+<nav class="nav-dots" id="navDots" aria-label="卡片导航">
+  <button class="nav-dot active" data-index="0" aria-label="Card 1"></button>
+  <button class="nav-dot" data-index="1" aria-label="Card 2"></button>
+  <button class="nav-dot" data-index="2" aria-label="Card 3"></button>
+  <button class="nav-dot" data-index="3" aria-label="Card 4"></button>
+  <button class="nav-dot" data-index="4" aria-label="Card 5"></button>
+  <button class="nav-dot" data-index="5" aria-label="Card 6"></button>
+  <button class="nav-dot" data-index="6" aria-label="Card 7"></button>
+  <button class="nav-dot" data-index="7" aria-label="Card 8"></button>
+  <button class="nav-dot" data-index="8" aria-label="Card 9"></button>
+</nav>
+
+<main class="deck" id="deck">
+  <article class="card card-hero" id="card-0">
+  <div class="hero-guest">🎙 姚顺宇, Google DeepMind 研究员</div>
+  <div class="hero-stats">⏱ 3h 47m · 24 core insights</div>
+  <blockquote class="hero-thesis">AI研究从个人英雄走向系统化集体工程</blockquote>
+  <div class="theme-index-label">📋 Content</div>
+  <div class="theme-index">
+    <button class="theme-index-tile" data-theme-index="1" style="border-left: 3px solid #6C5CE7">
+      <span class="tile-name">模型没有撞墙，问题变成定义任务</span>
+      <span class="tile-summary">姚顺宇认为行业焦点从能不能做，转向任务是否被良好定义、反馈是否清晰。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="2" style="border-left: 3px solid #00B894">
+      <span class="tile-name">产品形态释放模型能力</span>
+      <span class="tile-summary">Claude Code、Manus和豆包说明，能力存在不等于用户能感知，产品壳会改变模型价值。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="3" style="border-left: 3px solid #E17055">
+      <span class="tile-name">Coding是后训练的理想试验场</span>
+      <span class="tile-summary">清晰reward、强数据源和可执行环境，使coding成为大模型最先显著改变工作的领域。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="4" style="border-left: 3px solid #0984E3">
+      <span class="tile-name">AI研究进入集体主义</span>
+      <span class="tile-summary">大模型已经从寻找单点英雄，转向组织、平台和系统工程能否协作。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="5" style="border-left: 3px solid #FDCB6E">
+      <span class="tile-name">物理训练提供研究气质</span>
+      <span class="tile-summary">物理不是AI硬技能捷径，但训练了系统性、黑盒意识和经验定律思维。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="6" style="border-left: 3px solid #E84393">
+      <span class="tile-name">大公司和创业公司的打法不同</span>
+      <span class="tile-summary">小团队敢赌，大公司要管理品牌、法律、安全和资源，但大公司有全栈系统优势。</span>
+    </button>
+    <button class="theme-index-tile" data-theme-index="7" style="border-left: 3px solid #00CEC9">
+      <span class="tile-name">靠谱比聪明更稀缺</span>
+      <span class="tile-summary">姚顺宇反复降低聪明叙事，强调细致、负责、可信和系统性判断。</span>
+    </button>
+  </div>
+  <button class="btn btn-primary hero-start">开始学习 →</button>
+</article>
+  <article class="card card-theme" id="card-1" style="--theme-color: #6C5CE7">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 1 / 7
+  </div>
+  <h2 class="card-claim">模型没有撞墙，问题变成定义任务</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">姚顺宇认为行业焦点从能不能做，转向任务是否被良好定义、反馈是否清晰。</p>
+  <div class="card-narrative">
+    <p>姚顺宇认为行业焦点从能不能做，转向任务是否被良好定义、反馈是否清晰。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"很难，比如说OpenAI就干不了，宅男也比较难。大公司和和start up他打法本来就不一样，因为start up重要的是make bt就是我得我得赌一件事儿是我觉得大家现在每个人都是冲浪的人，本质上是一个浪，而不是你那个冲浪的人。因为AI这个事儿本来也不太需要脑子，太需要脑子，真的不太需要脑子。"</p>
+    <cite><span class="timestamp-badge" data-time="00:45">00:45</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">AI行业更像冲浪，浪潮本身比单个冲浪者更重要。</div>
+        <div class="insight-expl">姚顺宇用冲浪隐喻降低个人英雄色彩，强调关键是抓住浪而不是夸大个人。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">模型进步不能只看benchmark涨点，用户体验可能在高分区间出现非线性变化。</div>
+        <div class="insight-expl">他反对简单用百分比变化判断能力是否放缓。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">ML coding对Google特别有价值，因为Google自己就是AI research全栈大户。</div>
+        <div class="insight-expl">如果AI能加速训练、硬件、模型连接和实验管理，会直接改善研发系统。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_2, theme_3
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="2">产品形态释放模型能力 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-2" style="--theme-color: #00B894">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 2 / 7
+  </div>
+  <h2 class="card-claim">产品形态释放模型能力</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">Claude Code、Manus和豆包说明，能力存在不等于用户能感知，产品壳会改变模型价值。</p>
+  <div class="card-narrative">
+    <p>Claude Code、Manus和豆包说明，能力存在不等于用户能感知，产品壳会改变模型价值。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"对，当然事实情况就是你去看这个Claude Code最早版本的github的那个code。其实那个code也就从某种意义上说写的也不是特别的干净。但是我觉得他很重要的事儿是他给大家展示的这种可能性。那可能展示这种可能性之后，未来香港欧欧朋广告作者自己也加入楼盘。然后那可能就是这些模型的的实验室，或者说一些大一点创业公司会很快跟上，然后把这个东西打磨成一个真正可用的产品。"</p>
+    <cite><span class="timestamp-badge" data-time="12:00">12:00</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">Claude Code的意义不是突然出现新能力，而是展示了模型能做long horizon工作的可能性。</div>
+        <div class="insight-expl">姚顺宇认为技术准备早已存在，产品让行业形成共识。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Seedance体现的是多模态生成细节和数据产品能力，而不是明确范式变化。</div>
+        <div class="insight-expl">姚顺宇承认压力存在，但不把它视为新范式。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Claude 3.5/3.6后，coding作为效率工具被公众真正感知。</div>
+        <div class="insight-expl">模型能力和产品壳结合，让软件工程圈意识到这不是演示。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Gemini 2.5让业内感知到Google开始上道。</div>
+        <div class="insight-expl">姚顺宇认为2.5是开始有人真正使用的模型。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_3
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="3">Coding是后训练的理想试验场 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-3" style="--theme-color: #E17055">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 3 / 7
+  </div>
+  <h2 class="card-claim">Coding是后训练的理想试验场</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">清晰reward、强数据源和可执行环境，使coding成为大模型最先显著改变工作的领域。</p>
+  <div class="card-narrative">
+    <p>清晰reward、强数据源和可执行环境，使coding成为大模型最先显著改变工作的领域。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"这个很难量化的说，因为就是你得给一个标准，我才能量化的告诉你。因为如果你给的标准是，比如说我就看在某一个match mark，比如说three bench上，它每一个月涨多少个点，那这个事儿是肯定会变慢的。因为根据定义这个完成bug最高就到100%，所以你越接近那肯定是越跑的越慢。但是这可能并不代表用户体验这个模型的能力增长变慢了。因为可能从50%到60%，他可能感觉好了一点。"</p>
+    <cite><span class="timestamp-badge" data-time="25:38">25:38</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">模型进步不能只看benchmark涨点，用户体验可能在高分区间出现非线性变化。</div>
+        <div class="insight-expl">他反对简单用百分比变化判断能力是否放缓。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Claude 3.5/3.6后，coding作为效率工具被公众真正感知。</div>
+        <div class="insight-expl">模型能力和产品壳结合，让软件工程圈意识到这不是演示。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">ML coding对Google特别有价值，因为Google自己就是AI research全栈大户。</div>
+        <div class="insight-expl">如果AI能加速训练、硬件、模型连接和实验管理，会直接改善研发系统。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_2
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="4">AI研究进入集体主义 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-4" style="--theme-color: #0984E3">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 4 / 7
+  </div>
+  <h2 class="card-claim">AI研究进入集体主义</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">大模型已经从寻找单点英雄，转向组织、平台和系统工程能否协作。</p>
+  <div class="card-narrative">
+    <p>大模型已经从寻找单点英雄，转向组织、平台和系统工程能否协作。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"很难，比如说OpenAI就干不了，宅男也比较难。大公司和和start up他打法本来就不一样，因为start up重要的是make bt就是我得我得赌一件事儿是我觉得大家现在每个人都是冲浪的人，本质上是一个浪，而不是你那个冲浪的人。因为AI这个事儿本来也不太需要脑子，太需要脑子，真的不太需要脑子。"</p>
+    <cite><span class="timestamp-badge" data-time="00:45">00:45</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">AI行业更像冲浪，浪潮本身比单个冲浪者更重要。</div>
+        <div class="insight-expl">姚顺宇用冲浪隐喻降低个人英雄色彩，强调关键是抓住浪而不是夸大个人。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">大模型侧已经过了个人英雄主义时代，更多是集体能否围绕同一目标工作。</div>
+        <div class="insight-expl">个人可以贡献技术，但产品效果很难单点归因。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Gemini 2.5让业内感知到Google开始上道。</div>
+        <div class="insight-expl">姚顺宇认为2.5是开始有人真正使用的模型。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">AI研究者最稀缺的仍是靠谱：做事细、对结果负责、能把系统因素想全。</div>
+        <div class="insight-expl">他认为聪明被过度神话，训练环境和机会同样重要。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_2
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="5">物理训练提供研究气质 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-5" style="--theme-color: #FDCB6E">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 5 / 7
+  </div>
+  <h2 class="card-claim">物理训练提供研究气质</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">物理不是AI硬技能捷径，但训练了系统性、黑盒意识和经验定律思维。</p>
+  <div class="card-narrative">
+    <p>物理不是AI硬技能捷径，但训练了系统性、黑盒意识和经验定律思维。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"这么说就是说他我觉得机器人的模型可能更多的处于feature engineering的时代。就是你让你有一个给定的环境，给定的场景，你去优化这个场景，大家是知道怎么做的。但是。"</p>
+    <cite><span class="timestamp-badge" data-time="01:05:08">01:05:08</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">机器人还没有到GPT式泛化阶段，更多仍是feature engineering。</div>
+        <div class="insight-expl">给定场景可以优化，但水平迁移到所有相关任务的能力还未形成。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">物理对AI的帮助不是硬技能，而是系统性和刨根问底的性格。</div>
+        <div class="insight-expl">姚顺宇不神化物理背景，但承认它塑造了研究方式。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">今天的大模型研究像早期热力学：缺少微观机制解释，但经验定律足以推动工程进展。</div>
+        <div class="insight-expl">这解释了为什么AI能在理论不完整时持续发展。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_2
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="6">大公司和创业公司的打法不同 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-6" style="--theme-color: #E84393">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 6 / 7
+  </div>
+  <h2 class="card-claim">大公司和创业公司的打法不同</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">小团队敢赌，大公司要管理品牌、法律、安全和资源，但大公司有全栈系统优势。</p>
+  <div class="card-narrative">
+    <p>小团队敢赌，大公司要管理品牌、法律、安全和资源，但大公司有全栈系统优势。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"对，当然事实情况就是你去看这个Claude Code最早版本的github的那个code。其实那个code也就从某种意义上说写的也不是特别的干净。但是我觉得他很重要的事儿是他给大家展示的这种可能性。那可能展示这种可能性之后，未来香港欧欧朋广告作者自己也加入楼盘。然后那可能就是这些模型的的实验室，或者说一些大一点创业公司会很快跟上，然后把这个东西打磨成一个真正可用的产品。"</p>
+    <cite><span class="timestamp-badge" data-time="12:00">12:00</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">Claude Code的意义不是突然出现新能力，而是展示了模型能做long horizon工作的可能性。</div>
+        <div class="insight-expl">姚顺宇认为技术准备早已存在，产品让行业形成共识。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">Gemini 2.5让业内感知到Google开始上道。</div>
+        <div class="insight-expl">姚顺宇认为2.5是开始有人真正使用的模型。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">ML coding对Google特别有价值，因为Google自己就是AI research全栈大户。</div>
+        <div class="insight-expl">如果AI能加速训练、硬件、模型连接和实验管理，会直接改善研发系统。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_2
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+  <div class="next-theme">
+    <span class="next-theme-label">Next</span>
+    <button class="next-theme-btn" data-next-index="7">靠谱比聪明更稀缺 →</button>
+  </div>
+</article>
+
+<article class="card card-theme" id="card-7" style="--theme-color: #00CEC9">
+  <div class="theme-badge">
+    <span class="dot"></span>
+    Theme 7 / 7
+  </div>
+  <h2 class="card-claim">靠谱比聪明更稀缺</h2>
+  <p style="font-size:var(--fs-md);color:var(--text-secondary);margin-bottom:var(--sp-lg)">姚顺宇反复降低聪明叙事，强调细致、负责、可信和系统性判断。</p>
+  <div class="card-narrative">
+    <p>姚顺宇反复降低聪明叙事，强调细致、负责、可信和系统性判断。 这个主题贯穿访谈中的模型、产品、组织和个人路径，帮助读者理解姚顺宇为什么总是把问题拉回任务定义、反馈信号和系统责任。</p>
+  </div>
+  <blockquote class="pull-quote">
+    <p>"很难，比如说OpenAI就干不了，宅男也比较难。大公司和和start up他打法本来就不一样，因为start up重要的是make bt就是我得我得赌一件事儿是我觉得大家现在每个人都是冲浪的人，本质上是一个浪，而不是你那个冲浪的人。因为AI这个事儿本来也不太需要脑子，太需要脑子，真的不太需要脑子。"</p>
+    <cite><span class="timestamp-badge" data-time="00:45">00:45</span></cite>
+  </blockquote>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 为什么这很重要
+    </button>
+    <div class="expand-content">
+      <div class="insight-item">
+        <div class="insight-claim">AI行业更像冲浪，浪潮本身比单个冲浪者更重要。</div>
+        <div class="insight-expl">姚顺宇用冲浪隐喻降低个人英雄色彩，强调关键是抓住浪而不是夸大个人。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">ML coding对Google特别有价值，因为Google自己就是AI research全栈大户。</div>
+        <div class="insight-expl">如果AI能加速训练、硬件、模型连接和实验管理，会直接改善研发系统。</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-claim">AI研究者最稀缺的仍是靠谱：做事细、对结果负责、能把系统因素想全。</div>
+        <div class="insight-expl">他认为聪明被过度神话，训练环境和机会同样重要。</div>
+      </div>
+    </div>
+  </div>
+  <div class="expandable">
+    <button class="expand-toggle" aria-expanded="false">
+      <span class="arrow">▸</span> 关联主题：theme_1, theme_2
+    </button>
+    <div class="expand-content">
+    <p>此主题与以下概念相关联，在知识图谱中可看到连线关系。</p>
+    </div>
+  </div>
+  <div style="margin-top:var(--sp-lg);font-family:var(--font-ui);font-size:var(--fs-xs);color:var(--text-muted)">
+    ⏱ ~1 min read
+  </div>
+</article>
+  <article class="card card-closing" id="card-closing">
+  <h2>如果你只记住三件事</h2>
+  <ol class="remember-list">
+    <li class="remember-item">
+      <span class="remember-num">1</span>
+      <span class="remember-text">模型没有简单撞墙。</span>
+    </li>
+    <li class="remember-item">
+      <span class="remember-num">2</span>
+      <span class="remember-text">产品形态释放模型能力。</span>
+    </li>
+    <li class="remember-item">
+      <span class="remember-num">3</span>
+      <span class="remember-text">Coding先爆发有结构性原因。</span>
+    </li>
+  </ol>
+  <p style="font-size:var(--fs-md);margin-top:var(--sp-xl);color:var(--text-secondary)">阅读完整报告以获取详细分析和建议。</p>
+  <div class="closing-links">
+    <span class="closing-links-label">Continue Exploring</span>
+    <a href="report-姚顺宇-20260511.md" class="btn btn-secondary">深度报告 →</a>
+    <a href="map-姚顺宇-20260511.html" class="btn btn-secondary">Knowledge Map →</a>
+    <a href="tldr-姚顺宇-20260511.md" class="btn btn-secondary">TL;DR →</a>
+  </div>
+</article>
+</main>
+
+<div class="bottom-nav" id="bottomNav">
+  <button id="prevCard" aria-label="上一张卡片">← 上一张</button>
+  <span class="card-counter" id="mobileCounter"></span>
+  <button id="nextCard" aria-label="下一张卡片">下一张 →</button>
+</div>
+
+<script>
+/**
+ * Learning Cards — Interactive Script
+ * Vanilla JS. Swipe, keyboard, touch, and progress tracking.
+ */
+(function(){"use strict";
+
+function ready(fn){document.readyState!=="loading"?fn():document.addEventListener("DOMContentLoaded",fn)}
+
+ready(function(){
+  try{
+    initTheme();
+    initNav();
+    initHeroNav();
+    initExpandables();
+    initIntersectionObserver();
+    initRoleTabs();
+    initKeyboardShortcuts();
+    initTouchSupport();
+    initProgressBar();
+    initDotNav();
+  }catch(e){console.error("[Cards] Init error:",e)}
+});
+
+/* ---- Theme ---- */
+function initTheme(){
+  var btn=document.getElementById("themeToggle");if(!btn)return;
+  var s=localStorage.getItem("learning-cards-theme");
+  if(s)document.documentElement.setAttribute("data-theme",s);
+  else if(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)
+    document.documentElement.setAttribute("data-theme","dark");
+  btn.addEventListener("click",function(){
+    var c=document.documentElement.getAttribute("data-theme");
+    var n=c==="dark"?"light":"dark";
+    document.documentElement.setAttribute("data-theme",n);
+    localStorage.setItem("learning-cards-theme",n);
+  });
+}
+
+/* ---- Card Navigation ---- */
+var allCards=[],currentIndex=0;
+
+function initNav(){
+  allCards=document.querySelectorAll(".card");if(!allCards.length)return;
+  currentIndex=0;
+  updateCounter();
+
+  var prev=document.getElementById("prevCard");
+  var next=document.getElementById("nextCard");
+  if(prev)prev.addEventListener("click",function(){goToCard(currentIndex-1)});
+  if(next)next.addEventListener("click",function(){goToCard(currentIndex+1)});
+
+  // Handle hero "Start Reading" button
+  var startBtn = document.querySelector(".hero-start");
+  if (startBtn) {
+    startBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      goToCard(1);
+    });
+  }
+}
+
+function initHeroNav() {
+  // Theme index tile clicks
+  document.addEventListener("click", function(e) {
+    var tile = e.target.closest(".theme-index-tile");
+    if (!tile) return;
+    var idx = parseInt(tile.getAttribute("data-theme-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
+  // Next-theme button clicks
+  document.addEventListener("click", function(e) {
+    var btn = e.target.closest(".next-theme-btn");
+    if (!btn) return;
+    var idx = parseInt(btn.getAttribute("data-next-index"));
+    if (!isNaN(idx) && idx >= 1) {
+      goToCard(idx);
+    }
+  });
+}
+
+function goToCard(index){
+  if(index<0||index>=allCards.length)return;
+  currentIndex=index;
+  allCards[index].scrollIntoView({behavior:"smooth",block:"center"});
+  updateCounter();
+  updateActiveDot();
+}
+
+function updateCounter(){
+  var c=document.getElementById("cardCounter");
+  var m=document.getElementById("mobileCounter");
+  var txt=(currentIndex+1)+" / "+allCards.length;
+  if(c)c.textContent=txt;
+  if(m)m.textContent=txt;
+}
+
+/* ---- Expandables ---- */
+function initExpandables(){
+  document.addEventListener("click",function(e){
+    var btn=e.target.closest(".expand-toggle");if(!btn)return;
+    btn.classList.toggle("open");
+    var content=btn.nextElementSibling;
+    if(content&&content.classList.contains("expand-content")){
+      content.classList.toggle("visible");
+    }
+  });
+}
+
+/* ---- Intersection Observer for card tracking ---- */
+function initIntersectionObserver(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&e.intersectionRatio>0.4){
+        e.target.classList.add("card-in-view");
+        // Find index
+        var idx=Array.from(allCards).indexOf(e.target);
+        if(idx>=0){currentIndex=idx;updateCounter();updateActiveDot();}
+      }
+    });
+  },{threshold:[0,0.3,0.5,0.8]});
+
+  allCards.forEach(function(c){obs.observe(c)});
+}
+
+/* ---- Role Tabs (Closing Card) ---- */
+function initRoleTabs(){
+  document.addEventListener("click",function(e){
+    var tab=e.target.closest(".role-tab");if(!tab)return;
+    var role=tab.getAttribute("data-role");
+    // Deactivate all tabs in this group
+    var group=tab.parentElement;
+    group.querySelectorAll(".role-tab").forEach(function(t){t.classList.remove("active")});
+    tab.classList.add("active");
+    // Show matching content
+    var container=group.parentElement;
+    container.querySelectorAll(".role-content").forEach(function(c){c.classList.remove("visible")});
+    var target=container.querySelector('.role-content[data-role="'+role+'"]');
+    if(target)target.classList.add("visible");
+  });
+}
+
+/* ---- Keyboard Shortcuts ---- */
+function initKeyboardShortcuts(){
+  document.addEventListener("keydown",function(e){
+    var inp=e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.isContentEditable;
+    if(inp)return;
+
+    if(e.key==="ArrowRight"||e.key==="ArrowDown"||e.key==="j"){
+      e.preventDefault();goToCard(currentIndex+1);
+    }else if(e.key==="ArrowLeft"||e.key==="ArrowUp"||e.key==="k"){
+      e.preventDefault();goToCard(currentIndex-1);
+    }else if(e.key===" "||e.key==="Enter"){
+      // Expand current card's first expandable
+      var card=allCards[currentIndex];
+      if(card){
+        var toggle=card.querySelector(".expand-toggle");
+        if(toggle){e.preventDefault();toggle.click();}
+      }
+    }else if(e.key>="1"&&e.key<="9"){
+      e.preventDefault();goToCard(parseInt(e.key)-1);
+    }
+  });
+}
+
+/* ---- Touch / Swipe ---- */
+function initTouchSupport(){
+  var startX=0,startY=0;
+  document.addEventListener("touchstart",function(e){
+    startX=e.touches[0].clientX;startY=e.touches[0].clientY;
+  },{passive:true});
+
+  document.addEventListener("touchend",function(e){
+    var dx=e.changedTouches[0].clientX-startX;
+    var dy=e.changedTouches[0].clientY-startY;
+    var absDx=Math.abs(dx),absDy=Math.abs(dy);
+
+    // Only trigger if horizontal swipe is dominant and significant
+    if(absDx>absDy&&absDx>50){
+      if(dx<-30)goToCard(currentIndex+1);
+      else if(dx>30)goToCard(currentIndex-1);
+    }
+  },{passive:true});
+}
+
+/* ---- Progress Bar ---- */
+function initProgressBar(){
+  var bar=document.getElementById("progressBar");if(!bar)return;
+  var tick=false;
+  window.addEventListener("scroll",function(){
+    if(!tick){requestAnimationFrame(function(){
+      var h=document.documentElement.scrollHeight-innerHeight;
+      bar.style.width=(h>0?Math.min((scrollY/h)*100,100):0)+"%";tick=false;
+    });tick=true}
+  },{passive:true});
+}
+
+/* ---- Dot Nav ---- */
+function initDotNav(){
+  var container=document.getElementById("navDots");if(!container)return;
+  container.addEventListener("click",function(e){
+    var dot=e.target.closest(".nav-dot");if(!dot)return;
+    var idx=parseInt(dot.getAttribute("data-index"));
+    if(!isNaN(idx))goToCard(idx);
+  });
+}
+
+function updateActiveDot(){
+  var dots=document.querySelectorAll(".nav-dot");
+  dots.forEach(function(d,i){
+    d.classList[i===currentIndex?"add":"remove"]("active");
+  });
+}
+
+})();
+
+</script>
+</body>
+</html>

@@ -26,7 +26,7 @@ Transcript file (.docx / .txt / .md)
 [Stage 4: Synthesize]   → knowledge.json           (Claude merge + cross-cutting)
 [Stage 4.5: Visual Synthesis] → visual_content.json (Claude; inputs: knowledge.json + optional report-*.md)
 [Stage 5: Present]      → selected output formats   (Claude for MD + scripts/generate_*.py for HTML/Cards/Audio/PDF; at least one required)
-[Stage 5b: Verify]      ── quality checks on all 8 outputs
+[Stage 5b: Verify]      ── quality checks on all 7 user-facing outputs
 ```
 
 Each stage produces a well-defined intermediate artifact. This decouples the pipeline so stages can be re-run independently and output formats can be generated in parallel.
@@ -43,7 +43,9 @@ Run the parse script:
 python scripts/parse_docx.py <transcript.docx> --output output/[dir]/data/turns.json
 ```
 
-The script auto-detects speaker roles (guest vs interviewer by turn count), normalizes timestamps (MM:SS / HH:MM:SS → seconds), and extracts metadata.
+Before creating `output/[dir]`, determine the interview date and use it in the directory name: `output/[guest-slug]-[interview-date-YYYYMMDD]/`. The date source priority is: user-provided interview date → transcript/docx header or source metadata → a reliable date in the transcript title/body → today's date when no interview date was provided. Do not use the output folder creation date as the naming source.
+
+The script auto-detects speaker roles (guest vs interviewer by turn count), normalizes timestamps (MM:SS / HH:MM:SS → seconds), and extracts metadata. `metadata.date` should mean the actual interview date when available; if no interview date is provided, use today's date consistently for the output directory and files.
 
 ### For .txt / .md files
 
@@ -345,7 +347,7 @@ Save as `reports/social-[guest-lastname]-[YYYYMMDD].md`.
 
 ### Output 6: Short Podcast
 
-Prepare an editorial brief, write the podcast script with the language model, review it, then render it to MP3:
+Prepare an editorial brief, write the podcast script with the language model, review it, render it to MP3, then mix in BGM. The final user-facing audio is a single MP3 named `podcast-[guest]-[YYYYMMDD].mp3`.
 
 ```bash
 python scripts/prepare_podcast_brief.py output/[dir]/data/knowledge.json --turns output/[dir]/data/turns-corrected.json --visual output/[dir]/data/visual_content.json --output output/[dir]/audio/podcast-brief-[guest]-[YYYYMMDD].md
@@ -355,17 +357,26 @@ python scripts/prepare_podcast_brief.py output/[dir]/data/knowledge.json --turns
 python scripts/review_podcast_script.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --knowledge output/[dir]/data/knowledge.json
 
 python scripts/generate_audio.py output/[dir]/audio/podcast-script-[guest]-[YYYYMMDD].md --output output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3
+
+python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
 ```
 
 `prepare_podcast_brief.py` applies the adaptive duration policy: `target_minutes = clamp(round(source_minutes * 0.10), 3, 15)` and `target_chars = target_minutes * 320` with tolerance. It produces a source brief, not the final script.
 
 The final script MUST be written by the language model from the brief. It should sound like a polished solo podcast for listeners who do not have time to watch the full interview: explain what the guest believes, why, what is at stake, and what listeners should remember. Do not mechanically stitch bullets, quotes, or themes.
 
+Opening format: start directly with a strong two-part opening, without labels or metadata. Use this pattern:
+1. `今天我们用[目标时长]拆解[嘉宾]在[节目/访谈]里的核心判断。`
+2. `这场访谈表面聊[A、B、C]，但真正的主线是：[一句话核心问题/判断]。`
+Then move immediately into the first theme. Do not say `HOST:`、`GUEST:`、`欢迎收听`、`本期播客将总结` or any production note.
+
 Before TTS, run a podcast review pass:
 - Ask a reviewer agent/model to use [references/podcast-review-guide.md](references/podcast-review-guide.md) and reject the script if it sounds like a report index, has awkward repeated phrasing, includes internal prompt language, makes claims that do not follow, or fails to explain the guest's views.
 - Run `review_podcast_script.py` for hard-rule checks. If either review fails, revise the script and rerun the review.
 
 `generate_audio.py` uses MiniMax Token Plan (speech-2.8 series via `mmx-cli`) to render the script as MP3. Voice and speed controls are for natural listening preference only; do not slow speech down to force a fixed duration. Requires `mmx-cli` installed and authenticated.
+
+`generate_bgm_podcast.py` then generates temporary instrumental BGM, mixes it into the voiceover, writes the mixed result back to `podcast-[guest]-[YYYYMMDD].mp3`, and deletes the pure BGM temporary file. Do not keep separate raw voiceover, `*-bgm.mp3`, or `bgm-podcast-*.mp3` files in final output directories.
 
 ### Output 7: Styled PDF（新增）
 
@@ -389,23 +400,9 @@ Social Markdown remains an output for copying into social platforms, but the PDF
 
 **Requirements:** `markdown-it-py`, `Jinja2`, and `playwright` (all pre-installed in the skill environment).
 
-### Output 8: 播客BGM增强版（新增）
-
-Generate background music and mix with the podcast voiceover:
-
-```bash
-python scripts/generate_bgm_podcast.py output/[dir]/audio/podcast-[guest]-[YYYYMMDD].mp3 --knowledge output/[dir]/data/knowledge.json
-```
-
-Uses MiniMax Token Plan `music-2.6` model to generate an instrumental background track matching the interview's mood, then mixes it with the voiceover using ffmpeg (BGM at 25% volume). Requires `ffmpeg`.
-
-Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest]-[YYYYMMDD].mp3`.
-
----
-
 ## 选择性输出模式 (Selective Output Generation)
 
-无需每次生成全部 8 种输出。根据需求选择：
+无需每次生成全部 7 种用户可见输出。根据需求选择：
 
 | 需求 | 最小流水线 |
 |------|-----------|
@@ -413,23 +410,24 @@ Save to `audio/podcast-[guest]-[YYYYMMDD]-bgm.mp3` and `audio/bgm-podcast-[guest
 | 只需交互卡片或知识图谱 | 阶段 1→2→3→4→4.5，然后运行对应脚本 |
 | 从已有 Markdown 生成 PDF | 仅 Output 7（运行 generate_pdf.py）— 无需流水线 |
 | 播客音频 | 阶段 1→2→3→4（+4.5 可获得更丰富内容），准备 brief → 模型写稿 → 审稿 → Output 6 |
-| 完整输出（全部 8 种） | 全部阶段，全部输出 |
+| 完整输出（全部 7 种用户可见输出） | 全部阶段，全部输出 |
 
 ### 独立输出指南
 
 - **Output 1/2/5**（Markdown 报告）：仅需 knowledge.json，Claude 直接撰写
 - **Output 3/4**（HTML 交互）：需 visual_content.json + 对应 Python 脚本
-- **Output 6**（播客音频）：需 knowledge.json + prepare_podcast_brief.py + 模型写稿 + review_podcast_script.py + generate_audio.py
+- **Output 6**（播客音频）：需 knowledge.json + prepare_podcast_brief.py + 模型写稿 + review_podcast_script.py + generate_audio.py + generate_bgm_podcast.py；最终只保留一个 `podcast-[guest]-[YYYYMMDD].mp3`
 - **Output 7**（PDF）：需对应 Markdown 文件 + generate_pdf.py
-- **Output 8**（播客BGM）：需播客 MP3 + knowledge.json + generate_bgm_podcast.py
 
 ### Output Directory Convention
 
 Organize outputs by interview:
 
+`[YYYYMMDD]` means the interview date when available; if the user did not provide one and it cannot be detected from metadata, use today's date. Use the same date token for the output directory and every generated file inside it.
+
 ```
 output/
-└── [guest-lastname]-[YYYYMMDD]/
+└── [guest-lastname]-[interview-date-YYYYMMDD]/
     ├── data/                                    (Stage 1–4.5 intermediate)
     │   ├── turns.json                           (Stage 1)
     │   ├── turns-corrected.json                 (Stage 1.5)
@@ -450,12 +448,10 @@ output/
     ├── html/                                    (Outputs 3, 4)
     │   ├── cards-[guest]-[YYYYMMDD].html        (Output 3)
     │   └── map-[guest]-[YYYYMMDD].html          (Output 4)
-    └── audio/                                   (Output 6, 8)
+    └── audio/                                   (Output 6)
         ├── podcast-brief-[guest]-[YYYYMMDD].md
         ├── podcast-script-[guest]-[YYYYMMDD].md
-        ├── podcast-[guest]-[YYYYMMDD].mp3
-        ├── podcast-[guest]-[YYYYMMDD]-bgm.mp3
-        └── bgm-podcast-[guest]-[YYYYMMDD].mp3
+        └── podcast-[guest]-[YYYYMMDD].mp3       (final BGM-mixed audio)
 ```
 
 ### Post-Generation Verification (Stage 5b)
@@ -538,7 +534,7 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | `scripts/review_podcast_script.py` | 5b | Hard-rule review for podcast scripts before TTS |
 | `scripts/generate_audio.py` | 5 | Render podcast audio via MiniMax Token Plan (mmx CLI) |
 | `scripts/generate_pdf.py` | 5 | Render styled PDFs from Markdown reports |
-| `scripts/generate_bgm_podcast.py` | 5 | Generate BGM + mix with podcast via MiniMax music-2.6 |
+| `scripts/generate_bgm_podcast.py` | 5 | Generate temporary BGM, mix it into the podcast MP3, and keep only the final same-name MP3 |
 | `scripts/estimate.py` | 0 (pre-run) | Estimate token cost and runtime before pipeline execution |
 | `scripts/_mmx_utils.py` | — | Shared mmx CLI helper (used by generate_audio, generate_bgm_podcast) |
 

@@ -26,6 +26,9 @@ FORBIDDEN_PATTERNS = [
     r"Source duration",
     r"Target character",
     r"Duration policy",
+    r"欢迎收听",
+    r"本期播客将总结",
+    r"这期播客将总结",
     r"\d{2}:\d{2}",
     r"从用户角度看",
     r"换成听众最关心的问题",
@@ -115,6 +118,13 @@ def review(text: str, knowledge: dict[str, Any], min_chars: int | None, max_char
         errors.append("Mechanical repeated paragraph openings: " + ", ".join(f"{p}×{c}" for p, c in prefix_repeats[:5]))
 
     first_400 = text[:400]
+    first_250 = text[:250]
+    if not ("今天我们用" in first_250 and "核心判断" in first_250 and "主线" in first_400):
+        errors.append(
+            "Opening must use the standardized listener hook: start with "
+            "'今天我们用[目标时长]拆解...' and state the interview's core judgment/main line."
+        )
+
     if not re.search(r"为什么|判断|核心|问题|意味着|听懂|访谈", first_400):
         warnings.append("Opening may not establish the episode question or core judgment.")
 

@@ -14,10 +14,10 @@
 你只需要提供对话文本（`.docx` / `.txt` / `.md`），它就会自动完成：
 
 ```
-原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 8种输出格式
+原始笔录 → 解析 → 校验 → 分段 → 知识提取 → 综合 → 视觉综合 → 生成 → 验证 → 7种用户可见输出
 ```
 
-### 8 种输出格式
+### 7 种输出格式
 
 | 格式 | 说明 | 阅读/收听时间 |
 |------|------|---------------|
@@ -26,9 +26,8 @@
 | 🌐 **学习卡片** | 卡片滑动/主题切换/移动优先 | 通勤学习 |
 | 🗺️ **知识图谱** | D3.js 径向思维导图 | 可视化探索 |
 | 📱 **社交媒体推文** | 核心观点提炼为社交平台适配格式 | 2 分钟 |
-| 🎧 **短播客脚本** | 大模型撰写 + 审稿的自然口播播客，可 TTS 转音频 | 按原视频长度自适应，约 3-15 分钟 |
+| 🎧 **短播客** | 大模型撰写 + 审稿 + TTS + BGM 混音，最终只保留一个 MP3 | 按原视频长度自适应，约 3-15 分钟 |
 | 📕 **精美 PDF** | 中文化、低干扰、紧凑排版的可打印 PDF 版 | 离线阅读/分享 |
-| 🎵 **BGM 增强播客** | 播客 + 氛围背景音乐 | 沉浸式收听 |
 
 ---
 
@@ -67,26 +66,25 @@ transcripts/
 
 ### 3. 获得输出
 
-处理完成后，所有输出在 `output/[guest-name]-[YYYYMMDD]/` 目录下。
+处理完成后，所有输出在 `output/[guest-name]-[interview-date-YYYYMMDD]/` 目录下。这里的 `YYYYMMDD` 优先使用访谈实际发生日期；如果用户没有提供、笔录中也无法识别，则默认使用当天日期。不要用文件夹创建日期作为命名依据。
 
 示例输出（姚顺宇访谈）：
 
 ```
-output/yaoshunyu-20260530/
+output/yaoshunyu-20260511/
 ├── reports/                             ← Markdown 报告
-│   ├── tldr-yaoshunyu-20260530.md       ← 5分钟速读
-│   ├── report-yaoshunyu-20260530.md     ← 完整深度报告
-│   └── social-yaoshunyu-20260530.md     ← 社交媒体推文
+│   ├── tldr-yaoshunyu-20260511.md       ← 5分钟速读
+│   ├── report-yaoshunyu-20260511.md     ← 完整深度报告
+│   └── social-yaoshunyu-20260511.md     ← 社交媒体推文
 ├── pdf/                                 ← 精美 PDF
-│   ├── report-yaoshunyu-20260530.pdf
-│   └── tldr-yaoshunyu-20260530.pdf
+│   ├── report-yaoshunyu-20260511.pdf
+│   └── tldr-yaoshunyu-20260511.pdf
 ├── html/                                ← 交互式网页
-│   ├── cards-yaoshunyu-20260530.html    ← 学习卡片
-│   └── map-yaoshunyu-20260530.html      ← 知识图谱
+│   ├── cards-yaoshunyu-20260511.html    ← 学习卡片
+│   └── map-yaoshunyu-20260511.html      ← 知识图谱
 ├── audio/                               ← 音频
-│   ├── podcast-script-yaoshunyu-20260530.md ← 短播客脚本
-│   ├── podcast-yaoshunyu-20260530.mp3   ← TTS 合成音频
-│   └── podcast-yaoshunyu-20260530-bgm.mp3 ← BGM 增强版
+│   ├── podcast-script-yaoshunyu-20260511.md ← 短播客脚本
+│   └── podcast-yaoshunyu-20260511.mp3   ← 最终 BGM 混音播客
 ├── data/                                ← 中间数据
 │   ├── turns.json
 │   ├── knowledge.json
@@ -108,11 +106,11 @@ Stage 2: Segment        ── Claude + segmentation-guide    → segments.json
 Stage 3: Extract        ── 6 parallel sub-agents          → 12 extraction files
 Stage 4: Synthesize     ── Claude merge + cross-cutting   → knowledge.json
 Stage 4.5: Visual Synth ── Claude + visual-synthesis-guide→ visual_content.json
-Stage 5: Present        ── Claude MD + scripts/generate_*.py → 8 output formats (可按需选择)
+Stage 5: Present        ── Claude MD + scripts/generate_*.py → 7 user-facing output formats (可按需选择)
 Stage 5b: Verify        ── Claude + quality-checklist     → verified outputs
 ```
 
-> **提示**：无需每次生成全部 8 种输出。详见 SKILL.md 中的「选择性输出模式」章节。
+> **提示**：无需每次生成全部 7 种用户可见输出。详见 SKILL.md 中的「选择性输出模式」章节。
 
 ### 6 维知识提取
 
@@ -146,7 +144,7 @@ interview-based-learning/
 │   ├── prepare_podcast_brief.py   ← knowledge.json → 播客编导 brief
 │   ├── review_podcast_script.py   ← 播客逐字稿 → 审稿硬规则检查
 │   ├── generate_audio.py        ← 播客脚本 → TTS 音频
-│   ├── generate_bgm_podcast.py  ← 播客音频 → BGM 增强版
+│   ├── generate_bgm_podcast.py  ← 播客音频 → 写回同名 BGM 混音版并清理临时 BGM
 │   ├── generate_pdf.py          ← Markdown 报告 → 中文化精美 PDF
 │   ├── estimate.py              ← 成本与 token 估算
 │   └── _mmx_utils.py            ← MiniMax CLI 共享辅助函数
@@ -154,7 +152,7 @@ interview-based-learning/
 │   ├── analysis-framework.md    ← 6 维提取框架 + JSON Schema
 │   ├── segmentation-guide.md    ← 话题边界检测启发式
 │   ├── visual-synthesis-guide.md← 视觉内容综合指南
-│   ├── output-templates.md      ← 8 种输出格式模板
+│   ├── output-templates.md      ← 7 种用户可见输出格式模板
 │   ├── podcast-review-guide.md  ← 播客审稿 Agent 标准
 │   ├── quality-checklist.md     ← QA 检查清单 + 常见坑位
 │   └── transcript-glossary.md   ← 术语表 + 专有名词纠错
@@ -169,11 +167,11 @@ interview-based-learning/
 │       ├── report-wrapper.html.j2
 │       └── tldr-wrapper.html.j2
 └── output/                      ← 运行时输出（中间产物 gitignored）
-    └── yaoshunyu-20260530/      ← 姚顺宇访谈示例输出
+    └── yaoshunyu-20260511/      ← 姚顺宇访谈示例输出（目录日期为访谈日期）
         ├── reports/             ← Markdown 报告（tldr-*.md, report-*.md, social-*.md）
         ├── pdf/                 ← 精美 PDF（report-*.pdf, tldr-*.pdf）
         ├── html/                ← 交互网页（cards-*.html, map-*.html）
-        ├── audio/               ← 音频（podcast-script-*.md, podcast-*.mp3）
+        ├── audio/               ← 音频（podcast-script-*.md, podcast-*.mp3；仅 1 个最终 MP3）
         ├── data/                ← 中间数据（turns.json, knowledge.json 等）
         └── segments/            ← 分段提取文件
 ```
@@ -246,7 +244,7 @@ mmx auth login --api-key sk-cp-...
 ### 添加新的访谈
 
 1. 将笔录文件放入 `transcripts/`
-2. 触发 Skill 处理
+2. 触发 Skill 处理；如已知访谈实际日期，请提供或写入 `metadata.date`，否则默认使用当天日期
 3. 输出自动生成在 `output/` 目录
 
 ### 修改 Skill 行为
