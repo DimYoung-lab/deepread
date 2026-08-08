@@ -111,7 +111,7 @@ Transform the theme structures into a map-specific format:
    - `color`: Assign from a fixed palette
    - `arguments[]`: Top 2-4 supporting insights with their best evidence
 3. `cross_links[]`: Connections between arguments in different themes:
-   - `source`: "theme_id.arg_index" 
+   - `source`: "theme_id.arg_index"
    - `target`: "theme_id.arg_index"
    - `relation`: "supports" | "contrasts" | "extends"
 
@@ -262,7 +262,7 @@ For each theme, select:
 ### Curation Discipline
 
 - Maximum 5 highlighted insights per theme
-- Maximum 3 highlighted quotes per theme  
+- Maximum 3 highlighted quotes per theme
 - Maximum 25 curated quotes total
 - Maximum 4 arguments per theme in map_data
 - Maximum 2 evidence items per argument in map_data

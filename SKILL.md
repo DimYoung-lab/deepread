@@ -1,8 +1,8 @@
 ---
 name: interview-based-learning
-description: Extract structured knowledge from long interview/podcast transcripts (.docx, .txt, .md) into digestible formats — deep-dive reports, learning cards, knowledge maps, and quick summaries. Use when the user wants to distill a recorded conversation, extract insights from an interview transcript, create a knowledge map from a podcast, generate a readable summary of a long dialogue, or turn a talk transcript into a structured learning resource. Trigger words include: 访谈, 播客, 笔录, 逐字稿, 知识提取, 知识图谱, interview transcript, podcast transcript, knowledge extraction.
+description: 将长访谈、播客或对话逐字稿提炼为深度报告、学习卡片和知识图谱。用于 .docx/.txt/.md 访谈文本的分段、洞察提取与结构化呈现；不用于普通长文写作、会议纪要或仅修改
+  Word 格式，应分别使用 article-writing、文档或会议类 Skill。
 ---
-
 # Interview-Based Learning
 
 Transform long interview transcripts into structured, digestible knowledge. This skill processes 1–3 hour interview recordings (provided as `.docx`, `.txt`, or `.md` transcripts) through a seven-stage pipeline: Parse → Validate → Segment → Extract → Synthesize → Visual Synthesis → Present → Verify.

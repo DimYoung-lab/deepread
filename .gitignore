@@ -5,19 +5,27 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.venv/
 
-# Runtime output — per-interview directories
-# Track all final outputs; ignore only intermediate build artifacts.
+# Runtime output — per-interview directories are generated artifacts.
+# Keep the repo to skill code + docs + templates only; outputs stay local.
+# A curated public sample lives in examples/ instead.
+output/
 
-# Ignore intermediate JSON data (except visual_content.json for HTML scripts)
-output/*/data/*
-!output/*/data/visual_content.json
+# Third-party interview transcripts — copyright belongs to the original
+# podcasts/interviewers; do not redistribute via this repo.
+transcripts/
 
-# Ignore per-segment extraction files
-output/*/segments/
+# Secrets and local env
+.env
+.env.*
+*.key
 
-# Social-platform copy stays as Markdown; do not track generated social PDFs.
-output/*/pdf/social-*.pdf
+# Node (mmx-cli and friends install globally; guard against local installs)
+node_modules/
+
+# Logs
+*.log
 
 # OS
 .DS_Store
