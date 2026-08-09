@@ -283,7 +283,7 @@ Write `visual_content.json` to the `data/` subdirectory of the interview output.
 
 ## Stage 5: Generate Outputs
 
-**Goal:** Produce selected output formats (at least one). Not all eight are required — choose based on user needs. See "选择性输出模式" section below for per-output dependencies.
+**Goal:** Produce selected output formats (at least one). Not all seven are required — choose based on user needs. See "选择性输出模式" section below for per-output dependencies.
 
 ### Output 1: TL;DR Quick Summary
 
@@ -518,7 +518,7 @@ These are bugs discovered in real usage. Read [references/quality-checklist.md](
 | [references/segmentation-guide.md](references/segmentation-guide.md) | Stage 2 | How to split transcripts into topics |
 | [references/analysis-framework.md](references/analysis-framework.md) | Stage 3 | Six-dimension extraction taxonomy with JSON schemas |
 | [references/visual-synthesis-guide.md](references/visual-synthesis-guide.md) | Stage 4.5 | How to synthesize content for visual HTML presentation |
-| [references/output-templates.md](references/output-templates.md) | Stage 5 | Templates for all eight output formats |
+| [references/output-templates.md](references/output-templates.md) | Stage 5 | Templates for all seven output formats |
 | [references/podcast-review-guide.md](references/podcast-review-guide.md) | Stage 5b (Output 6) | Reviewer-agent criteria for podcast scripts before TTS |
 | [references/quality-checklist.md](references/quality-checklist.md) | Stage 5b (post-generation) | Mandatory QA checks, common pitfalls, regression test script |
 
