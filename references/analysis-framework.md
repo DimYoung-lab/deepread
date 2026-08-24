@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This framework defines the six dimensions of knowledge extraction used during Stage 3 of the interview-based-learning pipeline. Each dimension targets a distinct type of content, ensuring comprehensive coverage without redundancy. Sub-agents use this framework to produce structured JSON output from transcript segments.
+This framework defines the six dimensions of knowledge extraction used during Stage 3 of the deepread pipeline. Each dimension targets a distinct type of content, ensuring comprehensive coverage without redundancy. Sub-agents use this framework to produce structured JSON output from transcript segments.
 
 ---
 

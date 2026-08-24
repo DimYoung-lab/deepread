@@ -1,7 +1,7 @@
 # Output Templates & Format Specifications
 
 This reference defines the eight canonical output formats produced by the
-interview-based-learning pipeline. Every generated artifact must conform to its
+deepread pipeline. Every generated artifact must conform to its
 template below — use these as the source of truth for structure, content
 requirements, and formatting conventions.
 

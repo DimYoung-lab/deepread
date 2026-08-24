@@ -5,7 +5,7 @@ Converts Markdown to HTML via markdown-it-py, wraps in a Jinja2 HTML
 template with premium print CSS, and renders to PDF via Playwright
 headless Chromium.
 
-Designed for the interview-based-learning skill's PDF outputs:
+Designed for the deepread skill's PDF outputs:
   - Deep-dive report (--type report)      — compact report layout
   - TL;DR summary     (--type tldr)       — compact quick-read layout
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pre-run estimation report for the interview-based-learning pipeline.
+"""Pre-run estimation report for the deepread pipeline.
 
 Analyzes a transcript .docx file and produces a structured cost/runtime
 estimation with interactive output selection.

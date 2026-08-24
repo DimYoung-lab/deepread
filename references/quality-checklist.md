@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This reference documents the mandatory testing procedures and common pitfalls discovered during the development and use of the interview-based-learning skill. Run these checks before considering any output complete.
+This reference documents the mandatory testing procedures and common pitfalls discovered during the development and use of the deepread skill. Run these checks before considering any output complete.
 
 ---
 
