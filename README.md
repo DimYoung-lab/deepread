@@ -1,6 +1,6 @@
-# Interview-Based Learning
+# deepread · 访谈精读
 
-> 将长篇访谈/播客转录为结构化知识的 AI 技能
+> 从逐字稿到知识资产 —— 将长篇访谈/播客转录为结构化知识的 AI 技能
 
 [![Skill Type](https://img.shields.io/badge/type-Claude%20Code%20Skill-blue)](https://claude.com/claude-code)
 [![Language](https://img.shields.io/badge/lang-中文%20%7C%20English-green)]()
@@ -12,7 +12,7 @@
 
 AI 行业的高价值信息，越来越多以 1–3 小时的长访谈、播客形式出现：完整听完一场要一个晚上，听完能复述的观点所剩无几，金句、数据、判断散在几万字的逐字稿里，无法沉淀和复用。
 
-**Interview-Based Learning** 是一个 Claude Code Skill：把带时间戳的访谈逐字稿（`.docx` / `.txt` / `.md`）变成一套结构化知识产品。它自动完成解析、转录纠错、话题分段、六维知识提取与综合，一次处理产出 7 种形态的内容；每条金句与论点都锚定原文时间戳，可以回查原话。
+**deepread（访谈精读）** 是一个 Claude Code Skill：把带时间戳的访谈逐字稿（`.docx` / `.txt` / `.md`）变成一套结构化知识产品。它自动完成解析、转录纠错、话题分段、六维知识提取与综合，一次处理产出 7 种形态的内容；每条金句与论点都锚定原文时间戳，可以回查原话。
 
 处理流水线：
 
@@ -72,10 +72,10 @@ AI 行业的高价值信息，越来越多以 1–3 小时的长访谈、播客�
 
 ```bash
 # 用户级（所有项目可用）
-git clone https://github.com/DimYoung-lab/interview-based-learning.git ~/.claude/skills/interview-based-learning
+git clone https://github.com/DimYoung-lab/deepread.git ~/.claude/skills/deepread
 
 # 或项目级（仅当前项目可用）
-git clone https://github.com/DimYoung-lab/interview-based-learning.git <your-project>/.claude/skills/interview-based-learning
+git clone https://github.com/DimYoung-lab/deepread.git <your-project>/.claude/skills/deepread
 ```
 
 ### 3. 安装依赖
@@ -117,7 +117,7 @@ mmx auth login --api-key sk-cp-...
 或者使用命令：
 
 ```
-/interview-based-learning
+/deepread
 ```
 
 ### 3. 获得输出
@@ -191,7 +191,7 @@ output/yaoshunyu-20260511/
 ## 项目结构
 
 ```
-interview-based-learning/
+deepread/
 ├── SKILL.md                     ← Skill 入口（流水线编排）
 ├── README.md                    ← 本文件
 ├── LICENSE                      ← MIT License
